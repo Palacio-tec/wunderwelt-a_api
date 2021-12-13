@@ -1,0 +1,134 @@
+import { getRepository, Repository } from "typeorm";
+
+import { ICreateUserDTO } from "@modules/accounts/dtos/ICreateUserDTO";
+import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
+import { User } from "../entities/User";
+
+class UsersRepository implements IUsersRepository {
+  private repository: Repository<User>;
+
+  constructor() {
+    this.repository = getRepository(User);
+  }
+
+  async create({
+    name,
+    username,
+    password,
+    email,
+    id,
+    inactivation_date,
+    is_admin,
+    is_teacher,
+    street_name,
+    street_number,
+    zip_code,
+    area_code,
+    phone,
+    document_type,
+    document,
+  }: ICreateUserDTO): Promise<User> {
+    const user = this.repository.create({
+      name,
+      username,
+      password,
+      email,
+      id,
+      inactivation_date,
+      is_admin,
+      is_teacher,
+      street_name,
+      street_number,
+      zip_code,
+      area_code,
+      phone,
+      document_type,
+      document,
+    });
+
+    await this.repository.save(user);
+
+    return user;
+  }
+
+  async findByEmail(email: string): Promise<User> {
+    email = email.toLocaleLowerCase();
+
+    const user = await this.repository.findOne({ email });
+
+    return user;
+  }
+
+  async findByUsername(username: string): Promise<User> {
+    username = username.toLocaleLowerCase();
+
+    const user = await this.repository.findOne({ username });
+
+    return user;
+  }
+
+  async findById(id: string): Promise<User> {
+    const user = await this.repository.findOne(id);
+
+    return user;
+  }
+
+  async findAllStudentUsers(): Promise<User[]> {
+    const studentUsers = await this.repository.find({
+      where: {
+        is_admin: false,
+        is_teacher: false,
+      },
+    });
+
+    return studentUsers;
+  }
+
+  async list(): Promise<User[]> {
+    const users = this.repository.find({ order: { name: "ASC" } });
+
+    return users;
+  }
+  
+  async findByFieldForOtherUser(field: string, value: string, user_id: string): Promise<User[]> {
+    const users = await this.repository.query(
+      `SELECT 
+        u.id
+      FROM
+        users u
+      WHERE
+        u.id <> '${user_id}'
+        AND u.${field} = '${value}'`
+    );
+
+    return users;
+  }
+
+  async findByField(field: string, value: string): Promise<User[]> {
+    const users = await this.repository.query(
+      `SELECT 
+        u.id
+      FROM
+        users u
+      WHERE
+        u.${field} = '${value}'`
+    );
+
+    return users;
+  }
+  
+  async delete(id: string): Promise<void> {
+    await this.repository.delete(id);
+  }
+
+  async listTeachers(): Promise<User[]> {
+    const teachers = this.repository.find({
+      where: { is_teacher: true },
+      order: { name: "ASC" },
+    });
+
+    return teachers
+  }
+}
+
+export { UsersRepository };

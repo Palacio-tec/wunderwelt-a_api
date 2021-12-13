@@ -1,0 +1,36 @@
+import { Router } from "express";
+
+import { authenticateRoutes } from "./authenticate.routes";
+import { couponsRoutes } from "./coupons.routes";
+import { eventsRoutes } from "./events.routes";
+import { notificationsRoutes } from "./notifications.routes";
+import { parametersRoutes } from "./parameters.routes";
+import { passwordRoutes } from "./password.routes";
+import { profileRoutes } from "./profile.routes";
+import { queueRoutes } from "./queues.routes";
+import { schedulesRoutes } from "./schedules.routes";
+import { statementsRoutes } from "./statements.routes";
+import { usersRoutes } from "./users.routes";
+import { levelsRoutes } from "./levels.routes";
+import { productsRoutes } from "./products.routes";
+import { purchasesRoutes } from "./purchases.routes";
+
+const router = Router();
+
+router.use(authenticateRoutes);
+
+router.use("/users", usersRoutes);
+router.use("/profile", profileRoutes);
+router.use("/events", eventsRoutes);
+router.use("/schedules", schedulesRoutes);
+router.use("/password", passwordRoutes);
+router.use("/notifications", notificationsRoutes);
+router.use("/parameters", parametersRoutes);
+router.use("/queues", queueRoutes);
+router.use("/statements", statementsRoutes);
+router.use("/coupons", couponsRoutes);
+router.use("/levels", levelsRoutes);
+router.use("/products", productsRoutes);
+router.use("/purchase-orders", purchasesRoutes)
+
+export { router };

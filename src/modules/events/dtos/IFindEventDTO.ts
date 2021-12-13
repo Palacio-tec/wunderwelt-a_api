@@ -1,0 +1,23 @@
+type LevelsProps = {
+    value: string;
+    label: string;
+}
+
+interface IFindEventDTO {
+    id: string;
+    title: string;
+    description: string;
+    link: string;
+    start_date: Date;
+    end_date: Date;
+    student_limit: string;
+    instruction: string;
+    is_canceled: boolean;
+    teacher_id: string;
+    name: string;
+    credit: Number;
+    request_subject: boolean;
+    levels?: LevelsProps[];
+}
+
+export { IFindEventDTO }
