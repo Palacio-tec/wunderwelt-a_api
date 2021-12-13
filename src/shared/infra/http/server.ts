@@ -1,4 +1,4 @@
-import { CronList } from "crons";
+import { CronList } from "../../../crons";
 
 import { app } from "./app";
 
