@@ -35,8 +35,7 @@ jobs:
           source: ".,!node_modules"
           target: "~/app/wunderwelt-a_api"
       
-      # Executar "yarn" na Digital Ocean
-      - name: Install dependencies on Digital Ocean
+      - name: Run production scripts
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -46,25 +45,5 @@ jobs:
           script: |
             cd ~/app/wunderwelt-a_api
             yarn
-        
-      # Executar as migrations do TypeORM
-      - name: Run migrations on Digital Ocean
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          port: ${{ secrets.SSH_PORT }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            cd ~/app/wunderwelt-a_api
             ./node_modules/.bin/typeorm migration:run
-
-      # Restart no servidor Node.js
-      - name: Restar server Node.js
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          port: ${{ secrets.SSH_PORT }}
-          key: ${{ secrets.SSH_KEY }}
-          script: pm2 restart praktika-api
+            pm2 restart praktika-api
