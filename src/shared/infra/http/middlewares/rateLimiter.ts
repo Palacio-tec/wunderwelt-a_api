@@ -11,6 +11,7 @@ export default async function rateLimiter(
 ): Promise<void> {
   const redisClient = redis.createClient({
     legacyMode: true,
+    password: process.env.REDIS_PASSWORD || undefined,
     socket: {
       host: process.env.REDIS_HOST,
       port: Number(process.env.REDIS_PORT),
