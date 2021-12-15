@@ -24,7 +24,7 @@ export default async function rateLimiter(
   const limiter = new RateLimiterRedis({
     storeClient: redisClient,
     keyPrefix: "rateLimiter",
-    points: 5,
+    points: 10,
     duration: 1,
   });
   try {
@@ -32,7 +32,6 @@ export default async function rateLimiter(
 
     return next();
   } catch (err) {
-    console.log(err)
     throw new AppError("Too many requests", 429);
   }
 }
