@@ -7,8 +7,6 @@ class CreatePurchaseOrderWebhookController {
   async handle(request: Request, response: Response): Promise<Response> {
     const { action, data } = request.body;
 
-    console.info('WEBHOOK MP', request)
-
     const payment_id = data?.id;
 
     const createPurchaseOrderWebhookUseCase = container.resolve(CreatePurchaseOrderWebhookUseCase);
