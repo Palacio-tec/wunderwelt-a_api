@@ -45,8 +45,8 @@ class DayjsDateProvider implements IDateProvider {
     return dayjs(parseDate).toDate();
   }
 
-  parseFormat(date: Date): string {
-    return dayjs(date).format("YYYY-MM-DD HH:mm:ss");
+  parseFormat(date: Date, format: string = "YYYY-MM-DD HH:mm:ss"): string {
+    return dayjs(date).format(format);
   }
 
   formatInDate(date: Date): string {

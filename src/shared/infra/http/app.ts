@@ -10,8 +10,6 @@ import { AppError } from "@shared/errors/AppError";
 import createConnection from "@shared/infra/typeorm";
 import rateLimiter from "@shared/infra/http/middlewares/rateLimiter";
 
-import swaggerFile from "../../../swagger.json";
-
 import { router } from "./routes";
 
 createConnection();
@@ -24,8 +22,6 @@ app.use(express.json());
 app.use(cors({
   exposedHeaders: ['x-total-count', 'Content-Type', 'Content-Length']
 }))
-
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 app.use(router);
 

@@ -1,12 +1,8 @@
-
 import { inject, injectable } from "tsyringe";
-import { format } from "date-fns";
 import { resolve } from "path";
 
 import { IEventsRepository } from "@modules/events/repositories/IEventsRepository";
-import { ISchedulesRepository } from "@modules/schedules/repositories/ISchedulesRepository";
 import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
-import { EventsRepository } from "@modules/events/infra/typeorm/repositories/EventsRepository";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
 
@@ -15,9 +11,6 @@ class CancelEventWithoutStudentUseCase {
   constructor(
     @inject("EventsRepository")
     private eventsRepository: IEventsRepository,
-
-    @inject("SchedulesRepository")
-    private schedulesRepository: ISchedulesRepository,
 
     @inject("MailProvider")
     private mailProvider: IMailProvider,
@@ -63,7 +56,7 @@ class CancelEventWithoutStudentUseCase {
 
       const { teacher_name, teacher_email, title, start_date } = event;
 
-      const dateFormated = this.dateProvider.parseFormat(start_date)
+      const dateFormated = this.dateProvider.parseFormat(start_date, 'DD.MM.YYYY HH:mm:ss')
 
       const mailMessage = `A aula "${title}" que teria início em ${dateFormated} foi cancelada por não haver alunos cadastrados.`
 
