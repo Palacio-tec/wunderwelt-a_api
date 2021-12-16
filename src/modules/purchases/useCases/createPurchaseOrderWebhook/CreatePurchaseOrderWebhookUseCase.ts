@@ -78,6 +78,10 @@ class CreatePurchaseOrderWebhookUseCase {
   }
 
   async execute(action: string, payment_id: string): Promise<PurchaseOrder> {
+    if (!payment_id) {
+      return
+    }
+
     const payment = await this.paymentProvider.getPayment(Number(payment_id));
 
     if (!payment) {

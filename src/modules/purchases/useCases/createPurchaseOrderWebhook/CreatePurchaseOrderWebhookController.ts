@@ -9,7 +9,7 @@ class CreatePurchaseOrderWebhookController {
 
     console.info('WEBHOOK MP', request)
 
-    const payment_id = data.id;
+    const payment_id = data?.id;
 
     const createPurchaseOrderWebhookUseCase = container.resolve(CreatePurchaseOrderWebhookUseCase);
 
