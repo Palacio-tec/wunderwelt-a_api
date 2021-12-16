@@ -20,7 +20,7 @@ app.use(rateLimiter);
 app.use(express.json());
 
 app.use(cors({
-  origin: process.env.APP_API_URL,
+  origin: process.env.DEFAULT_URL,
   exposedHeaders: ['x-total-count', 'Content-Type', 'Content-Length']
 }))
 
