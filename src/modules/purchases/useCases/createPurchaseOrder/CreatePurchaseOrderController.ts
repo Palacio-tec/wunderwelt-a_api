@@ -13,11 +13,7 @@ class CreatePurchaseOrderController {
 
     let purchaseOrder = {}
 
-    if (!api_version) {
-      purchaseOrder = await createPurchaseOrderUseCase.execute(action, payment_id);
-    } else {
-      createPurchaseOrderUseCase.execute(action, payment_id);
-    }
+    purchaseOrder = await createPurchaseOrderUseCase.execute(action, payment_id);
 
     return response.status(201).json(purchaseOrder);
   }
