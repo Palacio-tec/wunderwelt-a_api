@@ -89,7 +89,7 @@ class CreatePaymentReferenceUseCase {
       },
       auto_return: autoReturnPayment.ALL,
       statement_descriptor: "Praktika - Wunderwelt-a",
-      external_reference: user_id,
+      external_reference: `${user_id}|${product_id}|${product.amount}|${product_value}`,
       expires: true
     };
 

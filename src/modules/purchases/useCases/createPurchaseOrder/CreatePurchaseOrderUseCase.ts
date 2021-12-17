@@ -85,24 +85,18 @@ class CreatePurchaseOrderUseCase {
     }
 
     const {
-      additional_info,
-      external_reference: payer_id,
+      external_reference,
       status,
       status_detail,
     } = payment.response;
 
-    const { items } = additional_info;
+    const generalInfo = external_reference.split('|');
 
-    const {
-      id: item_id,
-      unit_price: value,
-    } = items[0];
+    const payer_id = generalInfo[0];
+    const product_id = generalInfo[1];
+    const credit = generalInfo[2];
+    const value = generalInfo[3];
 
-    const productInfo = item_id.split('|');
-
-    const product_id = productInfo[0];
-    const credit = Number(productInfo[1]);
-  
     const userExists = await this.usersRepository.findById(payer_id);
 
     if (!userExists) {
