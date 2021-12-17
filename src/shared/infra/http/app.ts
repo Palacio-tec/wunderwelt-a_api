@@ -13,11 +13,6 @@ import rateLimiter from "@shared/infra/http/middlewares/rateLimiter";
 import { router } from "./routes";
 
 createConnection();
-
-const whitelist = [
-  process.env.DEFAULT_URL,
-  process.env.PAYMENT_PROVIDER_URL,
-]
 const app = express();
 
 app.use(rateLimiter);
@@ -25,14 +20,7 @@ app.use(rateLimiter);
 app.use(express.json());
 
 app.use(cors({
-  origin: (origin, callback) => {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true)
-    } else {
-      console.log(origin)
-      callback(new Error('Not allowed by CORS'))
-    }
-  },
+  origin: process.env.DEFAULT_URL,
   exposedHeaders: ['x-total-count', 'Content-Type', 'Content-Length']
 }))
 
