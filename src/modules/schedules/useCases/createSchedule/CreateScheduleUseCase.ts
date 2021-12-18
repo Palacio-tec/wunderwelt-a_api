@@ -128,7 +128,6 @@ class CreateScheduleUseCase {
       title,
       day,
       start_hour,
-      link,
       hasInstruction: !!instruction,
       instruction
     };

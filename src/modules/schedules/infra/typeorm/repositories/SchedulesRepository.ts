@@ -106,7 +106,6 @@ class SchedulesRepository implements ISchedulesRepository {
         WHERE
             u.inactivation_date is null
             AND is_admin = false
-            AND is_teacher = false
         GROUP BY
             u.id, u.name, u.email, u.created_at
       ) base_gift

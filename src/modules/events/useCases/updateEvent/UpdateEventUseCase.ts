@@ -89,17 +89,19 @@ class UpdateEventUseCase {
 
     await this.eventsLevelsRepository.deleteByEvent(id);
 
-    await Promise.all(
-      levels.split(",").map(async (level_id: string) => {
-        const levelExist = await this.levelsRepository.findById(level_id);
+    if (levels) {
+      await Promise.all(
+        levels.split(",").map(async (level_id: string) => {
+          const levelExist = await this.levelsRepository.findById(level_id);
 
-        if (!levelExist) {
-          throw new AppError("Level does not exists");
-        }
+          if (!levelExist) {
+            throw new AppError("Level does not exists");
+          }
 
-        await this.eventsLevelsRepository.create({ event_id: id, level_id });
-      })
-    )
+          await this.eventsLevelsRepository.create({ event_id: id, level_id });
+        })
+      )
+    }
 
     return event;
   }

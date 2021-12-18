@@ -66,7 +66,7 @@ class SendReminderEventsWillStartUseCase {
           name: user.name,
           title,
           link,
-          time: reminderEventEmail,
+          time: reminderEventEmailValue,
         };
   
         this.mailProvider.sendMail(

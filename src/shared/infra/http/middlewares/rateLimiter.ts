@@ -25,7 +25,7 @@ export default async function rateLimiter(
     storeClient: redisClient,
     keyPrefix: "rateLimiter",
     points: 10,
-    duration: 1,
+    duration: 2,
   });
   try {
     await limiter.consume(request.ip);

@@ -33,6 +33,11 @@
         text-align: left;
         padding: 8px;
       }
+      
+      a {
+        text-decoration: none;
+        font-weight: bold;
+      }
 
       .noReply {
         font-size: 14px;
@@ -47,6 +52,7 @@
       <br>
 
       <text>Segue lista dos alunos matriculados na aula "{{title}}" que inicia hoje às {{time}} (horário de Brasilia).</text>
+      <p>Para acessar a sala virtual, <a href="{{link}}">clique aqui</a>.</p>
 
       <br>
       <br>
@@ -58,7 +64,7 @@
         </tr>
         {{#each schedules}}
           <tr>
-              <td>{{user.username}}</th>
+              <td>{{user.name}}</th>
               <td>{{subject}}</th>
           </tr>
         {{/each}}

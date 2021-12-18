@@ -47,7 +47,7 @@ class SendEventsWillStartEmailUseCase {
     events.map(async (event) => {
       const schedules = await this.schedulesRepository.findByEventId(event.event_id);
 
-      const { teacher_name, teacher_email, title, start_date } = event;
+      const { teacher_name, teacher_email, title, start_date, link } = event;
 
       const time = this.dateProvider.formatInHour(start_date)
 
@@ -56,11 +56,12 @@ class SendEventsWillStartEmailUseCase {
         title,
         time,
         schedules,
+        link,
       };
 
       this.mailProvider.sendMail(
         teacher_email,
-        "Lista de alunos",
+        `Lista de alunos - ${title}`,
         variables,
         templatePath
       );
