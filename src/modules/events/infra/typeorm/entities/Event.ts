@@ -55,6 +55,9 @@ class Event {
   @Column()
   request_subject: boolean;
 
+  @Column()
+  minimum_number_of_students: number;
+
   constructor() {
     if (!this.id) {
       this.id = uuidV4();

@@ -23,7 +23,7 @@ interface IEventsRepository {
   findByIdToCreate(id: string): Promise<Event>;
   findEventByTeacherAndPeriod({teacher_id, start_date, end_date}: IFindEventByTeacherAndPeriodDTO): Promise<Event[]>;
   findEventWillStart(startDate: string, endDate: string): Promise<IFindEventWillStartDTO[]>;
-  findEventWithoutStudentByDate(startDate: string, endDate: string): Promise<IFindEventWithoutStudentByDateDTO[]>;
+  findEventWithoutStudentByDate(refDate: string): Promise<IFindEventWithoutStudentByDateDTO[]>;
 }
 
 export { IEventsRepository };

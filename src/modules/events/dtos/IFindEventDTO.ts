@@ -17,6 +17,7 @@ interface IFindEventDTO {
     name: string;
     credit: Number;
     request_subject: boolean;
+    minimum_number_of_students: string;
     levels?: LevelsProps[];
 }
 

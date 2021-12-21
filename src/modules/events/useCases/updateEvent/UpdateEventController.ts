@@ -16,6 +16,7 @@ class UpdateEventControllet {
       teacher_id,
       credit,
       request_subject,
+      minimum_number_of_students,
       levels,
     } = request.body;
     const { id } = request.params;
@@ -36,6 +37,7 @@ class UpdateEventControllet {
         teacher_id,
         credit,
         request_subject,
+        minimum_number_of_students,
         levels,
       },
       user_id

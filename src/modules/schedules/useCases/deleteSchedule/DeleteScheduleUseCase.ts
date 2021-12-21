@@ -122,7 +122,7 @@ class DeleteScheduleUseCase {
 
         this.mailProvider.sendMail(
           email,
-          "Vaga disponível",
+          `Vaga disponível - ${title}`,
           variables,
           templatePath
         );

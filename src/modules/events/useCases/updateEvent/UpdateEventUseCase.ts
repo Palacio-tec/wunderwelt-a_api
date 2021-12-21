@@ -1,13 +1,17 @@
+import { inject, injectable } from "tsyringe";
+import { resolve } from "path";
+
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
 import { ICreateEventDTO } from "@modules/events/dtos/ICreateEventDTO";
 import { Event } from "@modules/events/infra/typeorm/entities/Event";
 import { IEventsLevelsRepository } from "@modules/events/repositories/IEventsLevelsRepository";
 import { IEventsRepository } from "@modules/events/repositories/IEventsRepository";
 import { ILevelsRepository } from "@modules/levels/repositories/ILevelsRepository";
+import { IQueuesRepository } from "@modules/queues/repositories/IQueuesRepository";
 import { ISchedulesRepository } from "@modules/schedules/repositories/ISchedulesRepository";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { AppError } from "@shared/errors/AppError";
-import { inject, injectable } from "tsyringe";
+import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 
 @injectable()
 class UpdateEventUseCase {
@@ -28,7 +32,13 @@ class UpdateEventUseCase {
     private dateProvider: IDateProvider,
 
     @inject("LevelsRepository")
-    private levelsRepository: ILevelsRepository
+    private levelsRepository: ILevelsRepository,
+
+    @inject("QueuesRepository")
+    private queuesRepository: IQueuesRepository,
+
+    @inject("MailProvider")
+    private mailProvider: IMailProvider,
   ) {}
 
   async execute(
@@ -44,6 +54,7 @@ class UpdateEventUseCase {
       instruction,
       credit,
       request_subject,
+      minimum_number_of_students,
       levels,
     }: ICreateEventDTO,
     user_id: string
@@ -64,11 +75,7 @@ class UpdateEventUseCase {
       throw new AppError("Event does not exists");
     }
 
-    const schedulesExists = await this.schedulesRepository.findByEventId(id);
-
-    if (schedulesExists.length > 0) {
-      throw new AppError("Event has enrolled students");
-    }
+    const haveLimitIncrease = Number(eventExists.student_limit) < student_limit;
 
     const parseStartDate = this.dateProvider.parseISO(start_date);
     const parseEndDate = this.dateProvider.parseISO(end_date);
@@ -84,6 +91,7 @@ class UpdateEventUseCase {
       teacher_id,
       credit,
       request_subject,
+      minimum_number_of_students,
       instruction,
     });
 
@@ -101,6 +109,47 @@ class UpdateEventUseCase {
           await this.eventsLevelsRepository.create({ event_id: id, level_id });
         })
       )
+    }
+
+    if (haveLimitIncrease) {
+      const queues = await this.queuesRepository.findByEvent(id);
+
+      if (queues) {
+        queues.map((queue) => {
+          const templatePath = resolve(
+            __dirname,
+            "..",
+            "..",
+            "..",
+            "queues",
+            "views",
+            "emails",
+            "queueAvailableEvent.hbs"
+          );
+
+          const { name, email } = queue.user;
+
+          const { title, start_date, link } = queue.event;
+
+          const day = this.dateProvider.formatInDate(start_date);
+          const start_hour = this.dateProvider.formatInHour(start_date);
+
+          const variables = {
+            name,
+            title,
+            day,
+            start_hour,
+            link,
+          };
+
+          this.mailProvider.sendMail(
+            email,
+            `Vaga disponível - ${title}`,
+            variables,
+            templatePath
+          );
+        });
+      }
     }
 
     return event;

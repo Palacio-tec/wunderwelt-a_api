@@ -1,4 +1,5 @@
 import { inject, injectable } from "tsyringe";
+import { resolve } from "path";
 
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
 import { ICreateEventDTO } from "@modules/events/dtos/ICreateEventDTO";
@@ -9,6 +10,7 @@ import { IDateProvider } from "@shared/container/providers/DateProvider/IDatePro
 import { INotificationsRepository } from "@modules/notifications/repositories/INotificationsRepository";
 import { IEventsLevelsRepository } from "@modules/events/repositories/IEventsLevelsRepository";
 import { ILevelsRepository } from "@modules/levels/repositories/ILevelsRepository";
+import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 
 @injectable()
 class CreateEventUseCase {
@@ -29,7 +31,10 @@ class CreateEventUseCase {
     private levelsRepository: ILevelsRepository,
 
     @inject("NotificationsRepository")
-    private notificationsRepository: INotificationsRepository
+    private notificationsRepository: INotificationsRepository,
+
+    @inject("MailProvider")
+    private mailProvider: IMailProvider,
   ) {}
 
   async execute(
@@ -45,6 +50,7 @@ class CreateEventUseCase {
       credit,
       levels,
       request_subject,
+      minimum_number_of_students,
     }: ICreateEventDTO,
     user_id: string
   ): Promise<Event> {
@@ -92,6 +98,7 @@ class CreateEventUseCase {
       credit,
       instruction,
       request_subject,
+      minimum_number_of_students,
     });
 
     const event_id = event.id;
@@ -111,8 +118,34 @@ class CreateEventUseCase {
     }
 
     const formatedStartDate = this.dateProvider.formatInDate(event.start_date);
+    
+    const dateTimeFormated = this.dateProvider.parseFormat(event.start_date, "DD.MM.YYYY [às] HH:mm")
 
-    const content = `Nova aula incluída - ${event.title} para o dia ${formatedStartDate}`;
+    const templatePath = resolve(
+      __dirname,
+      "..",
+      "..",
+      "views",
+      "emails",
+      "teacherEventCreated.hbs"
+    );
+
+    const { name, email } = teacherExists;
+
+    const variables = {
+      name,
+      title,
+      dateTime: dateTimeFormated,
+    };
+
+    this.mailProvider.sendMail(
+      email,
+      `Aula incluída - ${title}`,
+      variables,
+      templatePath
+    );
+
+    const content = `Nova aula incluída - ${title} para o dia ${formatedStartDate}`;
 
     const studentUsers = await this.usersRepository.findAllStudentUsers();
 
