@@ -33,6 +33,7 @@ class EventsRepository implements IEventsRepository {
     is_canceled,
     credit,
     request_subject,
+    minimum_number_of_students,
   }: ICreateEventDTO): Promise<Event> {
     const event = this.repository.create({
       title,
@@ -47,6 +48,7 @@ class EventsRepository implements IEventsRepository {
       credit,
       id,
       request_subject,
+      minimum_number_of_students,
     });
 
     await this.repository.save(event);
@@ -57,7 +59,7 @@ class EventsRepository implements IEventsRepository {
   async list(): Promise<IListEventsDTO[]> {
     const events = await this.repository.query(
       `SELECT
-        e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit, e.instruction, e.is_canceled, e.credit, e.teacher_id,
+        e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit, e.instruction, e.is_canceled, e.credit, e.teacher_id, e.minimum_number_of_students,
         u.name,
         string_agg(l.name, ', ') levels
       FROM
@@ -75,7 +77,7 @@ class EventsRepository implements IEventsRepository {
       ON
         l.id = el.level_id
       GROUP BY
-        e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit, e.instruction, e.is_canceled, e.credit, e.teacher_id,
+        e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit, e.instruction, e.is_canceled, e.credit, e.teacher_id, e.minimum_number_of_students,
         u.name
       ORDER BY
         e.created_at DESC`
@@ -118,7 +120,7 @@ class EventsRepository implements IEventsRepository {
         AND q.user_id = '${user_id}'
       WHERE
         suser.id IS NULL
-        AND ( q.id IS NULL OR ea.registered_students < ea.credit )
+        AND ( q.id IS NULL OR ea.registered_students < ea.student_limit )
       ORDER BY
         ea.start_date`
     );
@@ -129,7 +131,7 @@ class EventsRepository implements IEventsRepository {
   async findById(id: string): Promise<IListEventsDTO> {
     const event = await this.repository.query(
       `SELECT
-        e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit, e.instruction, e.is_canceled, e.credit, e.teacher_id, e.request_subject,
+        e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit, e.instruction, e.is_canceled, e.credit, e.teacher_id, e.request_subject, e.minimum_number_of_students,
         u.name,
         string_agg(l.name, ', ') levels
       FROM
@@ -149,7 +151,7 @@ class EventsRepository implements IEventsRepository {
       WHERE
         e.id = '${id}'
       GROUP BY
-        e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit, e.instruction, e.is_canceled, e.credit, e.teacher_id, e.request_subject,
+        e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit, e.instruction, e.is_canceled, e.credit, e.teacher_id, e.request_subject, e.minimum_number_of_students,
         u.name`
     );
 
@@ -293,27 +295,35 @@ class EventsRepository implements IEventsRepository {
     return events;
   }
 
-  async findEventWithoutStudentByDate(startDate: string, endDate: string): Promise<IFindEventWithoutStudentByDateDTO[]> {
+  async findEventWithoutStudentByDate(refDate: string): Promise<IFindEventWithoutStudentByDateDTO[]> {
     const events = await this.repository.query(
-      `SELECT
-        e.id as event_id, e.title, e.start_date,
-        u.name as teacher_name, u.email as teacher_email
-      FROM
-        events e
-      INNER JOIN
-        users u
-      ON
-        u.id = e.teacher_id
-      LEFT JOIN
-        schedules s
-      ON
-        s.event_id = e.id
+      `SELECT * FROM (
+        SELECT
+          e.id as event_id, e.title, e.start_date, e.minimum_number_of_students,
+          u.name as teacher_name, u.email as teacher_email,
+          SUM(
+            CASE WHEN s.id IS NULL THEN 0 ELSE 1 END
+          ) as student_qty
+        FROM
+          events e
+        INNER JOIN
+          users u
+        ON
+          u.id = e.teacher_id
+        LEFT JOIN
+          schedules s
+        ON
+          s.event_id = e.id
+        WHERE
+          e.start_date <= '${refDate}' AND
+          e.is_canceled = false
+        GROUP BY
+          e.id, e.title, e.start_date, e.minimum_number_of_students,
+          u.name, u.email
+      ) eventWithoutStudent
       WHERE
-        e.start_date BETWEEN '${startDate}' and '${endDate}'
-        AND s.id IS NULL
-      GROUP BY
-        e.id, e.title, e.start_date,
-        u.name, u.email`
+        eventWithoutStudent.student_qty = 0 OR
+        eventWithoutStudent.minimum_number_of_students > eventWithoutStudent.student_qty`
     );
 
     return events;

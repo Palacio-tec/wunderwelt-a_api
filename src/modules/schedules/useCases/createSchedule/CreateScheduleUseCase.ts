@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
 import { resolve } from "path";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 
 import { IHoursRepository } from "@modules/accounts/repositories/IHoursRepository";
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";

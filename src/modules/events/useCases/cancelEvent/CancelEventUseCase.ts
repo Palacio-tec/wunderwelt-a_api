@@ -10,8 +10,6 @@ import { resolve } from "path";
 import { IStatementsRepository } from "@modules/statements/repositories/IStatementsRepository";
 import { OperationEnumTypeStatement } from "@modules/statements/dtos/ICreateStatementDTO";
 import { IHoursRepository } from "@modules/accounts/repositories/IHoursRepository";
-import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
-
 @injectable()
 class CancelEventUseCase {
   constructor(
@@ -35,9 +33,6 @@ class CancelEventUseCase {
 
     @inject("HoursRepository")
     private hoursRepository: IHoursRepository,
-
-    @inject("ParametersRepository")
-    private parametersRepository: IParametersRepository
   ) {}
 
   async execute(
@@ -89,7 +84,7 @@ class CancelEventUseCase {
 
         await this.mailProvider.sendMail(
           email,
-          "Aula Cancelada",
+          `Aula Cancelada - ${eventExists.title}`,
           variables,
           templatePath
         );
@@ -104,13 +99,6 @@ class CancelEventUseCase {
         const hours = await this.hoursRepository.findByUser(schedule.user_id);
 
         hours.amount = Number(hours.amount) + credit;
-
-        const parameterExpirationTime =
-          await this.parametersRepository.findByReference("ExpirationTime");
-
-        hours.expiration_date = this.dateProvider.addDays(
-          Number(parameterExpirationTime.value)
-        );
 
         await this.hoursRepository.update(hours);
       });
@@ -131,6 +119,7 @@ class CancelEventUseCase {
       is_canceled: eventExists.is_canceled,
       credit: eventExists.credit,
       request_subject: eventExists.request_subject,
+      minimum_number_of_students: Number(eventExists.minimum_number_of_students),
     });
 
     return event;

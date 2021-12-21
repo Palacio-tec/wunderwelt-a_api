@@ -39,6 +39,7 @@ class FindEventUseCase {
       credit,
       request_subject,
       levels,
+      minimum_number_of_students,
     } = event;
 
     let levelsInfo = [];
@@ -70,6 +71,7 @@ class FindEventUseCase {
       name,
       credit,
       request_subject,
+      minimum_number_of_students,
       levels: levelsInfo,
     };
   }

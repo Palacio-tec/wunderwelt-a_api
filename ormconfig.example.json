@@ -23,3 +23,33 @@
     "entities": ["./src/modules/**/schemas/*.ts"]
   }
 ]
+
+// [
+//   {
+//     "name": "default",
+//     "type": "postgres",
+//     "port": 25060,
+//     "host": "db-postgresql-praktika-do-user-10354711-0.b.db.ondigitalocean.com",
+//     "username": "adminpraktika",
+//     "password": "HRUTru91orIqusAo",
+//     "database": "praktika",
+//     "migrations": ["./src/shared/infra/typeorm/migrations/*.ts"],
+//     "entities": ["./src/modules/**/entities/*.ts"],
+//     "cli": {
+//       "migrationsDir": "./src/shared/infra/typeorm/migrations"
+//     },
+//     "ssl": {
+//       "require": true,
+//       "rejectUnauthorized": false
+//     }
+//   },
+//   {
+//     "name": "mongo",
+//     "type": "mongodb",
+//     "host": "localhost",
+//     "port": 27017,
+//     "database": "wunderwelt",
+//     "useUnifiedTopology": true,
+//     "entities": ["./src/modules/**/schemas/*.ts"]
+//   }
+// ]

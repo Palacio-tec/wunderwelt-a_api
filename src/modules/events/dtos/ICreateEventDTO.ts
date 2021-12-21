@@ -12,6 +12,7 @@ interface ICreateEventDTO {
   is_canceled?: boolean;
   credit: number;
   request_subject?: boolean;
+  minimum_number_of_students?: number;
 }
 
 export { ICreateEventDTO };

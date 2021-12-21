@@ -1,9 +1,12 @@
 import dayjs from "dayjs";
+
 import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 
 import { IDateProvider } from "../IDateProvider";
 
 dayjs.extend(utc);
+dayjs.extend(timezone);
 
 class DayjsDateProvider implements IDateProvider {
   differenceInHours(start_date: Date, end_date: Date): number {
@@ -46,15 +49,15 @@ class DayjsDateProvider implements IDateProvider {
   }
 
   parseFormat(date: Date, format: string = "YYYY-MM-DD HH:mm:ss"): string {
-    return dayjs(date).format(format);
+    return dayjs(date).tz('America/Sao_Paulo').format(format);
   }
 
   formatInDate(date: Date): string {
-    return dayjs(date).format("DD-MM-YYYY");
+    return dayjs(date).tz('America/Sao_Paulo').format("DD-MM-YYYY");
   }
 
   formatInHour(date: Date): string {
-    return dayjs(date).format("HH:mm");
+    return dayjs(date).tz('America/Sao_Paulo').format("HH:mm");
   }
 
   addHoursInDate(date: Date, hours: number): Date {

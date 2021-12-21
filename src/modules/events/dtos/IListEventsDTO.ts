@@ -12,6 +12,7 @@ interface IListEventsDTO {
   name: string;
   credit: number;
   request_subject: boolean;
+  minimum_number_of_students: string;
   levels: string;
 }
 
