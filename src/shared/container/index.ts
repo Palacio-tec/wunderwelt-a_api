@@ -17,9 +17,6 @@ import { SchedulesRepository } from "@modules/schedules/infra/typeorm/repositori
 import { IHoursRepository } from "@modules/accounts/repositories/IHoursRepository";
 import { HoursRepository } from "@modules/accounts/infra/typeorm/repositories/HoursRepository";
 
-import { INotificationsRepository } from "@modules/notifications/repositories/INotificationsRepository";
-import { NotificationsRepository } from "@modules/notifications/infra/typeorm/repositories/NotificationsRepository";
-
 import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
 import { ParametersRepository } from "@modules/parameters/infra/typeorm/repositories/ParametersRepository";
 
@@ -77,11 +74,6 @@ container.registerSingleton<IEventsLevelsRepository>(
 container.registerSingleton<ILevelsRepository>(
   "LevelsRepository",
   LevelsRepository
-);
-
-container.registerSingleton<INotificationsRepository>(
-  "NotificationsRepository",
-  NotificationsRepository
 );
 
 container.registerSingleton<IParametersRepository>(
