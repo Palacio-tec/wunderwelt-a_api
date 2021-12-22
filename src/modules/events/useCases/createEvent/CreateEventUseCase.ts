@@ -7,7 +7,6 @@ import { Event } from "@modules/events/infra/typeorm/entities/Event";
 import { IEventsRepository } from "@modules/events/repositories/IEventsRepository";
 import { AppError } from "@shared/errors/AppError";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
-import { INotificationsRepository } from "@modules/notifications/repositories/INotificationsRepository";
 import { IEventsLevelsRepository } from "@modules/events/repositories/IEventsLevelsRepository";
 import { ILevelsRepository } from "@modules/levels/repositories/ILevelsRepository";
 import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
@@ -29,9 +28,6 @@ class CreateEventUseCase {
 
     @inject("LevelsRepository")
     private levelsRepository: ILevelsRepository,
-
-    @inject("NotificationsRepository")
-    private notificationsRepository: INotificationsRepository,
 
     @inject("MailProvider")
     private mailProvider: IMailProvider,
@@ -148,13 +144,6 @@ class CreateEventUseCase {
     const content = `Nova aula incluída - ${title} para o dia ${formatedStartDate}`;
 
     const studentUsers = await this.usersRepository.findAllStudentUsers();
-
-    studentUsers.map(async (student) => {
-      await this.notificationsRepository.create({
-        recipient_id: student.id,
-        content,
-      });
-    });
 
     return event;
   }
