@@ -26,13 +26,13 @@ class SendEventsWillStartEmailUseCase {
   ) {}
 
   async execute(date: Date): Promise<void> {
-    const startDateFormated = this.dateProvider.parseFormat(date);
+    const startDateFormatted = this.dateProvider.parseFormat(date);
     const endDate = this.dateProvider.addHours(1);
-    const endDateFormated = this.dateProvider.parseFormat(endDate);
+    const endDateFormatted = this.dateProvider.parseFormat(endDate);
 
     const events = await this.eventsRepository.findEventWillStart(
-      startDateFormated,
-      endDateFormated
+      startDateFormatted,
+      endDateFormatted
     ); 
 
     const templatePath = resolve(
