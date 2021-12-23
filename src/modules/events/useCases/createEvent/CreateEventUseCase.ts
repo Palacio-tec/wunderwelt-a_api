@@ -113,9 +113,11 @@ class CreateEventUseCase {
       });
     }
 
-    const formatedStartDate = this.dateProvider.formatInDate(event.start_date);
+    const formattedStartDate = this.dateProvider.formatInDate(event.start_date);
     
-    const dateTimeFormated = this.dateProvider.parseFormat(event.start_date, "DD.MM.YYYY [às] HH:mm")
+    const dateTimeFormatted = this.dateProvider.parseFormat(event.start_date, "DD.MM.YYYY [às] HH:mm")
+
+    const duration = this.dateProvider.differenceInMinutes(event.start_date, event.end_date)
 
     const templatePath = resolve(
       __dirname,
@@ -131,7 +133,8 @@ class CreateEventUseCase {
     const variables = {
       name,
       title,
-      dateTime: dateTimeFormated,
+      dateTime: dateTimeFormatted,
+      duration,
     };
 
     this.mailProvider.sendMail(
@@ -140,10 +143,6 @@ class CreateEventUseCase {
       variables,
       templatePath
     );
-
-    const content = `Nova aula incluída - ${title} para o dia ${formatedStartDate}`;
-
-    const studentUsers = await this.usersRepository.findAllStudentUsers();
 
     return event;
   }
