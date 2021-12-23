@@ -71,7 +71,7 @@ class SendReminderEventsWillStartUseCase {
   
         this.mailProvider.sendMail(
           user.email,
-          "Aula próxima do iníco",
+          "A sua aula vai começar daqui a pouco!",
           variables,
           templatePath
         );

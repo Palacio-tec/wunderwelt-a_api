@@ -16,7 +16,7 @@ class EventLevels {
   @Column()
   level_id: string;
 
-  @ManyToOne(() => Event)
+  @ManyToOne(() => Event, event => event.id)
   @JoinColumn({ name: "event_id" })
   event: Event;
 
