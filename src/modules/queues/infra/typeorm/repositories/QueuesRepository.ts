@@ -1,5 +1,5 @@
 import { IQueuesRepository } from "@modules/queues/repositories/IQueuesRepository";
-import { getRepository, Repository } from "typeorm";
+import { getRepository, MoreThanOrEqual, Repository } from "typeorm";
 
 import { Queue } from "../entities/Queue";
 
@@ -69,6 +69,20 @@ class QueuesRepository implements IQueuesRepository {
   async findByUser(user_id: string): Promise<Queue[]> {
     const queues = await this.repository.find({
       where: { user_id },
+    });
+
+    return queues;
+  }
+
+  async findAvailableByUser(user_id: string): Promise<Queue[]> {
+    const queues = await this.repository.find({
+      relations: ['event', 'event.event_levels', 'event.event_levels.level'],
+      where: {
+        user_id,
+        event: {
+          start_date: MoreThanOrEqual(new Date().toISOString())
+        },
+      },
     });
 
     return queues;
