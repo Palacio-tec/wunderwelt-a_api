@@ -101,7 +101,7 @@ class SendGiftUseCase {
   
       this.mailProvider.sendMail(
         email,
-        "Ganhou um presente",
+        "Você ganhou um presente!",
         variables,
         templatePath
       );

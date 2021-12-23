@@ -110,7 +110,7 @@ class CreateUserUseCase {
 
       this.mailProvider.sendMail(
         email,
-        "Acesso a plataforma Wunderwelt-A",
+        "Login para acessar a plataforma PrAktikA",
         variables,
         templatePath
       );

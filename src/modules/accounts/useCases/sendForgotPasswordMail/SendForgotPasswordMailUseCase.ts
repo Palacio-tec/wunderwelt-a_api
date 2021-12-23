@@ -57,7 +57,7 @@ class SendForgotPasswordMailUseCase {
 
     this.mailProvider.sendMail(
       email,
-      "Recuperação de senha",
+      "Cadastre a sua nova senha",
       variables,
       templatePath
     );

@@ -134,7 +134,7 @@ class CreateScheduleUseCase {
 
     this.mailProvider.sendMail(
       email,
-      "Aula agendada",
+      "Inscrição na aula realizada com sucesso!",
       variables,
       templatePath
     );

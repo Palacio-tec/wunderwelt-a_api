@@ -61,7 +61,7 @@ class SendEventsWillStartEmailUseCase {
 
       this.mailProvider.sendMail(
         teacher_email,
-        `Lista de alunos - ${title}`,
+        'Lista de alunos inscritos na aula',
         variables,
         templatePath
       );

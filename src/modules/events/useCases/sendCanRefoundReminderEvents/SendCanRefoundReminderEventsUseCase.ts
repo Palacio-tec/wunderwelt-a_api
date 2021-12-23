@@ -69,7 +69,7 @@ class SendCanRefoundReminderEventsUseCase {
   
         this.mailProvider.sendMail(
           user.email,
-          "Reembolso ao cancelar",
+          "Deseja cancelar a inscrição na aula?",
           variables,
           templatePath
         );
