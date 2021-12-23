@@ -1,6 +1,8 @@
+import { schedule } from "node-cron";
+
 import { SendEventsWillStartEmailController } from "@modules/events/useCases/sendEventsWillStartEmail/SendEventsWillStartEmailController";
 
-async function EventsWillStart() {
+function EventsWillStart() {
   const sendEventsWillStartEmailController = new SendEventsWillStartEmailController();
 
   const date = new Date();
@@ -8,4 +10,4 @@ async function EventsWillStart() {
   sendEventsWillStartEmailController.handle(date);
 }
 
-export { EventsWillStart }
+export default schedule('0 30 * * * *', EventsWillStart, { scheduled: false }); // Every minute 30

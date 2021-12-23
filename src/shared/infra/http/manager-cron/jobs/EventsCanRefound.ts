@@ -1,6 +1,8 @@
+import { schedule } from "node-cron";
+
 import { SendCanRefoundReminderEventsController } from "@modules/events/useCases/sendCanRefoundReminderEvents/SendCanRefoundReminderEventsController";
 
-async function EventsCanRefound() {
+function EventsCanRefound() {
   const sendCanRefoundReminderEventsController = new SendCanRefoundReminderEventsController();
 
   const date = new Date();
@@ -8,4 +10,4 @@ async function EventsCanRefound() {
   sendCanRefoundReminderEventsController.handle(date);
 }
 
-export { EventsCanRefound }
+export default schedule('0 56 * * * *', EventsCanRefound, { scheduled: false }); // Every minute 56

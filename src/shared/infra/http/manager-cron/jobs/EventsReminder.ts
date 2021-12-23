@@ -1,6 +1,8 @@
+import { schedule } from "node-cron";
+
 import { SendReminderEventsWillStartController } from "@modules/events/useCases/sendReminderEventsWillStart/SendReminderEventsWillStartController";
 
-async function EventsReminder() {
+function EventsReminder() {
   const sendReminderEventsWillStartController = new SendReminderEventsWillStartController();
 
   const date = new Date();
@@ -8,4 +10,4 @@ async function EventsReminder() {
   sendReminderEventsWillStartController.handle(date);
 }
 
-export { EventsReminder }
+export default schedule('0 57 * * * *', EventsReminder, { scheduled: false }); // Every minute 57
