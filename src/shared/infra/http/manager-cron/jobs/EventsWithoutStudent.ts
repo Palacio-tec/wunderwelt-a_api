@@ -1,6 +1,8 @@
+import { schedule } from "node-cron";
+
 import { CancelEventWithoutStudentController } from "@modules/events/useCases/cancelEventWithoutStudent/CancelEventWithoutStudentController";
 
-async function EventsWithoutStudent() {
+function EventsWithoutStudent() {
   const cancelEventWithoutStudentController = new CancelEventWithoutStudentController();
 
   const date = new Date();
@@ -8,4 +10,4 @@ async function EventsWithoutStudent() {
   cancelEventWithoutStudentController.handle(date);
 }
 
-export { EventsWithoutStudent }
+export default schedule('0 55 * * * *', EventsWithoutStudent, { scheduled: false }); // Every minute 55
