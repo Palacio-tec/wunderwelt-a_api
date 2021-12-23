@@ -12,6 +12,7 @@ interface IDateProvider {
   formatInHour(date: Date): string;
   addHoursInDate(date: Date, hours: number): Date;
   addDaysInDate(date: Date, days: number): Date;
+  differenceInMinutes(start_date: Date, end_date: Date): number;
 }
 
 export { IDateProvider };

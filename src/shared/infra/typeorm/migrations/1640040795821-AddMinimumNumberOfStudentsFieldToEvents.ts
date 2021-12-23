@@ -8,7 +8,7 @@ export class AddMinimumNumberOfStudentsFieldToEvents1640040795821 implements Mig
       new TableColumn({
         name: 'minimum_number_of_students',
         type: 'numeric',
-        isNullable: true,
+        default: 0,
       }),
     );
   }

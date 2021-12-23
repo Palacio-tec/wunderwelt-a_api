@@ -4,3 +4,4 @@ coverage
 .env
 ormconfig.json
 dist
+.ormconfig.my

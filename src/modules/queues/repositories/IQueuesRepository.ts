@@ -8,6 +8,7 @@ interface IQueuesRepository {
   delete(id: string): Promise<void>;
   findByEventAndUser(event_id: string, user_id: string): Promise<Queue>;
   findByUser(user_id: string): Promise<Queue[]>;
+  findAvailableByUser(user_id: string): Promise<Queue[]>;
 }
 
 export { IQueuesRepository };

@@ -6,9 +6,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryColumn,
 } from "typeorm";
 import { User } from "@modules/accounts/infra/typeorm/entities/User";
+import { Exclude } from "class-transformer";
+import { EventLevels } from "./EventsLevels";
 
 @Entity("events")
 class Event {
@@ -22,6 +25,7 @@ class Event {
   description: string;
 
   @Column()
+  @Exclude()
   link: string;
 
   @Column()
@@ -44,6 +48,7 @@ class Event {
   user: User;
 
   @Column()
+  @Exclude()
   instruction: string;
 
   @Column()
@@ -57,6 +62,10 @@ class Event {
 
   @Column()
   minimum_number_of_students: number;
+
+  @OneToMany(() => EventLevels, eventLevels => eventLevels.event)
+  @JoinColumn({ name: 'id' })
+  event_levels: EventLevels[];
 
   constructor() {
     if (!this.id) {
