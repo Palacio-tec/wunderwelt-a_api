@@ -65,7 +65,7 @@ class CancelEventWithoutStudentUseCase {
 
       const { teacher_name, teacher_email, title, start_date } = event;
 
-      const dateFormated = this.dateProvider.parseFormat(start_date, 'DD.MM.YYYY HH:mm:ss')
+      const dateFormated = this.dateProvider.parseFormat(start_date, 'DD-MM-YYYY [às] HH:mm')
 
       const mailMessage = `A aula "${title}" que teria início em ${dateFormated} foi cancelada por não haver alunos suficientes.`
 

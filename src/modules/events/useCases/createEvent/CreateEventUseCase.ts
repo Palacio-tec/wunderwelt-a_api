@@ -115,7 +115,7 @@ class CreateEventUseCase {
 
     const formattedStartDate = this.dateProvider.formatInDate(event.start_date);
     
-    const dateTimeFormatted = this.dateProvider.parseFormat(event.start_date, "DD.MM.YYYY [às] HH:mm")
+    const dateTimeFormatted = this.dateProvider.parseFormat(event.start_date, "DD-MM-YYYY [às] HH:mm")
 
     const duration = this.dateProvider.differenceInMinutes(event.start_date, event.end_date)
 
