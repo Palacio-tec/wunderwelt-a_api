@@ -1,7 +1,15 @@
-import { Column, CreateDateColumn, Entity, PrimaryColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  PrimaryColumn,
+} from "typeorm";
 import { v4 as uuidv4 } from "uuid";
-
 import { Exclude } from "class-transformer";
+
+import { Hours } from "./Hours";
 @Entity("users")
 class User {
   @PrimaryColumn()
@@ -52,6 +60,10 @@ class User {
 
   @Column()
   document: string;
+
+  @OneToMany(() => Hours, hours => hours.user)
+  @JoinColumn() 
+  hours: Hours;
 
   constructor() {
     if (!this.id) {
