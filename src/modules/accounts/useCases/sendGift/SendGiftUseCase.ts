@@ -68,7 +68,8 @@ class SendGiftUseCase {
         amount: credit,
         description: `Você foi presenteado com ${credit} crédito${credit > 1 ? 's' : ''}`,
         type: OperationEnumTypeStatement.DEPOSIT,
-        user_id
+        user_id,
+        is_gift: true,
       });
 
       hours.amount = Number(hours.amount) + credit;

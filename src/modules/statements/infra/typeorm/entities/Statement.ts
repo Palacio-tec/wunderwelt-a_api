@@ -38,6 +38,9 @@ class Statement {
   @Column()
   operation_date: Date;
 
+  @Column({ default: false })
+  is_gift: boolean;
+
   constructor() {
     if (!this.id) {
       this.id = uuidV4();
