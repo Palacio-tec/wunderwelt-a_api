@@ -87,7 +87,16 @@ class SchedulesRepository implements ISchedulesRepository {
   async listParticipations(): Promise<IListParticipationDTO[]> {
     const participations = await this.repository.query(
       `SELECT
-        base_gift.*
+        base_gift.*,
+        COALESCE( (
+          SELECT
+              SUM( s.amount )
+            FROM
+              statements s
+           WHERE
+              s.user_id = base_gift.user_id
+              AND s.is_gift
+        ), 0 ) as gift_credits
       FROM (
         SELECT
             u.id as user_id, u.name, u.email, u.created_at,

@@ -18,6 +18,7 @@ class StatementsRepository implements IStatementsRepository {
     description,
     type,
     user_id,
+    is_gift,
   }: ICreateStatementDTO): Promise<Statement> {
     const statement = this.repository.create({
       id,
@@ -26,6 +27,7 @@ class StatementsRepository implements IStatementsRepository {
       type,
       user_id,
       operation_date: new Date(),
+      is_gift,
     });
 
     await this.repository.save(statement);

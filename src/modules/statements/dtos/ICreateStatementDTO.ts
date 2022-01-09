@@ -9,6 +9,7 @@ interface ICreateStatementDTO {
   amount: number;
   description: string;
   type: OperationEnumTypeStatement;
+  is_gift?: boolean;
 }
 
 export { ICreateStatementDTO, OperationEnumTypeStatement };
