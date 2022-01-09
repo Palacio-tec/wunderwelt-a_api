@@ -85,7 +85,7 @@ class UsersRepository implements IUsersRepository {
   }
 
   async list(): Promise<User[]> {
-    const users = this.repository.find({ order: { name: "ASC" } });
+    const users = this.repository.find({ order: { name: "ASC" }, relations: ['hours'] });
 
     return users;
   }
