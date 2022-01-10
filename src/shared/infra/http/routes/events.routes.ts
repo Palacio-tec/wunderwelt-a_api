@@ -17,6 +17,7 @@ import { CanDeleteEventController } from "@modules/events/useCases/validations/c
 import { CanceledEventController } from "@modules/events/useCases/canceledEvent/CanceledEventController";
 import { ListEventsByTeacherController } from "@modules/events/useCases/listEventsByTeacher/ListEventsByTeacherController";
 import { ListEventsMonthlyController } from "@modules/events/useCases/listEventsMonthly/ListEventsMonthlyController";
+import { SendEmailEventsWillStartController } from "@modules/events/useCases/sendEmailEventsWillStart/SendEmailEventsWillStartController";
 
 const eventsRoutes = Router();
 
@@ -35,6 +36,7 @@ const canDeleteEventController = new CanDeleteEventController();
 const canceledEventController = new CanceledEventController();
 const listEventsByTeacherController = new ListEventsByTeacherController();
 const listEventsMonthlyController = new ListEventsMonthlyController();
+const sendEmailEventsWillStartController = new SendEmailEventsWillStartController();
 
 // eventsRoutes.post(
 //   "/cancel",
@@ -138,6 +140,13 @@ eventsRoutes.get(
   ensureAuthenticated,
   ensureAdmin,
   listEventsByTeacherController.handle
+)
+
+eventsRoutes.post(
+  "/send-mail",
+  ensureAuthenticated,
+  ensureAdmin,
+  sendEmailEventsWillStartController.handle
 )
 
 export { eventsRoutes };

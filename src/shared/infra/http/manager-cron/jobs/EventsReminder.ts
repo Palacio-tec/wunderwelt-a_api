@@ -10,4 +10,4 @@ function EventsReminder() {
   sendReminderEventsWillStartController.handle(date);
 }
 
-export default schedule('0 57 * * * *', EventsReminder, { scheduled: false }); // Every minute 57
+export default schedule('0 0 * * * *', EventsReminder, { scheduled: false }); // Every minute 00
