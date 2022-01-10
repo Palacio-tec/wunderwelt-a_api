@@ -75,6 +75,35 @@ class UpdateEventUseCase {
       throw new AppError("Event does not exists");
     }
 
+    if (eventExists.start_date !== start_date || eventExists.end_date !== end_date) {
+      const eventTeacher = await this.usersRepository.findById(teacher_id);
+      const dateTimeFormatted = this.dateProvider.parseFormat(start_date, "DD-MM-YYYY [às] HH:mm")
+      const duration = this.dateProvider.differenceInMinutes(start_date, end_date)
+
+      const templatePath = resolve(
+        __dirname,
+        "..",
+        "..",
+        "views",
+        "emails",
+        "teacherEventChange.hbs"
+      );
+  
+      const variables = {
+        name: eventTeacher.name,
+        title,
+        dateTime: dateTimeFormatted,
+        duration,
+      };
+  
+      this.mailProvider.sendMail(
+        eventTeacher.email,
+        `Mudança de horário - ${title}`,
+        variables,
+        templatePath
+      );
+    }
+
     const haveLimitIncrease = Number(eventExists.student_limit) < student_limit;
 
     const parseStartDate = this.dateProvider.parseISO(start_date);
