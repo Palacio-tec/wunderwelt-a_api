@@ -127,6 +127,31 @@ class DeleteEventUseCase {
       });
     }
 
+    const templatePath = resolve(
+      __dirname,
+      "..",
+      "..",
+      "views",
+      "emails",
+      "cancelEvent.hbs"
+    );
+
+    const { teacher_id, title } = eventExists;
+
+    const eventTeacher = await this.usersRepository.findById(teacher_id);
+
+    const variables = {
+      name: eventTeacher.name,
+      mailMessage: `A aula "${title}" agendada para o dia ${this.dateProvider.parseFormat(start_date, "DD-MM-YYYY [às] HH:mm")} foi cancelada.`,
+    };
+
+    this.mailProvider.sendMail(
+      eventTeacher.email,
+      `Aula cancelada - ${title}`,
+      variables,
+      templatePath
+    );
+
     await this.eventsLevelsRepository.deleteByEvent(id);
 
     await this.eventsRepository.delete(id);
