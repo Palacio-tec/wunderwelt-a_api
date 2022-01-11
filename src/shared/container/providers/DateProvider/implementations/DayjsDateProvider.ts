@@ -52,6 +52,10 @@ class DayjsDateProvider implements IDateProvider {
     return dayjs(date).tz('America/Sao_Paulo').format(format);
   }
 
+  parseFormatUTC(date: Date, format: string = "YYYY-MM-DD HH:mm:ss"): string {
+    return dayjs(date).format(format);
+  }
+
   formatInDate(date: Date): string {
     return dayjs(date).tz('America/Sao_Paulo').format("DD-MM-YYYY");
   }

@@ -8,6 +8,7 @@ interface IDateProvider {
   comparaIfBefore(start_date: Date, end_date: Date): boolean;
   parseISO(date: Date): Date;
   parseFormat(date: Date, format?: string): string;
+  parseFormatUTC(date: Date, format?: string): string;
   formatInDate(date: Date): string;
   formatInHour(date: Date): string;
   addHoursInDate(date: Date, hours: number): Date;

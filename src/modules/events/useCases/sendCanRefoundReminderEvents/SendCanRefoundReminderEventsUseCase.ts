@@ -35,10 +35,10 @@ class SendCanRefoundReminderEventsUseCase {
     const refundPeriodReminderValue = Number(refundPeriodReminder.value);
 
     const startDate = this.dateProvider.addDaysInDate(date, refundPeriodReminderValue);
-    const startDateFormated = this.dateProvider.parseFormat(startDate);
+    const startDateFormated = this.dateProvider.parseFormatUTC(startDate);
 
     const endDate = this.dateProvider.addHoursInDate(startDate, 1);
-    const endDateFormated = this.dateProvider.parseFormat(endDate);
+    const endDateFormated = this.dateProvider.parseFormatUTC(endDate);
 
     console.log( `[EventsCanRefound - ${date}] startDate = '${startDateFormated}' - endDate ='${endDateFormated}'` )
 
