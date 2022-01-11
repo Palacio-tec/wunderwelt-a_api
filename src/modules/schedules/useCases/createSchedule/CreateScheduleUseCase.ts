@@ -123,13 +123,25 @@ class CreateScheduleUseCase {
 
     const { name, email } = userExists;
 
+    const instructionInfo = instruction.split(/\r?\n/)
+
+    let instructionHTML = ''
+
+    instructionInfo.forEach(info => {
+      if (info.includes('http')) {
+        instructionHTML += `<br /><a href='${info}'>${info}</a>`
+      } else {
+        instructionHTML += `<br /><text>${info}</text>`
+      }
+    });
+
     const variables = {
       name,
       title,
       day,
       start_hour,
       hasInstruction: !!instruction,
-      instruction
+      instruction: instructionHTML,
     };
 
     this.mailProvider.sendMail(
