@@ -52,6 +52,18 @@ class SendEventsWillStartEmailUseCase {
 
       const { teacher_name, teacher_email, title, start_date, link } = event;
 
+      const linkInfo = link.split(/\r?\n/)
+
+      let newLink = ''
+
+      linkInfo.forEach(info => {
+        if (info.includes('http')) {
+          newLink += `<br /><a href='${info}'>${info}</a>`
+        } else {
+          newLink += `<br /><text>${info}</text>`
+        }
+      });
+
       const time = this.dateProvider.formatInHour(start_date)
 
       const variables = {
@@ -59,7 +71,7 @@ class SendEventsWillStartEmailUseCase {
         title,
         time,
         schedules,
-        link,
+        link: newLink,
       };
 
       this.mailProvider.sendMail(

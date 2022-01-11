@@ -61,13 +61,25 @@ class SendReminderEventsWillStartUseCase {
       
       const { title, link } = event;
 
+      const linkInfo = link.split(/\r?\n/)
+
+      let newLink = ''
+
+      linkInfo.forEach(info => {
+        if (info.includes('http')) {
+          newLink += `<br /><a href='${info}'>${info}</a>`
+        } else {
+          newLink += `<br /><text>${info}</text>`
+        }
+      });
+
       schedules.map(async (schedule) => {
         const { user } = schedule;
 
         const variables = {
           name: user.name,
           title,
-          link,
+          link: newLink,
           time: reminderEventEmailValue,
         };
   
