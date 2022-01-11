@@ -27,9 +27,9 @@ class SendEventsWillStartEmailUseCase {
 
   async execute(date: Date): Promise<void> {
     const startDate = this.dateProvider.addHoursInDate(date, 1);
-    const startDateFormatted = this.dateProvider.parseFormat(startDate);
+    const startDateFormatted = this.dateProvider.parseFormatUTC(startDate);
     const endDate = this.dateProvider.addHoursInDate(date, 2);
-    const endDateFormatted = this.dateProvider.parseFormat(endDate);
+    const endDateFormatted = this.dateProvider.parseFormatUTC(endDate);
 
     console.log( `[EventsWillStart - ${date}] startDate = '${startDateFormatted}' - endDate ='${endDateFormatted}'` )
 
