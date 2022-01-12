@@ -37,7 +37,7 @@ class SendReminderEventsWillStartUseCase {
     const startDate = this.dateProvider.addHoursInDate(date, reminderEventEmailValue);
     const startDateFormated = this.dateProvider.parseFormatUTC(startDate);
 
-    const endDate = this.dateProvider.addHoursInDate(startDate, 1);
+    const endDate = this.dateProvider.addMinutesInDate(startDate, 59);
     const endDateFormated = this.dateProvider.parseFormatUTC(endDate);
 
     console.log( `[EventsReminder - ${date}] startDate = '${startDateFormated}' - endDate ='${endDateFormated}'` )
