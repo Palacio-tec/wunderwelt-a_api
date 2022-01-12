@@ -78,6 +78,10 @@ class DayjsDateProvider implements IDateProvider {
 
     return dayjs(end_date_utc).diff(start_date_utc, "minutes");
   }
+
+  addMinutesInDate(date: Date, minutes: number): Date {
+    return dayjs(date).add(minutes, "minutes").toDate();
+  }
 }
 
 export { DayjsDateProvider };
