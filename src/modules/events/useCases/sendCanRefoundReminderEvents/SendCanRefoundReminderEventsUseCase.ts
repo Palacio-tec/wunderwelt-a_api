@@ -40,7 +40,7 @@ class SendCanRefoundReminderEventsUseCase {
     const endDate = this.dateProvider.addHoursInDate(startDate, 1);
     const endDateFormated = this.dateProvider.parseFormatUTC(endDate);
 
-    console.log( `[EventsCanRefound - ${date}] startDate = '${startDateFormated}' - endDate ='${endDateFormated}'` )
+    // console.log( `[EventsCanRefound - ${date}] startDate = '${startDateFormated}' - endDate ='${endDateFormated}'` )
 
     const events = await this.eventsRepository.findEventWillStart(
       startDateFormated,

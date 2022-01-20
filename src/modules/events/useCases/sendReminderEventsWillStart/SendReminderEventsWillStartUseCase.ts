@@ -40,7 +40,7 @@ class SendReminderEventsWillStartUseCase {
     const endDate = this.dateProvider.addMinutesInDate(startDate, 59);
     const endDateFormated = this.dateProvider.parseFormatUTC(endDate);
 
-    console.log( `[EventsReminder - ${date}] startDate = '${startDateFormated}' - endDate ='${endDateFormated}'` )
+    // console.log( `[EventsReminder - ${date}] startDate = '${startDateFormated}' - endDate ='${endDateFormated}'` )
 
     const events = await this.eventsRepository.findEventWillStart(
       startDateFormated,

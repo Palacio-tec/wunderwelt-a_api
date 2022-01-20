@@ -43,7 +43,7 @@ class CancelEventWithoutStudentUseCase {
     const startDate = this.dateProvider.addHoursInDate(date, studentlessPeriodValue);
     const startDateFormated = this.dateProvider.parseISO(startDate).toISOString();
 
-    console.log( `[EventsWithoutStudent - ${date}] startDate = '${startDateFormated}'` )
+    // console.log( `[EventsWithoutStudent - ${date}] startDate = '${startDateFormated}'` )
 
     const events = await this.eventsRepository.findEventWithoutStudentByDate(
       startDateFormated

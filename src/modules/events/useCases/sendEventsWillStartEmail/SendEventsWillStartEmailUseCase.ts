@@ -38,7 +38,7 @@ class SendEventsWillStartEmailUseCase {
     const endDate = this.dateProvider.addMinutesInDate(startDate, 59);
     const endDateFormatted = this.dateProvider.parseFormatUTC(endDate);
 
-    console.log( `[EventsWillStart - ${date}] startDate = '${startDateFormatted}' - endDate ='${endDateFormatted}'` )
+    // console.log( `[EventsWillStart - ${date}] startDate = '${startDateFormatted}' - endDate ='${endDateFormatted}'` )
 
     const events = await this.eventsRepository.findEventWillStart(
       startDateFormatted,
