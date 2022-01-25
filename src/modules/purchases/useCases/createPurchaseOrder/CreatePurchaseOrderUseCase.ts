@@ -43,7 +43,7 @@ class CreatePurchaseOrderUseCase {
   async credit(payer_id: string, credit: number): Promise<void> {
     const hours = await this.hoursRepository.findByUser(payer_id);
 
-    hours.amount = Number(hours.amount) + credit;
+    hours.amount = Number(hours.amount) + Number(credit);
 
     const parameterExpirationTime =
       await this.parametersRepository.findByReference("ExpirationTime");
@@ -65,7 +65,7 @@ class CreatePurchaseOrderUseCase {
   async debit(payer_id: string, credit: number): Promise<void> {
     const hours = await this.hoursRepository.findByUser(payer_id);
 
-    hours.amount = Number(hours.amount) - credit;
+    hours.amount = Number(hours.amount) - Number(credit);
 
     await this.hoursRepository.update(hours);
 

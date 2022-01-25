@@ -98,7 +98,7 @@ class CancelEventUseCase {
 
         const hours = await this.hoursRepository.findByUser(schedule.user_id);
 
-        hours.amount = Number(hours.amount) + credit;
+        hours.amount = Number(hours.amount) + Number(credit);
 
         await this.hoursRepository.update(hours);
       });
