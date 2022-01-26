@@ -72,7 +72,7 @@ class SendGiftUseCase {
         is_gift: true,
       });
 
-      hours.amount = Number(hours.amount) + credit;
+      hours.amount = Number(hours.amount) + Number(credit);
 
       const parameterExpirationTime =
         await this.parametersRepository.findByReference("ExpirationTime");

@@ -114,7 +114,7 @@ class DeleteEventUseCase {
 
         const hours = await this.hoursRepository.findByUser(user_id);
 
-        hours.amount = Number(hours.amount) + eventDurationInHours;
+        hours.amount = Number(hours.amount) + Number(eventDurationInHours);
 
         const parameterExpirationTime =
           await this.parametersRepository.findByReference("ExpirationTime");

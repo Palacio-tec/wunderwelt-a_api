@@ -26,7 +26,7 @@ class UpdateHoursUseCase {
       throw new AppError("User does not has hours");
     }
 
-    hours.amount = Number(hours.amount) + amount;
+    hours.amount = Number(hours.amount) + Number(amount);
 
     const parameterExpirationTime =
       await this.parametersRepository.findByReference("ExpirationTime");
