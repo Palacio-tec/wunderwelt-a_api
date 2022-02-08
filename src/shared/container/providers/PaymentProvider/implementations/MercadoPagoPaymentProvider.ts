@@ -6,6 +6,7 @@ import { PreferenceCreateResponse } from "mercadopago/resources/preferences";
 
 import { CreatePurchaseOrderPayload, IPaymentProvider } from "../IPaymentProvider";
 import { PaymentGetResponse } from "mercadopago/resources/payment";
+import { AppError } from "@shared/errors/AppError";
 
 @injectable()
 class MercadoPagoPaymentProvider implements IPaymentProvider {
@@ -31,9 +32,17 @@ class MercadoPagoPaymentProvider implements IPaymentProvider {
   };
 
   async getPayment(payment_id: number): Promise<PaymentGetResponse> {
-    const payment = await this.mercadoPago.payment.findById(payment_id)
+    try {
+      const payment = await this.mercadoPago.payment.findById(payment_id)
 
-    return payment;
+      return payment;
+    } catch ({ cause, status }) {
+      if (cause[0].description === 'Payment not found') {
+        return null
+      } else {
+        throw new AppError(cause.description, status, 'MercadoPago')
+      }
+    }
   }
 }
 

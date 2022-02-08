@@ -165,13 +165,33 @@ class EventsRepository implements IEventsRepository {
   async findAllInMonth({ year, month }: IFindAllInMonthDTO): Promise<Event[]> {
     const parsedMonth = String(month).padStart(2, '0');
 
-    const events = await this.repository.find({
-      where: {
-        start_date: Raw(start_dateFieldName => 
-          `to_char(${start_dateFieldName}, 'MM-YYYY') = '${parsedMonth}-${year}'`
-        ),
-      }
-    })
+    const events = await this.repository.query(
+      `SELECT
+        e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit, e.instruction, e.is_canceled, e.credit, e.teacher_id, e.minimum_number_of_students,
+        u.name,
+        string_agg(l.name, ', ') levels
+      FROM
+        events e
+      INNER JOIN
+        users u
+      ON
+        u.id = e.teacher_id
+      LEFT JOIN
+        events_levels el
+      ON
+        el.event_id = e.id
+      LEFT JOIN
+        levels l
+      ON
+        l.id = el.level_id
+      WHERE
+        to_char(e.start_date, 'MM-YYYY') = '${parsedMonth}-${year}'
+      GROUP BY
+        e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit, e.instruction, e.is_canceled, e.credit, e.teacher_id, e.minimum_number_of_students,
+        u.name
+      ORDER BY
+        e.created_at DESC`
+    );
 
     return events;
   }

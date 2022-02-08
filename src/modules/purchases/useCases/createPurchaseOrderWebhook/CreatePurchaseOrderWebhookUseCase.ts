@@ -40,7 +40,7 @@ class CreatePurchaseOrderWebhookUseCase {
     private statementsRepository: IStatementsRepository,
   ) {}
 
-  async credit(payer_id: string, credit: number): Promise<void> {
+  async credit(payer_id: string, credit: number, payment_id: string): Promise<void> {
     const hours = await this.hoursRepository.findByUser(payer_id);
 
     hours.amount = Number(hours.amount) + Number(credit);
@@ -59,10 +59,12 @@ class CreatePurchaseOrderWebhookUseCase {
       description: `Você realizou a compra de ${credit} crédito${credit > 1 ? 's' : ''}`,
       type: OperationEnumTypeStatement.DEPOSIT,
       user_id: payer_id,
+      payment_id,
+      origin: 'webhook',
     });
   }
 
-  async debit(payer_id: string, credit: number): Promise<void> {
+  async debit(payer_id: string, credit: number, payment_id: string): Promise<void> {
     const hours = await this.hoursRepository.findByUser(payer_id);
 
     hours.amount = Number(hours.amount) - Number(credit);
@@ -71,9 +73,11 @@ class CreatePurchaseOrderWebhookUseCase {
 
     await this.statementsRepository.create({
       amount: credit,
-      description: `Ocorreu o extorno de ${credit} crédito${credit > 1 ? 's' : ''}`,
+      description: `Ocorreu o estorno de ${credit} crédito${credit > 1 ? 's' : ''}`,
       type: OperationEnumTypeStatement.WITHDRAW,
       user_id: payer_id,
+      payment_id,
+      origin: 'webhook',
     });
   }
 
@@ -131,7 +135,7 @@ class CreatePurchaseOrderWebhookUseCase {
       });
 
       if (status === "approved") {
-        await this.credit(payer_id, credit)
+        await this.credit(payer_id, credit, payment_id)
       }
   
       return purchaseOrder;
@@ -141,12 +145,12 @@ class CreatePurchaseOrderWebhookUseCase {
       }
 
       if (status === "approved") {
-        await this.credit(payer_id, credit)
+        await this.credit(payer_id, credit, payment_id)
       } else if (
         (status === "cancelled" || status === "refunded")
         && purchaseOrderExist.status === "approved"
       ) {
-        await this.debit(payer_id, credit)
+        await this.debit(payer_id, credit, payment_id)
       }
 
       purchaseOrderExist.status = status;
