@@ -41,6 +41,12 @@ class Statement {
   @Column({ default: false })
   is_gift: boolean;
 
+  @Column()
+  payment_id: string;
+
+  @Column()
+  origin: string;
+
   constructor() {
     if (!this.id) {
       this.id = uuidV4();

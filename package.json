@@ -13,6 +13,8 @@
     "seed:products": "ts-node-dev -r tsconfig-paths/register src/shared/infra/typeorm/seed/products.ts"
   },
   "dependencies": {
+    "@sentry/node": "^6.17.5",
+    "@sentry/tracing": "^6.17.5",
     "aws-sdk": "^2.1046.0",
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.4.0",

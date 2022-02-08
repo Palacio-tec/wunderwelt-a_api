@@ -10,6 +10,8 @@ interface ICreateStatementDTO {
   description: string;
   type: OperationEnumTypeStatement;
   is_gift?: boolean;
+  payment_id?: string;
+  origin?: string;
 }
 
 export { ICreateStatementDTO, OperationEnumTypeStatement };
