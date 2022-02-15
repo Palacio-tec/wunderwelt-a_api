@@ -42,8 +42,8 @@ class CreateUserUseCase {
     document_type,
     document,
   }: ICreateUserDTO): Promise<User> {
-    username = username.toLocaleLowerCase();
-    email = email.toLocaleLowerCase();
+    username = username.toLocaleLowerCase().trim();
+    email = email.toLocaleLowerCase().trim();
 
     const userUsernameAlreadyExists = await this.usersRepository.findByUsername(
       username
