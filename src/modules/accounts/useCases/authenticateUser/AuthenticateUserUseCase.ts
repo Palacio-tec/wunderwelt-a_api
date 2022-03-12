@@ -8,6 +8,8 @@ import { IUsersTokensRepository } from "@modules/accounts/repositories/IUsersTok
 import auth from "@config/auth";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { IStatementsRepository } from "@modules/statements/repositories/IStatementsRepository";
+import { isMail } from "@utils/isMail";
+import { User } from "@modules/accounts/infra/typeorm/entities/User";
 
 interface IRequest {
   username: string;
@@ -50,7 +52,14 @@ class AuthenticateUserUseCase {
   ) {}
 
   async execute({ username, password }: IRequest): Promise<IResponse> {
-    const user = await this.userRepository.findByUsername(username);
+    let user: User;
+
+    if (isMail(username)) {
+      user = await this.userRepository.findByEmail(username);
+    } else {
+      user = await this.userRepository.findByUsername(username);
+    }
+
     const {
       secret_token,
       expires_in_token,
