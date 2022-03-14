@@ -139,7 +139,7 @@ class CreateEventUseCase {
 
     this.mailProvider.sendMail(
       email,
-      'Aula incluída com sucesso',
+      `Nova aula - ${dateTimeFormatted} - ${title}`,
       variables,
       templatePath
     );
