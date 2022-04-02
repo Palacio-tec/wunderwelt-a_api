@@ -6,6 +6,8 @@ import { IEventsLevelsRepository } from "@modules/events/repositories/IEventsLev
 import { IFindAvailableDTO } from "@modules/events/dtos/IFindAvailableDTO";
 import { EventLevels } from "@modules/events/infra/typeorm/entities/EventsLevels";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
+import { AppError } from "@shared/errors/AppError";
+import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
 interface IRequest {
   user_id: string;
   filter?: string;
@@ -27,9 +29,20 @@ class ListAvailableEventsUseCase {
 
     @inject("EventsLevelsRepository")
     private eventsLevelsRepository: IEventsLevelsRepository,
+
+    @inject("UsersRepository")
+    private usersRepository: IUsersRepository,
   ) {}
 
   async execute({ user_id, filter }: IRequest): Promise<ListAvailableEventsUseCaseProps[]> {
+    const userExists = await this.usersRepository.findById(user_id);
+
+    if (!userExists) {
+      throw new AppError("User does not exists");
+    }
+
+    const { is_teacher: isTeacher } = userExists;
+
     const parameter = await this.parametersRepository.findByReference(
       "TimeLimiteViewClass"
     );
@@ -39,7 +52,12 @@ class ListAvailableEventsUseCase {
     const limiteDate = this.dateProvider.addHours(timeLimiteViewClass);
     const parseLimiteDate = this.dateProvider.convertToUTC(limiteDate);
 
-    const events = await this.eventsRepository.findAvailable(parseLimiteDate, user_id, filter);
+    const events = await this.eventsRepository.findAvailable({
+      date: parseLimiteDate,
+      user_id,
+      filter,
+      isTeacher
+    });
 
     const eventsWithLevels = await Promise.all(events.map(async event => {
       const levels = await this.eventsLevelsRepository.findByEvent(event.id)

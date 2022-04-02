@@ -19,6 +19,7 @@ class UpdateEventControllet {
       minimum_number_of_students,
       levels,
       has_highlight,
+      for_teachers,
     } = request.body;
     const { id } = request.params;
     const { id: user_id } = request.user;
@@ -41,6 +42,7 @@ class UpdateEventControllet {
         minimum_number_of_students,
         levels,
         has_highlight,
+        for_teachers,
       },
       user_id
     );
