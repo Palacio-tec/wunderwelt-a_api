@@ -47,6 +47,7 @@ class CreateEventUseCase {
       levels,
       request_subject,
       minimum_number_of_students,
+      has_highlight,
     }: ICreateEventDTO,
     user_id: string
   ): Promise<Event> {
@@ -95,6 +96,7 @@ class CreateEventUseCase {
       instruction,
       request_subject,
       minimum_number_of_students,
+      has_highlight,
     });
 
     const event_id = event.id;

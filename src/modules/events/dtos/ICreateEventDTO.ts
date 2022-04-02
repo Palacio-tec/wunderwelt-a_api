@@ -13,6 +13,7 @@ interface ICreateEventDTO {
   credit: number;
   request_subject?: boolean;
   minimum_number_of_students?: number;
+  has_highlight?: boolean;
 }
 
 export { ICreateEventDTO };

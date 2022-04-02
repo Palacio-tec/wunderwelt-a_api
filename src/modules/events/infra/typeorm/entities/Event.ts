@@ -63,6 +63,9 @@ class Event {
   @Column()
   minimum_number_of_students: number;
 
+  @Column()
+  has_highlight: boolean;
+
   @OneToMany(() => EventLevels, eventLevels => eventLevels.event)
   @JoinColumn({ name: 'id' })
   event_levels: EventLevels[];
