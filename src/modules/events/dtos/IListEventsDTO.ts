@@ -15,6 +15,7 @@ interface IListEventsDTO {
   minimum_number_of_students: string;
   levels: string;
   has_highlight?: boolean;
+  for_teachers?: boolean;
 }
 
 export { IListEventsDTO }

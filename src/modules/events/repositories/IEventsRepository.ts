@@ -1,6 +1,6 @@
 import { ICreateEventDTO } from "../dtos/ICreateEventDTO";
 import { IFindAllInMonthDTO } from "../dtos/IFindAllInMonthDTO";
-import { IFindAvailableDTO } from "../dtos/IFindAvailableDTO";
+import { IFindAvailableDTO, IFindAvailableProps } from "../dtos/IFindAvailableDTO";
 import { IFindEventByTeacherAndPeriodDTO } from "../dtos/IFindEventByTeacherAndPeriodDTO";
 import { IFindEventWillStartDTO } from "../dtos/IFindEventWillStartDTO";
 import { IFindEventWithoutStudentByDateDTO } from "../dtos/IFindEventWithoutStudentByDateDTO";
@@ -12,7 +12,12 @@ import { Event } from "../infra/typeorm/entities/Event";
 interface IEventsRepository {
   create(data: ICreateEventDTO): Promise<Event>;
   list(): Promise<IListEventsDTO[]>;
-  findAvailable(date: string, user_id: string, filter?: string): Promise<IFindAvailableDTO[]>;
+  findAvailable({
+    date,
+    user_id,
+    filter,
+    isTeacher
+  }: IFindAvailableProps): Promise<IFindAvailableDTO[]>;
   findById(id: string): Promise<IListEventsDTO>;
   delete(id: string): Promise<void>;
   findAllInMonth({ year, month }: IFindAllInMonthDTO): Promise<Event[]>;

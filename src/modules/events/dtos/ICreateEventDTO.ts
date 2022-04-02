@@ -14,6 +14,7 @@ interface ICreateEventDTO {
   request_subject?: boolean;
   minimum_number_of_students?: number;
   has_highlight?: boolean;
+  for_teachers?: boolean;
 }
 
 export { ICreateEventDTO };

@@ -1,3 +1,10 @@
+interface IFindAvailableProps {
+    date: string;
+    user_id: string;
+    filter?: string;
+    isTeacher: boolean;
+}
+
 interface IFindAvailableDTO {
     id: string;
     title: string;
@@ -10,4 +17,4 @@ interface IFindAvailableDTO {
     request_subject: boolean;
 }
 
-export { IFindAvailableDTO }
+export { IFindAvailableDTO, IFindAvailableProps }

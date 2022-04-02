@@ -1,12 +1,12 @@
 import {MigrationInterface, QueryRunner, TableColumn} from "typeorm";
 
-export class AddHasHighlightFieldToEvents1648907742170 implements MigrationInterface {
+export class AddForTeachersFieldToEvents1648910996267 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.addColumn(
             'events',
             new TableColumn({
-                name: 'has_highlight',
+                name: 'for_teachers',
                 type: 'boolean',
                 default: false,
             }),
@@ -14,7 +14,7 @@ export class AddHasHighlightFieldToEvents1648907742170 implements MigrationInter
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropColumn('events', 'has_highlight');
+        await queryRunner.dropColumn('events', 'for_teachers');
     }
 
 }

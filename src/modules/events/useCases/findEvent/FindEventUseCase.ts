@@ -38,6 +38,7 @@ class FindEventUseCase {
       levels,
       minimum_number_of_students,
       has_highlight,
+      for_teachers,
     } = event;
 
     let levelsInfo = [];
@@ -72,6 +73,7 @@ class FindEventUseCase {
       minimum_number_of_students,
       levels: levelsInfo,
       has_highlight,
+      for_teachers,
     };
   }
 }
