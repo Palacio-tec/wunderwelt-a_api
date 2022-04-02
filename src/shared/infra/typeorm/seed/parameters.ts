@@ -59,18 +59,6 @@ async function create() {
     `INSERT INTO PARAMETERS(id, reference, description, value, created_at)
       values(
         '${uuidV4()}',
-        'CancellationTimeout',
-        'Informar com quantos dias de antecedência o aluno irá receber e-mail informando sobre a possibilidade de cancelamento da aula sem penalidade',
-        '3',
-        'now()'
-      )
-    `
-  );
-
-  await connection.query(
-    `INSERT INTO PARAMETERS(id, reference, description, value, created_at)
-      values(
-        '${uuidV4()}',
         'StudentlessPeriod',
         'Informar quantas horas antes os eventos sem alunos serão analizados e cancelados. Ou seja, caso o conteúdo desse parâmetro esteja preenchdi com 12, significa que os eventos que terão início daqui a 12 horas serão analizados e caso não tenham alunos serão cancelados',
         '12',

@@ -6,7 +6,6 @@ import { resolve } from "path";
 import { IEventsRepository } from "@modules/events/repositories/IEventsRepository";
 import { ISchedulesRepository } from "@modules/schedules/repositories/ISchedulesRepository";
 import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
-import { EventsRepository } from "@modules/events/infra/typeorm/repositories/EventsRepository";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
 
@@ -31,6 +30,7 @@ class SendCanRefoundReminderEventsUseCase {
 
   async execute(date: Date): Promise<void> {
     const refundPeriodReminder = await this.parametersRepository.findByReference('RefundPeriodReminder');
+    const refundTimeLimit = await this.parametersRepository.findByReference('RefundTimeLimit');
 
     const refundPeriodReminderValue = Number(refundPeriodReminder.value);
 
@@ -63,15 +63,18 @@ class SendCanRefoundReminderEventsUseCase {
 
       schedules.map(async (schedule) => {
         const { user } = schedule;
+        const eventDate = this.dateProvider.parseFormat(event.start_date, "DD-MM-YYYY [às] HH:mm")
 
         const variables = {
           name: user.name,
           title,
+          eventDate,
+          refundTimeLimit: refundTimeLimit.value,
         };
   
         this.mailProvider.sendMail(
           user.email,
-          "Deseja cancelar a inscrição na aula?",
+          "Deseja manter ou cancelar sua próxima aula?",
           variables,
           templatePath
         );
