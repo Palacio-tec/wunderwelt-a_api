@@ -56,6 +56,7 @@ class UpdateEventUseCase {
       request_subject,
       minimum_number_of_students,
       levels,
+      has_highlight,
     }: ICreateEventDTO,
     user_id: string
   ): Promise<Event> {
@@ -122,6 +123,7 @@ class UpdateEventUseCase {
       request_subject,
       minimum_number_of_students,
       instruction,
+      has_highlight,
     });
 
     await this.eventsLevelsRepository.deleteByEvent(id);

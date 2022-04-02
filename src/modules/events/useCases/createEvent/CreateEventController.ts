@@ -18,6 +18,7 @@ class CreateEventController {
       levels,
       request_subject,
       minimum_number_of_students,
+      has_highlight,
     } = request.body;
     const { id: user_id } = request.user;
 
@@ -37,6 +38,7 @@ class CreateEventController {
         levels,
         request_subject,
         minimum_number_of_students,
+        has_highlight,
       },
       user_id
     );

@@ -17,7 +17,7 @@ interface IEventsRepository {
   delete(id: string): Promise<void>;
   findAllInMonth({ year, month }: IFindAllInMonthDTO): Promise<Event[]>;
   findByDate(year: number, month: number, day: number): Promise<Event[]>;
-  findRegisteredByuser({ user_id, willStart }: IFindRegisteredByUserDTO): Promise<IFindRegisteredDTO[]>;
+  findRegisteredByUser({ user_id, willStart }: IFindRegisteredByUserDTO): Promise<IFindRegisteredDTO[]>;
   findWaitingListByuser({ user_id }: IFindWaitingListByUserDTO): Promise<IFindRegisteredDTO[]>;
   findEventByTeacher(teacher_id: string): Promise<Event[]>;
   findByIdToCreate(id: string): Promise<Event>;

@@ -19,6 +19,7 @@ interface IFindEventDTO {
     request_subject: boolean;
     minimum_number_of_students: string;
     levels?: LevelsProps[];
+    has_highlight?: boolean;
 }
 
 export { IFindEventDTO }
