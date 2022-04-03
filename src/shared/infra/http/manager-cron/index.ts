@@ -1,9 +1,10 @@
-import { schedule, ScheduledTask } from "node-cron";
+import { ScheduledTask } from "node-cron";
 
 import EventsWillStart from "./jobs/EventsWillStart";
 import EventsWithoutStudent from "./jobs/EventsWithoutStudent";
 import EventsCanRefound from "./jobs/EventsCanRefound";
 import EventsReminder from "./jobs/EventsReminder";
+import EventsNewsletter from "./jobs/EventsNewsletter"
 
 class ManagerCron{
   private jobs: ScheduledTask[];
@@ -14,6 +15,7 @@ class ManagerCron{
       EventsWillStart,
       EventsWithoutStudent,
       EventsCanRefound,
+      EventsNewsletter,
     ];
   };
 

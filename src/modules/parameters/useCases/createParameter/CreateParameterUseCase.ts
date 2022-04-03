@@ -16,12 +16,25 @@ class CreateParameterUseCase {
     private parametersRepository: IParametersRepository
   ) {}
 
-  async execute({
-    description,
-    reference,
-    value,
-    id
-  }: ICreateParameterDTO): Promise<Parameter> {
+  async execute(
+    {
+      description,
+      reference,
+      value,
+      id
+    }: ICreateParameterDTO,
+    user_id: string
+  ): Promise<Parameter> {
+    const user = await this.usersRepository.findById(user_id);
+
+    if (!user) {
+      throw new AppError("User does not exists");
+    }
+
+    if (!user.is_admin) {
+      throw new AppError("User is not admin");
+    }
+
     const parameter = await this.parametersRepository.create({
       description,
       reference,
