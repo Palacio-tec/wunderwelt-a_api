@@ -91,6 +91,18 @@ async function create() {
     `
   );
 
+  await connection.query(
+    `INSERT INTO PARAMETERS(id, reference, description, value, created_at)
+      values(
+        '${uuidV4()}',
+        'SendNewsletter',
+        'Data que será realizado o envio do próximo e-mail aos alunos com a listagem das aulas de destaque.',
+        '',
+        'now()'
+      )
+    `
+  );
+
   await connection.close();
 }
 

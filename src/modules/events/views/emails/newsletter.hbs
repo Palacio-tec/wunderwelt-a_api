@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .container {
+        width: 100vw;
+        max-width: 1000px;
+        font-size: 18px;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      .article {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: fit-content;
+        padding: 10px;
+        border: 1px;
+        border-radius: 5px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+
+      .header {
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
+        color: #1e2f50;
+        margin: 10px 0 0 0;
+      }
+
+      .title {
+        font-size: larger;
+        text-align: left;
+        font-weight: bold;
+      }
+
+      .time {
+        font-size: smaller;
+        margin-bottom: 10px;
+      }
+
+      a {
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      .noReply {
+        font-size: 14px;
+        color: #687173;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <text>Confira as nossas próximas aulas de destaque que disponibilizamos.</text>
+      <p />
+      <text>Caso encontre alguma que goste <bold>corra para se inscrever</a></bold>, pois as vagas podem acabar.</text>
+      <p />
+
+    {{#each mailData}}
+        {{!-- <td>{{user.name}}</th> --}}
+        <div id={{id}} class="article">
+            <header class="header">
+                <a href='https://praktika.wunderwelt-a.com.br'>
+                  <span class="title">{{title}}</span>
+                </a>
+                <text class="time">📅 {{date}} (horário de Brasília) - 🪙 {{credit}}</text>
+            </header>
+            <text class="content">
+                {{description}}
+            </text>
+        </div>
+    {{/each}}
+
+      <br />
+
+      <strong>Atenciosamente,</strong>
+
+      <p>Equipe | <strong>PrAktikA - Wunderwelt-A</strong></p>
+
+      <p class="noReply">
+        Não responda a esta mensagem. Este e-mail foi enviado por um sistema automático que não processa respostas.
+      </p>
+    </div>
+  </body>
+</html>

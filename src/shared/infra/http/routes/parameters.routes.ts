@@ -7,13 +7,22 @@ import { FindParameterController } from "@modules/parameters/useCases/findParame
 import { ensureAuthenticated } from "../middlewares/ensureAuthenticated";
 import { ensureAdmin } from "../middlewares/ensureAdmin";
 import { ConsultParameterController } from "@modules/parameters/useCases/consultParameter.ts/ConsultParameterController";
+import { CreateParameterController } from "@modules/parameters/useCases/createParameter/CreateParameterController";
 
 const parametersRoutes = Router();
 
+const createParameterController = new CreateParameterController();
 const updateParameterController = new UpdateParameterController();
 const listParametersController = new ListParametersController();
 const findParameterController = new FindParameterController();
 const consultParameterController = new ConsultParameterController();
+
+parametersRoutes.post(
+  "/",
+  ensureAuthenticated,
+  ensureAdmin,
+  createParameterController.handle
+)
 
 parametersRoutes.post(
   "/update/:id",

@@ -376,6 +376,28 @@ class EventsRepository implements IEventsRepository {
 
     return events;
   }
+
+  async findByHighlightAndWillStart(year: number, month: number, day: number): Promise<Event[]> {
+    const parsedMonth = String(month).padStart(2, '0');
+    const parsedDay = String(day).padStart(2, '0');
+
+    const events = this.repository.find({
+      select: ['id', 'title', 'description', 'start_date', 'credit', 'event_levels'],
+      where: {
+        start_date: Raw(start_dateFieldName => 
+          `to_char(${start_dateFieldName}, 'YYYY-MM-DD') >= '${year}-${parsedMonth}-${parsedDay}'`
+        ),
+        has_highlight: true,
+        for_teachers: false,
+      },
+      order: {
+        start_date: "ASC",
+      },
+      relations: ['event_levels', 'event_levels.level'],
+    })
+
+    return events;
+  }
 }
 
 export { EventsRepository };
