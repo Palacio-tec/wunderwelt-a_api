@@ -10,4 +10,4 @@ function EventsWithoutStudent() {
   cancelEventWithoutStudentController.handle(date);
 }
 
-export default schedule('0 0 * * * *', EventsWithoutStudent, { scheduled: false }); // Every minute 55
+export default schedule('0 0 * * * *', EventsWithoutStudent, { scheduled: false }); // Every minute 00

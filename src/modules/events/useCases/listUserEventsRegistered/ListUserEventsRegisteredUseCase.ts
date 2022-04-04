@@ -25,7 +25,7 @@ class ListUserEventsRegisteredUseCase {
   ) {}
 
   async execute({ user_id, willStart = false }: IRequest): Promise<ListUserEventsRegisteredUseCaseProps[]> {
-    const events = await this.eventsRepository.findRegisteredByuser({user_id, willStart});
+    const events = await this.eventsRepository.findRegisteredByUser({user_id, willStart});
 
     const eventsWithLevels = await Promise.all(events.map(async event => {
       const levels = await this.eventsLevelsRepository.findByEvent(event.id)

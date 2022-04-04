@@ -10,4 +10,4 @@ function EventsCanRefound() {
   sendCanRefoundReminderEventsController.handle(date);
 }
 
-export default schedule('0 0 * * * *', EventsCanRefound, { scheduled: false }); // Every minute 01
+export default schedule('0 1 * * * *', EventsCanRefound, { scheduled: false }); // Every minute 01

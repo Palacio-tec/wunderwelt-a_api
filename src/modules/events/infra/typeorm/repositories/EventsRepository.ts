@@ -5,7 +5,7 @@ import { IEventsRepository } from "@modules/events/repositories/IEventsRepositor
 
 import { Event } from "../entities/Event";
 import { IFindAllInMonthDTO } from "@modules/events/dtos/IFindAllInMonthDTO";
-import { IFindAvailableDTO } from "@modules/events/dtos/IFindAvailableDTO";
+import { IFindAvailableDTO, IFindAvailableProps } from "@modules/events/dtos/IFindAvailableDTO";
 import { IFindRegisteredByUserDTO } from "@modules/events/dtos/IFindRegisteredByUserDTO";
 import { IFindWaitingListByUserDTO } from "@modules/events/dtos/IFindWaitingListByUserDTO";
 import { IFindRegisteredDTO } from "@modules/events/dtos/IFindRegisteredDTO";
@@ -34,6 +34,8 @@ class EventsRepository implements IEventsRepository {
     credit,
     request_subject,
     minimum_number_of_students,
+    has_highlight,
+    for_teachers,
   }: ICreateEventDTO): Promise<Event> {
     const event = this.repository.create({
       title,
@@ -49,6 +51,8 @@ class EventsRepository implements IEventsRepository {
       id,
       request_subject,
       minimum_number_of_students,
+      has_highlight,
+      for_teachers,
     });
 
     await this.repository.save(event);
@@ -59,7 +63,9 @@ class EventsRepository implements IEventsRepository {
   async list(): Promise<IListEventsDTO[]> {
     const events = await this.repository.query(
       `SELECT
-        e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit, e.instruction, e.is_canceled, e.credit, e.teacher_id, e.minimum_number_of_students,
+        e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit,
+        e.instruction, e.is_canceled, e.credit, e.teacher_id, e.minimum_number_of_students,
+        e.has_highlight, e.for_teachers,
         u.name,
         string_agg(l.name, ', ') levels
       FROM
@@ -77,7 +83,9 @@ class EventsRepository implements IEventsRepository {
       ON
         l.id = el.level_id
       GROUP BY
-        e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit, e.instruction, e.is_canceled, e.credit, e.teacher_id, e.minimum_number_of_students,
+        e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit,
+        e.instruction, e.is_canceled, e.credit, e.teacher_id, e.minimum_number_of_students,
+        e.has_highlight, e.for_teachers,
         u.name
       ORDER BY
         e.created_at DESC`
@@ -86,11 +94,18 @@ class EventsRepository implements IEventsRepository {
     return events;
   }
 
-  async findAvailable(date: string, user_id: string, filter: string): Promise<IFindAvailableDTO[]> {
+  async findAvailable({
+    date,
+    user_id,
+    filter,
+    isTeacher,
+  }: IFindAvailableProps): Promise<IFindAvailableDTO[]> {
     const events = await this.repository.query(
       `SELECT ea.* FROM (
         SELECT 
-          e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit, e.credit, e.request_subject,
+          e.id, e.title, e.description, e.link, e.start_date, e.end_date,
+          e.student_limit, e.credit, e.request_subject, e.has_highlight,
+          e.for_teachers,
           COUNT(s.event_id) AS registered_students
         FROM
           events e
@@ -105,8 +120,11 @@ class EventsRepository implements IEventsRepository {
             lower(e.title) like '%${filter}%'
             OR lower(e.description) like '%${filter}%'
           )
+          ${!isTeacher ? 'AND e.for_teachers = false' : ''}
         GROUP BY
-          e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit, e.credit
+          e.id, e.title, e.description, e.link, e.start_date, e.end_date,
+          e.student_limit, e.credit, e.request_subject, e.has_highlight,
+          e.for_teachers
       ) ea
       LEFT JOIN
         schedules suser
@@ -122,6 +140,7 @@ class EventsRepository implements IEventsRepository {
         suser.id IS NULL
         AND ( q.id IS NULL OR ea.registered_students < ea.student_limit )
       ORDER BY
+        ${isTeacher ? 'ea.for_teachers DESC,' : ''}
         ea.start_date`
     );
 
@@ -131,7 +150,9 @@ class EventsRepository implements IEventsRepository {
   async findById(id: string): Promise<IListEventsDTO> {
     const event = await this.repository.query(
       `SELECT
-        e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit, e.instruction, e.is_canceled, e.credit, e.teacher_id, e.request_subject, e.minimum_number_of_students,
+        e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit,
+        e.instruction, e.is_canceled, e.credit, e.teacher_id, e.request_subject,
+        e.minimum_number_of_students, e.has_highlight, e.for_teachers,
         u.name,
         string_agg(l.name, ', ') levels
       FROM
@@ -151,7 +172,9 @@ class EventsRepository implements IEventsRepository {
       WHERE
         e.id = '${id}'
       GROUP BY
-        e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit, e.instruction, e.is_canceled, e.credit, e.teacher_id, e.request_subject, e.minimum_number_of_students,
+        e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit,
+        e.instruction, e.is_canceled, e.credit, e.teacher_id, e.request_subject,
+        e.minimum_number_of_students, e.has_highlight, e.for_teachers,
         u.name`
     );
 
@@ -167,7 +190,9 @@ class EventsRepository implements IEventsRepository {
 
     const events = await this.repository.query(
       `SELECT
-        e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit, e.instruction, e.is_canceled, e.credit, e.teacher_id, e.minimum_number_of_students,
+        e.id, e.title, e.description, e.link, e.start_date, e.end_date,
+        e.student_limit, e.instruction, e.is_canceled, e.credit, e.teacher_id,
+        e.minimum_number_of_students, e.has_highlight, e.for_teachers,
         u.name,
         string_agg(l.name, ', ') levels
       FROM
@@ -187,7 +212,9 @@ class EventsRepository implements IEventsRepository {
       WHERE
         to_char(e.start_date, 'MM-YYYY') = '${parsedMonth}-${year}'
       GROUP BY
-        e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit, e.instruction, e.is_canceled, e.credit, e.teacher_id, e.minimum_number_of_students,
+        e.id, e.title, e.description, e.link, e.start_date, e.end_date,
+        e.student_limit, e.instruction, e.is_canceled, e.credit, e.teacher_id,
+        e.minimum_number_of_students, e.has_highlight, e.for_teachers,
         u.name
       ORDER BY
         e.created_at DESC`
@@ -215,7 +242,7 @@ class EventsRepository implements IEventsRepository {
     return events;
   }
 
-  async findRegisteredByuser({ user_id, willStart = false }: IFindRegisteredByUserDTO): Promise<IFindRegisteredDTO[]> {
+  async findRegisteredByUser({ user_id, willStart = false }: IFindRegisteredByUserDTO): Promise<IFindRegisteredDTO[]> {
     let where = ''
 
     if (willStart) {
@@ -224,7 +251,8 @@ class EventsRepository implements IEventsRepository {
 
     const events = await this.repository.query(
       `SELECT 
-        e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.credit, e.request_subject
+        e.id, e.title, e.description, e.link, e.start_date, e.end_date,
+        e.credit, e.request_subject, e.has_highlight, e.for_teachers
       FROM
         events e
       INNER JOIN
@@ -345,6 +373,28 @@ class EventsRepository implements IEventsRepository {
         eventWithoutStudent.student_qty = 0 OR
         eventWithoutStudent.minimum_number_of_students > eventWithoutStudent.student_qty`
     );
+
+    return events;
+  }
+
+  async findByHighlightAndWillStart(year: number, month: number, day: number): Promise<Event[]> {
+    const parsedMonth = String(month).padStart(2, '0');
+    const parsedDay = String(day).padStart(2, '0');
+
+    const events = this.repository.find({
+      select: ['id', 'title', 'description', 'start_date', 'credit', 'event_levels'],
+      where: {
+        start_date: Raw(start_dateFieldName => 
+          `to_char(${start_dateFieldName}, 'YYYY-MM-DD') >= '${year}-${parsedMonth}-${parsedDay}'`
+        ),
+        has_highlight: true,
+        for_teachers: false,
+      },
+      order: {
+        start_date: "ASC",
+      },
+      relations: ['event_levels', 'event_levels.level'],
+    })
 
     return events;
   }

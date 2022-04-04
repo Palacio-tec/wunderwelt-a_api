@@ -15,9 +15,6 @@ class FindEventUseCase {
     @inject("EventsRepository")
     private eventsRepository: IEventsRepository,
 
-    @inject("LevelsRepository")
-    private levelsRepository: ILevelsRepository,
-
     @inject("EventsLevelsRepository")
     private eventsLevelsRepository: IEventsLevelsRepository,
   ) {}
@@ -40,6 +37,8 @@ class FindEventUseCase {
       request_subject,
       levels,
       minimum_number_of_students,
+      has_highlight,
+      for_teachers,
     } = event;
 
     let levelsInfo = [];
@@ -73,6 +72,8 @@ class FindEventUseCase {
       request_subject,
       minimum_number_of_students,
       levels: levelsInfo,
+      has_highlight,
+      for_teachers,
     };
   }
 }

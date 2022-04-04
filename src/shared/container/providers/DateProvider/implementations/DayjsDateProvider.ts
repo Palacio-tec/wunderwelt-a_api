@@ -20,8 +20,8 @@ class DayjsDateProvider implements IDateProvider {
     return dayjs(date).utc().local().format();
   }
 
-  dateNow(): Date {
-    return dayjs().toDate();
+  dateNow(date?: Date | string | number): Date {
+    return dayjs(date).toDate();
   }
 
   compareInDays(start_date: Date, end_date: Date): number {
@@ -81,6 +81,24 @@ class DayjsDateProvider implements IDateProvider {
 
   addMinutesInDate(date: Date, minutes: number): Date {
     return dayjs(date).add(minutes, "minutes").toDate();
+  }
+
+  getDay(date: Date): number {
+    const day = dayjs(date).get('date');
+
+    return day
+  }
+
+  getMonth(date: Date): number {
+    const day = dayjs(date).get('month');
+
+    return day
+  }
+
+  getYear(date: Date): number {
+    const day = dayjs(date).get('year');
+
+    return day
   }
 }
 
