@@ -68,7 +68,7 @@ class CreateScheduleUseCase {
       throw new AppError("User does not have a record of credits");
     }
 
-    if (userHours.amount < credit) {
+    if (Number(userHours.amount) < Number(credit)) {
       throw new AppError("User does not have enough credits", 400, "enough.hours");
     }
 
