@@ -90,7 +90,7 @@ class SendEventsNewsletterUseCase {
     )
 
     const day = this.dateProvider.getDay(date)
-    const month = this.dateProvider.getMonth(date)
+    const month = this.dateProvider.getMonth(date) + 1
     const year = this.dateProvider.getYear(date)
 
     const events = await this.eventsRepository
