@@ -389,6 +389,7 @@ class EventsRepository implements IEventsRepository {
         ),
         has_highlight: true,
         for_teachers: false,
+        is_canceled: false,
       },
       order: {
         start_date: "ASC",
