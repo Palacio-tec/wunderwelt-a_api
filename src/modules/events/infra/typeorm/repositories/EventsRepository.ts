@@ -399,6 +399,32 @@ class EventsRepository implements IEventsRepository {
 
     return events;
   }
+
+  async findByUserIdAndDate(user_id: string, eventDate: string): Promise<IFindEventWillStartDTO[]> {
+    const events = await this.repository.query(
+      `SELECT
+        e.id as event_id, e.title, e.description, e.link, e.start_date, e.teacher_id,
+        u.name as teacher_name, u.email as teacher_email
+      FROM
+        events e
+      INNER JOIN
+        users u
+      ON
+        u.id = e.teacher_id
+      INNER JOIN
+        schedules s
+      ON
+        s.event_id = e.id
+      WHERE
+        e.start_date BETWEEN '${eventDate} 00:00:00' AND '${eventDate} 23:59:59' AND
+        s.user_id = '${user_id}'
+      GROUP BY
+        e.id, e.title, e.description, e.link, e.start_date, e.teacher_id,
+        u.name, u.email`
+    );
+
+    return events;
+  }
 }
 
 export { EventsRepository };
