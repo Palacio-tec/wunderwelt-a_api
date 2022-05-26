@@ -18,6 +18,7 @@ import { CanceledEventController } from "@modules/events/useCases/canceledEvent/
 import { ListEventsByTeacherController } from "@modules/events/useCases/listEventsByTeacher/ListEventsByTeacherController";
 import { ListEventsMonthlyController } from "@modules/events/useCases/listEventsMonthly/ListEventsMonthlyController";
 import { SendEmailEventsWillStartController } from "@modules/events/useCases/sendEmailEventsWillStart/SendEmailEventsWillStartController";
+import { SendTestEmailController } from "@modules/events/useCases/sendTestEmail/SendTestEmailController";
 
 const eventsRoutes = Router();
 
@@ -37,6 +38,7 @@ const canceledEventController = new CanceledEventController();
 const listEventsByTeacherController = new ListEventsByTeacherController();
 const listEventsMonthlyController = new ListEventsMonthlyController();
 const sendEmailEventsWillStartController = new SendEmailEventsWillStartController();
+const sendTestEmailController = new SendTestEmailController();
 
 // eventsRoutes.post(
 //   "/cancel",
@@ -147,6 +149,13 @@ eventsRoutes.post(
   ensureAuthenticated,
   ensureAdmin,
   sendEmailEventsWillStartController.handle
+)
+
+eventsRoutes.post(
+  "/send-mail/test",
+  ensureAuthenticated,
+  ensureAdmin,
+  sendTestEmailController.handle
 )
 
 export { eventsRoutes };
