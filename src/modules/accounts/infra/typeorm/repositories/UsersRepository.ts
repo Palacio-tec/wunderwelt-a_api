@@ -85,7 +85,7 @@ class UsersRepository implements IUsersRepository {
   }
 
   async list(): Promise<User[]> {
-    const users = this.repository.find({ order: { name: "ASC" }, relations: ['hours'] });
+    const users = await this.repository.find({ order: { name: "ASC" }, relations: ['hours'] });
 
     return users;
   }
@@ -122,7 +122,7 @@ class UsersRepository implements IUsersRepository {
   }
 
   async listTeachers(): Promise<User[]> {
-    const teachers = this.repository.find({
+    const teachers = await this.repository.find({
       where: { is_teacher: true },
       order: { name: "ASC" },
     });

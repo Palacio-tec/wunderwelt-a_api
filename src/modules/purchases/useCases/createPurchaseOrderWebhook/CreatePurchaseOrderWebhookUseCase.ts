@@ -144,7 +144,7 @@ class CreatePurchaseOrderWebhookUseCase {
         throw new AppError("Purchase Order does not exists");
       }
 
-      if (status === "approved") {
+      if (status === "approved" && purchaseOrderExist.status !== "approved") {
         await this.credit(payer_id, credit, payment_id)
       } else if (
         (status === "cancelled" || status === "refunded")

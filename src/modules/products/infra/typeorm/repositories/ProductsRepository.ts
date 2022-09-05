@@ -39,7 +39,7 @@ class ProductsRepository implements IProductsRepository {
   }
 
   async list(): Promise<Product[]> {
-    const products = this.repository.find({ order: { value: "ASC" } });
+    const products = await this.repository.find({ order: { value: "ASC" } });
 
     return products;
   }

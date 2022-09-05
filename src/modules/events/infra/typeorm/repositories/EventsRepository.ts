@@ -227,7 +227,7 @@ class EventsRepository implements IEventsRepository {
     const parsedMonth = String(month).padStart(2, '0');
     const parsedDay = String(day).padStart(2, '0');
 
-    const events = this.repository.find({
+    const events = await this.repository.find({
       where: {
         start_date: Raw(start_dateFieldName => 
           `to_char(${start_dateFieldName}, 'YYYY-MM-DD') = '${year}-${parsedMonth}-${parsedDay}'`
@@ -295,7 +295,7 @@ class EventsRepository implements IEventsRepository {
   }
 
   async findEventByTeacherAndPeriod({teacher_id, start_date, end_date}: IFindEventByTeacherAndPeriodDTO): Promise<Event[]> {
-    const events = this.repository.find({
+    const events = await this.repository.find({
       where: {
         teacher_id,
         start_date: Raw(start_dateFieldName => 
@@ -381,7 +381,7 @@ class EventsRepository implements IEventsRepository {
     const parsedMonth = String(month).padStart(2, '0');
     const parsedDay = String(day).padStart(2, '0');
 
-    const events = this.repository.find({
+    const events = await this.repository.find({
       select: ['id', 'title', 'description', 'start_date', 'credit', 'event_levels'],
       where: {
         start_date: Raw(start_dateFieldName => 

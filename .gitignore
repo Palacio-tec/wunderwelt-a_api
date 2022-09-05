@@ -3,5 +3,6 @@ node_modules
 coverage
 .env
 ormconfig.json
+ormconfig.local.json
 dist
 .ormconfig.my
