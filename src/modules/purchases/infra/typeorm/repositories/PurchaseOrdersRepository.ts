@@ -41,9 +41,9 @@ class PurchaseOrdersRepository implements IPurchaseOrdersRepository {
   }
   
   async findByPaymentId(payment_id: string): Promise<PurchaseOrder> {
-    const purchaseOrder = this.repository.findOne({payment_id});
+    const purchaseOrder = await this.repository.findOne({payment_id});
 
-    return purchaseOrder
+    return purchaseOrder;
   }
 }
 

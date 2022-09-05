@@ -27,7 +27,7 @@ class EventsLevelsRepository implements IEventsLevelsRepository {
   }
 
   async findByEvent(event_id: string): Promise<EventLevels[]> {
-    const eventsLevels = this.repository.find({ where: {event_id}, relations: ['level'] });
+    const eventsLevels = await this.repository.find({ where: {event_id}, relations: ['level'] });
 
     return eventsLevels;
   }
@@ -41,7 +41,7 @@ class EventsLevelsRepository implements IEventsLevelsRepository {
   }
 
   async findByLevel(level_id: string): Promise<EventLevels[]> {
-    const eventLevels = this.repository.find({ level_id });
+    const eventLevels = await this.repository.find({ level_id });
 
     return eventLevels;
   }

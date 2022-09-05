@@ -42,7 +42,7 @@ class LevelsRepository implements ILevelsRepository {
   }
 
   async list(): Promise<Level[]> {
-    const levels = this.repository.find({ order: { name: "ASC" } });
+    const levels = await this.repository.find({ order: { name: "ASC" } });
 
     return levels;
   }
