@@ -6,6 +6,7 @@ import { AppError } from "@shared/errors/AppError";
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { IProductsRepository } from "@modules/products/repositories/IProductsRepository";
+import { ICouponsRepository } from "@modules/coupons/repositories/ICouponsRepository";
 
 @injectable()
 class CreatePaymentReferenceUseCase {
@@ -24,6 +25,9 @@ class CreatePaymentReferenceUseCase {
 
     @inject("ProductsRepository")
     private productsRepository: IProductsRepository,
+
+    @inject("CouponsRepository")
+    private couponsRepository: ICouponsRepository,
   ) {}
 
   async execute({
@@ -35,7 +39,8 @@ class CreatePaymentReferenceUseCase {
     zip_code,
     area_code,
     phone,
-    document
+    document,
+    couponId
   }): Promise<any> {
     const user = await this.usersRepository.findById(user_id);
 
@@ -94,6 +99,12 @@ class CreatePaymentReferenceUseCase {
     };
 
     const { body, response } = await this.paymentProvider.createPurchaseOrder(payload);
+
+    const coupon = await this.couponsRepository.findById(couponId);
+
+    coupon.used = Number(coupon.used) + 1
+
+    this.couponsRepository.create(coupon);
 
     return {
       id: body.id,

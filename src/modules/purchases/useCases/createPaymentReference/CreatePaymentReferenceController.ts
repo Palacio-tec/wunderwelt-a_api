@@ -14,6 +14,7 @@ class CreatePaymentReferenceController {
       area_code,
       phone,
       document,
+      couponId,
     } = request.body;
     const user_id = request.user.id;
 
@@ -28,7 +29,8 @@ class CreatePaymentReferenceController {
       zip_code,
       area_code,
       phone,
-      document
+      document,
+      couponId
     });
 
     return response.status(201).json(paymentReference);

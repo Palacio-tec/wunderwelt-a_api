@@ -17,9 +17,9 @@ class ConsumeCouponUseCase {
   ) {}
 
   async execute({ code, user_id }: IConsumeCouponsDTO): Promise<Coupon> {
-    const coupons = await this.couponsRepository.findAvailableByCode(code.toUpperCase());
+    const coupon = await this.couponsRepository.findAvailableByCode(code.toUpperCase());
   
-    if (coupons.length <= 0) {
+    if (coupon) {
       throw new AppError("Coupon not available");
     }
 
@@ -28,8 +28,6 @@ class ConsumeCouponUseCase {
     if (!user) {
       throw new AppError("User does not exists");
     }
-
-    const coupon = coupons[0];
 
     coupon.used = Number(coupon.used) + 1
 

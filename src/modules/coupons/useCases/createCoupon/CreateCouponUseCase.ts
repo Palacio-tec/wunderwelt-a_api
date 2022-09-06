@@ -23,7 +23,7 @@ class CreateCouponUseCase {
     const availableCouponAlreadyExists =
       await this.couponsRepository.findAvailableByCode(codeFormated);
 
-    if (availableCouponAlreadyExists.length > 0) {
+    if (availableCouponAlreadyExists) {
       throw new AppError(
         "Code is already in use for an other available coupon"
       );
