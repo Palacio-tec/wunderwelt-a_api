@@ -33,7 +33,7 @@ class CouponsRepository implements ICouponsRepository {
     return coupon;
   }
 
-  async findAvailableByCode(code: string): Promise<Coupon[]> {
+  async findAvailableByCode(code: string): Promise<Coupon> {
     const coupons = await this.repository.query(
       `SELECT c.* FROM coupons c
       WHERE
@@ -42,7 +42,7 @@ class CouponsRepository implements ICouponsRepository {
         AND c.expiration_date >= '${format(new Date(), 'yyyy-MM-dd')}'`
     );
 
-    return coupons;
+    return coupons[0];
   }
 
   async list(): Promise<Coupon[]> {

@@ -11,6 +11,7 @@ import { CouponFieldsController } from "@modules/coupons/useCases/validations/co
 
 import { ensureAdmin } from "../middlewares/ensureAdmin";
 import { ensureAuthenticated } from "../middlewares/ensureAuthenticated";
+import { AvailableCouponControler } from "@modules/coupons/useCases/validations/availableCoupon/AvailableCouponController";
 
 const couponsRoutes = Router();
 
@@ -22,6 +23,7 @@ const deleteCouponController = new DeleteCouponController();
 const findCouponController = new FindCouponController();
 const canDeleteCouponController = new CanDeleteCouponController();
 const couponFieldsController = new CouponFieldsController()
+const availableCouponControler = new AvailableCouponControler()
 
 couponsRoutes.post(
   "/",
@@ -76,6 +78,13 @@ couponsRoutes.get(
   ensureAuthenticated,
   ensureAdmin,
   findCouponController.handle
+)
+
+couponsRoutes.get(
+  "/available/:code",
+  ensureAuthenticated,
+  ensureAdmin,
+  availableCouponControler.handle
 )
 
 export { couponsRoutes };

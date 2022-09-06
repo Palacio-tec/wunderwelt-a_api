@@ -3,7 +3,7 @@ import { Coupon } from "../infra/typeorm/entities/Coupon";
 
 interface ICouponsRepository {
   create(date: ICreateCouponsDTO): Promise<Coupon>;
-  findAvailableByCode(code: string): Promise<Coupon[]>;
+  findAvailableByCode(code: string): Promise<Coupon>;
   list(): Promise<Coupon[]>;
   findById(id: string): Promise<Coupon>;
   deleteById(id: string): Promise<void>;
