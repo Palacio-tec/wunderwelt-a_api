@@ -16,7 +16,7 @@ class DayjsDateProvider implements IDateProvider {
     return dayjs(end_date_utc).diff(start_date_utc, "hours");
   }
 
-  convertToUTC(date: Date): string {
+  convertToUTC(date: Date | string): string {
     return dayjs(date).utc().local().format();
   }
 
@@ -72,7 +72,7 @@ class DayjsDateProvider implements IDateProvider {
     return dayjs(date).add(days, "days").toDate();
   }
 
-  differenceInMinutes(start_date: Date, end_date: Date): number {
+  differenceInMinutes(start_date: Date | string, end_date: Date | string): number {
     const start_date_utc = this.convertToUTC(start_date);
     const end_date_utc = this.convertToUTC(end_date);
 

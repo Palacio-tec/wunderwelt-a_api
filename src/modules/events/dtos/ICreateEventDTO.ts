@@ -3,8 +3,8 @@ interface ICreateEventDTO {
   title: string;
   description: string;
   link: string;
-  start_date: Date;
-  end_date: Date;
+  start_date: string | Date;
+  end_date: string | Date;
   student_limit?: number;
   teacher_id: string;
   instruction: string;
