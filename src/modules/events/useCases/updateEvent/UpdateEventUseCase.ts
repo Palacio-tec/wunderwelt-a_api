@@ -8,7 +8,6 @@ import { IEventsLevelsRepository } from "@modules/events/repositories/IEventsLev
 import { IEventsRepository } from "@modules/events/repositories/IEventsRepository";
 import { ILevelsRepository } from "@modules/levels/repositories/ILevelsRepository";
 import { IQueuesRepository } from "@modules/queues/repositories/IQueuesRepository";
-import { ISchedulesRepository } from "@modules/schedules/repositories/ISchedulesRepository";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { AppError } from "@shared/errors/AppError";
 import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
@@ -21,9 +20,6 @@ class UpdateEventUseCase {
 
     @inject("EventsRepository")
     private eventsRepository: IEventsRepository,
-
-    @inject("SchedulesRepository")
-    private schedulesRepository: ISchedulesRepository,
 
     @inject("EventsLevelsRepository")
     private eventsLevelsRepository: IEventsLevelsRepository,
@@ -77,7 +73,7 @@ class UpdateEventUseCase {
       throw new AppError("Event does not exists");
     }
 
-    if (eventExists.start_date !== start_date || eventExists.end_date !== end_date) {
+    if (eventExists.start_date.toISOString() !== start_date || eventExists.end_date.toISOString() !== end_date) {
       const eventTeacher = await this.usersRepository.findById(teacher_id);
       const dateTimeFormatted = this.dateProvider.parseFormat(start_date, "DD-MM-YYYY [às] HH:mm")
       const duration = this.dateProvider.differenceInMinutes(start_date, end_date)

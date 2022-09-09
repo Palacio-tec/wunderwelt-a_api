@@ -88,36 +88,41 @@ class SchedulesRepository implements ISchedulesRepository {
     const participations = await this.repository.query(
       `SELECT
         base_gift.*,
-        COALESCE( (
-          SELECT
-              SUM( s.amount )
-            FROM
-              statements s
-           WHERE
-              s.user_id = base_gift.user_id
-              AND s.is_gift
-        ), 0 ) as gift_credits
+        COALESCE(SUM(s.amount), 0) as gift_credits,
+        MAX(s.created_at) as last_gift
       FROM (
         SELECT
-            u.id as user_id, u.name, u.email, u.created_at,
-            COUNT(e.id) as participation,
-            SUM(CASE WHEN e.credit is null THEN 0 ELSE e.credit END) as total_spent
+          u.id as user_id, u.name, u.email, u.created_at,
+          COUNT(e.id) as participation,
+          SUM(CASE WHEN e.credit is null THEN 0 ELSE e.credit END) as total_spent
         FROM
-            users u
+          users u
         LEFT JOIN
-            schedules s
+          schedules s
         ON
-            s.user_id = u.id
+          s.user_id = u.id
         LEFT JOIN
-            events e
+          events e
         ON
-            e.id = s.event_id
+          e.id = s.event_id
         WHERE
-            u.inactivation_date is null
-            AND is_admin = false
+          u.inactivation_date is null
+          AND is_admin = false
         GROUP BY
-            u.id, u.name, u.email, u.created_at
+          u.id, u.name, u.email, u.created_at
       ) base_gift
+      LEFT JOIN
+        statements s
+      ON
+        s.user_id = base_gift.user_id
+        AND s.is_gift
+      GROUP BY
+        base_gift.user_id,
+        base_gift.name,
+        base_gift.email,
+        base_gift.participation,
+        base_gift.total_spent,
+        base_gift.created_at
       ORDER BY
         base_gift.total_spent DESC,
         base_gift.participation DESC`
