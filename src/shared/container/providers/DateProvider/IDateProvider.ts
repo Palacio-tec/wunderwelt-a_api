@@ -5,7 +5,7 @@ interface IDateProvider {
   compareInDays(start_date: Date, end_date: Date): number;
   addDays(days: number): Date;
   addHours(hours: number): Date;
-  comparaIfBefore(start_date: Date, end_date: Date): boolean;
+  comparaIfBefore(start_date: string | Date, end_date: string | Date): boolean;
   parseISO(date: Date | string): Date;
   parseFormat(date: Date | string, format?: string): string;
   parseFormatUTC(date: Date, format?: string): string;

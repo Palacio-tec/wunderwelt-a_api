@@ -11,6 +11,7 @@ import { IQueuesRepository } from "@modules/queues/repositories/IQueuesRepositor
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { AppError } from "@shared/errors/AppError";
 import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
+import { createCalendarEvent } from "@utils/createCalendarEvent";
 
 @injectable()
 class UpdateEventUseCase {
@@ -93,13 +94,32 @@ class UpdateEventUseCase {
         dateTime: dateTimeFormatted,
         duration,
       };
+
+      const calendarEvent = {
+        content: await createCalendarEvent({
+          id,
+          start: start_date,
+          end: end_date,
+          summary: title,
+          description: instruction,
+          location: 'Sala virtual',
+          status: "CONFIRMED",
+          method: 'REQUEST',
+          attendee: {
+            name: eventTeacher.name,
+            email: eventTeacher.email,
+          },
+        }),
+        method: 'REQUEST',
+      }
   
-      this.mailProvider.sendMail(
-        eventTeacher.email,
-        `Mudança de horário - ${title}`,
+      this.mailProvider.sendMail({
+        to: eventTeacher.email,
+        subject: `Mudança de horário - ${title}`,
         variables,
-        templatePath
-      );
+        path: templatePath,
+        calendarEvent
+      });
     }
 
     const haveLimitIncrease = Number(eventExists.student_limit) < student_limit;
@@ -171,12 +191,12 @@ class UpdateEventUseCase {
             link,
           };
 
-          this.mailProvider.sendMail(
-            email,
-            'Abriu uma vaga para a aula que você queria! Aproveite!',
+          this.mailProvider.sendMail({
+            to: email,
+            subject: 'Abriu uma vaga para a aula que você queria! Aproveite!',
             variables,
-            templatePath
-          );
+            path: templatePath,
+          });
         });
       }
     }

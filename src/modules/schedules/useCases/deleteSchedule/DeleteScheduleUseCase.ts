@@ -120,12 +120,12 @@ class DeleteScheduleUseCase {
           link,
         };
 
-        this.mailProvider.sendMail(
-          email,
-          'Abriu uma vaga para a aula que você queria! Aproveite!',
+        this.mailProvider.sendMail({
+          to: email,
+          subject: 'Abriu uma vaga para a aula que você queria! Aproveite!',
           variables,
-          templatePath
-        );
+          path: templatePath
+        });
       });
     }
   }

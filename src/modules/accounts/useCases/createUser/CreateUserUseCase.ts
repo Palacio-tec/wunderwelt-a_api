@@ -108,12 +108,12 @@ class CreateUserUseCase {
         password,
       };
 
-      this.mailProvider.sendMail(
-        email,
-        "Login para acessar a plataforma PrAktikA",
+      this.mailProvider.sendMail({
+        to: email,
+        subject: "Login para acessar a plataforma PrAktikA",
         variables,
-        templatePath
-      );
+        path: templatePath
+      });
     }
 
     return user;

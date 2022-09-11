@@ -100,12 +100,12 @@ class SendGiftUseCase {
         plural: credit > 1
       };
   
-      this.mailProvider.sendMail(
-        email,
-        "Você ganhou um presente!",
+      this.mailProvider.sendMail({
+        to: email,
+        subject: "Você ganhou um presente!",
         variables,
-        templatePath
-      );
+        path: templatePath
+      });
     });
   }
 }

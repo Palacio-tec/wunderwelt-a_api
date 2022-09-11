@@ -9,6 +9,7 @@ import { ISchedulesRepository } from "@modules/schedules/repositories/ISchedules
 import { IStatementsRepository } from "@modules/statements/repositories/IStatementsRepository";
 import { OperationEnumTypeStatement } from "@modules/statements/dtos/ICreateStatementDTO";
 import { IHoursRepository } from "@modules/accounts/repositories/IHoursRepository";
+import { createCalendarEvent } from "@utils/createCalendarEvent";
 
 @injectable()
 class CancelEventWithoutStudentUseCase {
@@ -66,22 +67,7 @@ class CancelEventWithoutStudentUseCase {
       await this.eventsRepository.create(eventData);
 
       const { teacher_name, teacher_email, title, start_date } = event;
-
-      const dateFormated = this.dateProvider.parseFormat(start_date, 'DD-MM-YYYY [às] HH:mm')
-
-      const mailMessage = `A aula "${title}" que teria início em ${dateFormated} foi cancelada por não haver alunos suficientes.`
-
-      const variables = {
-        name: teacher_name,
-        mailMessage,
-      };
-
-      this.mailProvider.sendMail(
-        teacher_email,
-        `Aula cancelada - ${title}`,
-        variables,
-        templatePath
-      );
+      const { end_date, instruction } = eventData;
 
       const schedulesExists = await this.schedulesRepository.findByEventId(event.event_id);
 
@@ -108,12 +94,31 @@ class CancelEventWithoutStudentUseCase {
             mailMessage,
           };
 
-          await this.mailProvider.sendMail(
-            email,
-            `Aula Cancelada - ${title}`,
+          const calendarEvent = {
+            content: await createCalendarEvent({
+              id: event.event_id,
+              start: start_date,
+              end: end_date,
+              summary: title,
+              description: instruction,
+              location: 'Sala virtual',
+              status: "CANCELLED",
+              method: 'CANCEL',
+              attendee: {
+                name,
+                email
+              },
+            }),
+            method: 'CANCEL',
+          }
+
+          this.mailProvider.sendMail({
+            to: email,
+            subject: `Aula Cancelada - ${title}`,
             variables,
-            templatePath
-          );
+            path: templatePath,
+            calendarEvent
+          });
 
           await this.statementsRepository.create({
             amount: eventData.credit,
@@ -129,6 +134,41 @@ class CancelEventWithoutStudentUseCase {
           await this.hoursRepository.update(hours);
         });
       }
+
+      const calendarEvent = {
+        content: await createCalendarEvent({
+          id: event.event_id,
+          start: start_date,
+          end: end_date,
+          summary: title,
+          description: instruction,
+          location: 'Sala virtual',
+          status: "CANCELLED",
+          method: 'CANCEL',
+          attendee: {
+            name: teacher_name,
+            email: teacher_email
+          },
+        }),
+        method: 'CANCEL',
+      }
+
+      const dateFormated = this.dateProvider.parseFormat(start_date, 'DD-MM-YYYY [às] HH:mm')
+
+      const mailMessage = `A aula "${title}" que teria início em ${dateFormated} foi cancelada por não haver alunos suficientes.`
+
+      const variables = {
+        name: teacher_name,
+        mailMessage,
+      };
+
+      this.mailProvider.sendMail({
+        to: teacher_email,
+        subject: `Aula cancelada - ${title}`,
+        variables,
+        path: templatePath,
+        calendarEvent
+      });
     })
   }
 }

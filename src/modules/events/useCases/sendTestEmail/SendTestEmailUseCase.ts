@@ -90,26 +90,26 @@ class SendTestEmailUseCase {
                 time: 1,
             };
 
-            this.mailProvider.sendMail(
-                user.email,
-                "[TESTE] A sua aula vai começar daqui a pouco!",
+            this.mailProvider.sendMail({
+                to: user.email,
+                subject: "[TESTE] A sua aula vai começar daqui a pouco!",
                 variables,
-                templatePath
-            );
+                path: templatePath
+            });
 
-            this.mailProvider.sendMail(
-                user.email,
-                "[TESTE][SEM-LINK] A sua aula vai começar daqui a pouco!",
+            this.mailProvider.sendMail({
+                to: user.email,
+                subject: "[TESTE][SEM-LINK] A sua aula vai começar daqui a pouco!",
                 variables,
-                templatePathNoLink
-            );
+                path: templatePathNoLink
+            });
 
-            this.mailProvider.sendMail(
-                user.email,
-                "[TESTE][SOMENTE-TEXTO] A sua aula vai começar daqui a pouco!",
+            this.mailProvider.sendMail({
+                to: user.email,
+                subject: "[TESTE][SOMENTE-TEXTO] A sua aula vai começar daqui a pouco!",
                 variables,
-                templateOnlyText
-            );
+                path: templateOnlyText
+            });
         })
     })
   }
