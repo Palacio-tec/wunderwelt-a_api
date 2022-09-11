@@ -114,12 +114,12 @@ class SendEventsNewsletterUseCase {
     const allUsers = await this.usersRepository.findAllStudentUsers()
 
     allUsers.map((user) => {
-      this.mailProvider.sendMail(
-        user.email,
-        'Confira as aulas incríveis que estão por vir',
+      this.mailProvider.sendMail({
+        to: user.email,
+        subject: 'Confira as aulas incríveis que estão por vir',
         variables,
-        templatePath
-      );
+        path: templatePath,
+      });
     })
 
     this.parametersRepository.create({

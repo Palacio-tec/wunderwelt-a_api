@@ -14,6 +14,7 @@ import { AppError } from "@shared/errors/AppError";
 import { IStatementsRepository } from "@modules/statements/repositories/IStatementsRepository";
 import { OperationEnumTypeStatement } from "@modules/statements/dtos/ICreateStatementDTO";
 import { IQueuesRepository } from "@modules/queues/repositories/IQueuesRepository";
+import { createCalendarEvent } from "@utils/createCalendarEvent";
 
 @injectable()
 class CreateScheduleUseCase {
@@ -60,7 +61,7 @@ class CreateScheduleUseCase {
       throw new AppError("Event does not exists");
     }
 
-    const { start_date, title, link, instruction, credit } = eventExists;
+    const { start_date, end_date, title, instruction, credit } = eventExists;
 
     const userHours = await this.hoursRepository.findByUser(user_id);
 
@@ -144,12 +145,31 @@ class CreateScheduleUseCase {
       instruction: instructionHTML,
     };
 
-    this.mailProvider.sendMail(
-      email,
-      "Inscrição na aula realizada com sucesso!",
+    const calendarEvent = {
+      content: await createCalendarEvent({
+        id: event_id,
+        start: start_date,
+        end: end_date,
+        summary: title,
+        description: instruction,
+        location: 'Sala virtual',
+        status: "CONFIRMED",
+        method: 'REQUEST',
+        attendee: {
+          name,
+          email
+        },
+      }),
+      method: 'REQUEST',
+    }
+
+    this.mailProvider.sendMail({
+      to: email,
+      subject: "Inscrição na aula realizada com sucesso!",
       variables,
-      templatePath
-    );
+      path: templatePath,
+      calendarEvent
+    });
 
     return schedule;
   }

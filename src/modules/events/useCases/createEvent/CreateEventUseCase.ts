@@ -10,6 +10,7 @@ import { IDateProvider } from "@shared/container/providers/DateProvider/IDatePro
 import { IEventsLevelsRepository } from "@modules/events/repositories/IEventsLevelsRepository";
 import { ILevelsRepository } from "@modules/levels/repositories/ILevelsRepository";
 import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
+import { createCalendarEvent } from "@utils/createCalendarEvent";
 
 @injectable()
 class CreateEventUseCase {
@@ -116,8 +117,6 @@ class CreateEventUseCase {
         await this.eventsLevelsRepository.create({ event_id, level_id });
       });
     }
-
-    const formattedStartDate = this.dateProvider.formatInDate(event.start_date);
     
     const dateTimeFormatted = this.dateProvider.parseFormat(event.start_date, "DD-MM-YYYY [às] HH:mm")
 
@@ -141,12 +140,31 @@ class CreateEventUseCase {
       duration,
     };
 
-    this.mailProvider.sendMail(
-      email,
-      `Nova aula - ${dateTimeFormatted} - ${title}`,
+    const calendarEvent = {
+      content: await createCalendarEvent({
+        id: event_id,
+        start: start_date,
+        end: end_date,
+        summary: title,
+        description: instruction,
+        location: 'Sala virtual',
+        status: "CONFIRMED",
+        method: 'REQUEST',
+        attendee: {
+          name,
+          email
+        },
+      }),
+      method: 'REQUEST',
+    }
+
+    this.mailProvider.sendMail({
+      to: email,
+      subject: `Nova aula - ${dateTimeFormatted} - ${title}`,
       variables,
-      templatePath
-    );
+      path: templatePath,
+      calendarEvent
+    });
 
     return event;
   }

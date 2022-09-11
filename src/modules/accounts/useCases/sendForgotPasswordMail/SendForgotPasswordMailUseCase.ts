@@ -55,12 +55,12 @@ class SendForgotPasswordMailUseCase {
       link: `${process.env.FORGOT_MAIL_URL}${token}`,
     };
 
-    this.mailProvider.sendMail(
-      email,
-      "Cadastre a sua nova senha",
+    this.mailProvider.sendMail({
+      to: email,
+      subject: "Cadastre a sua nova senha",
       variables,
-      templatePath
-    );
+      path: templatePath
+    });
   }
 }
 

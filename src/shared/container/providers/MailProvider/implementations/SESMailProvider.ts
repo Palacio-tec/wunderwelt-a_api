@@ -4,7 +4,11 @@ import handlebars from "handlebars";
 import nodemailer, { Transporter } from "nodemailer";
 import { injectable } from "tsyringe";
 
-import { IMailProvider } from "../IMailProvider";
+import { IMailProvider, IMailProviderProps } from "../IMailProvider";
+
+const CALENDAR_FILE_NAME = 'invitation.ics'
+const MAIL_FROM = 'PrAktikA <info@wunderwelt-a.com.br>'
+const SES_API_VERSION = '2010-12-01'
 
 @injectable()
 class SESMailProvider implements IMailProvider {
@@ -13,30 +17,44 @@ class SESMailProvider implements IMailProvider {
   constructor() {
     this.client = nodemailer.createTransport({
       SES: new SES({
-        apiVersion: "2010-12-01",
+        apiVersion: SES_API_VERSION,
         region: process.env.AWS_REGION,
       }),
     });
   }
 
-  async sendMail(
-    to: string,
-    subject: string,
-    variables: any,
-    path: string
-  ): Promise<void> {
+  async sendMail({
+    to,
+    subject,
+    variables,
+    path,
+    calendarEvent,
+  }: IMailProviderProps): Promise<void> {
     const templateFileContent = fs.readFileSync(path).toString("utf-8");
 
     const templateParse = handlebars.compile(templateFileContent);
 
     const templateHTML = templateParse(variables);
 
-    await this.client.sendMail({
-      to,
-      from: "PrAktikA <info@wunderwelt-a.com.br>",
+    const mailOptions = {
+      to: process.env.RECIPIENT || to,
+      from: MAIL_FROM,
       subject,
       html: templateHTML,
-    });
+    }
+
+    if (calendarEvent) {
+      const { content: calendarContent, method } = calendarEvent;
+      const content = Buffer.from(calendarContent.toString());
+
+      mailOptions['icalEvent'] = {
+        filename: CALENDAR_FILE_NAME,
+        method,
+        content,
+      }
+    }
+
+    await this.client.sendMail(mailOptions);
   }
 }
 

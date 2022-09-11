@@ -13,6 +13,7 @@ import { IDateProvider } from "@shared/container/providers/DateProvider/IDatePro
 import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 import { IHoursRepository } from "@modules/accounts/repositories/IHoursRepository";
 import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
+import { createCalendarEvent } from "@utils/createCalendarEvent";
 
 @injectable()
 class DeleteEventUseCase {
@@ -77,7 +78,6 @@ class DeleteEventUseCase {
       );
 
       const day = this.dateProvider.formatInDate(start_date);
-      const start_hour = this.dateProvider.formatInHour(start_date);
 
       const templatePath = resolve(
         __dirname,
@@ -98,12 +98,31 @@ class DeleteEventUseCase {
           mailMessage,
         };
 
-        await this.mailProvider.sendMail(
-          email,
-          "Aula Removida",
+        const calendarEvent = {
+          content: await createCalendarEvent({
+            id: eventExists.id,
+            start: start_date,
+            end: end_date,
+            summary: eventExists.title,
+            description: eventExists.instruction,
+            location: 'Sala virtual',
+            status: "CANCELLED",
+            method: 'CANCEL',
+            attendee: {
+              name,
+              email
+            },
+          }),
+          method: 'CANCEL',
+        }
+
+        this.mailProvider.sendMail({
+          to: email,
+          subject: "Aula Removida",
           variables,
-          templatePath
-        );
+          path: templatePath,
+          calendarEvent,
+        });
 
         await this.statementsRepository.create({
           amount: eventDurationInHours,
@@ -140,17 +159,36 @@ class DeleteEventUseCase {
 
     const eventTeacher = await this.usersRepository.findById(teacher_id);
 
+    const calendarEvent = {
+      content: await createCalendarEvent({
+        id: eventExists.id,
+        start: start_date,
+        end: end_date,
+        summary: eventExists.title,
+        description: eventExists.instruction,
+        location: 'Sala virtual',
+        status: "CANCELLED",
+        method: 'CANCEL',
+        attendee: {
+          name: eventTeacher.name,
+          email: eventTeacher.email
+        },
+      }),
+      method: 'CANCEL',
+    }
+
     const variables = {
       name: eventTeacher.name,
       mailMessage: `A aula "${title}" agendada para o dia ${this.dateProvider.parseFormat(start_date, "DD-MM-YYYY [às] HH:mm")} foi cancelada.`,
     };
 
-    this.mailProvider.sendMail(
-      eventTeacher.email,
-      `Aula cancelada - ${title}`,
+    this.mailProvider.sendMail({
+      to: eventTeacher.email,
+      subject: `Aula cancelada - ${title}`,
       variables,
-      templatePath
-    );
+      path: templatePath,
+      calendarEvent,
+    });
 
     await this.eventsLevelsRepository.deleteByEvent(id);
 

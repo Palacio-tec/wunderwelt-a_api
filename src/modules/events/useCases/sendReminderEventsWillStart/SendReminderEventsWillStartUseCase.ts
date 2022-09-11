@@ -83,12 +83,12 @@ class SendReminderEventsWillStartUseCase {
           time: reminderEventEmailValue,
         };
   
-        this.mailProvider.sendMail(
-          user.email,
-          "A sua aula vai começar daqui a pouco!",
+        this.mailProvider.sendMail({
+          to: user.email,
+          subject: "A sua aula vai começar daqui a pouco!",
           variables,
-          templatePath
-        );
+          path: templatePath
+        });
       })
     })
   }

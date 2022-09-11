@@ -72,12 +72,12 @@ class SendCanRefoundReminderEventsUseCase {
           refundTimeLimit: refundTimeLimit.value,
         };
   
-        this.mailProvider.sendMail(
-          user.email,
-          "Deseja manter ou cancelar sua próxima aula?",
+        this.mailProvider.sendMail({
+          to: user.email,
+          subject: "Deseja manter ou cancelar sua próxima aula?",
           variables,
-          templatePath
-        );
+          path: templatePath,
+        });
       })
     })
   }

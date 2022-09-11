@@ -81,12 +81,12 @@ class SendEventsWillStartEmailUseCase {
         link: newLink,
       };
 
-      this.mailProvider.sendMail(
-        teacher_email,
-        `Lista de alunos inscritos na aula - ${title} hoje às ${time}`,
+      this.mailProvider.sendMail({
+        to: teacher_email,
+        subject: `Lista de alunos inscritos na aula - ${title} hoje às ${time}`,
         variables,
-        templatePath
-      );
+        path: templatePath
+      });
     })
   }
 }
