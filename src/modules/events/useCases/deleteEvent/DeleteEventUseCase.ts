@@ -101,8 +101,8 @@ class DeleteEventUseCase {
         const calendarEvent = {
           content: await createCalendarEvent({
             id: eventExists.id,
-            start: this.dateProvider.convertToUTC(start_date),
-            end: this.dateProvider.convertToUTC(end_date),
+            start: start_date,
+            end: end_date,
             summary: eventExists.title,
             description: eventExists.instruction,
             location: 'Sala virtual',
@@ -162,8 +162,8 @@ class DeleteEventUseCase {
     const calendarEvent = {
       content: await createCalendarEvent({
         id: eventExists.id,
-        start: this.dateProvider.convertToUTC(start_date),
-        end: this.dateProvider.convertToUTC(end_date),
+        start: start_date,
+        end: end_date,
         summary: eventExists.title,
         description: eventExists.instruction,
         location: 'Sala virtual',

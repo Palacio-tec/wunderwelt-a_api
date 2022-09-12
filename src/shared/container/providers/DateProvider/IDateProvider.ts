@@ -1,7 +1,6 @@
 interface IDateProvider {
   differenceInHours(start_date: Date, end_date: Date): number;
   convertToUTC(date: Date | string): string;
-  convertToUTC2(date: Date | string): string;
   dateNow(date?: Date | string | number): Date;
   compareInDays(start_date: Date, end_date: Date): number;
   addDays(days: number): Date;
