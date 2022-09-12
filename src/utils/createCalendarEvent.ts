@@ -60,7 +60,6 @@ async function createCalendarEvent({
         id,
         start,
         end,
-        timezone: EVENT_VARIABLES.TIMEZONE,
         summary,
         description,
         location,
