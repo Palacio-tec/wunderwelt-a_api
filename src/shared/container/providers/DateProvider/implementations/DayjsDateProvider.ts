@@ -21,7 +21,8 @@ class DayjsDateProvider implements IDateProvider {
   }
 
   convertToUTC2(date: Date | string): string {
-    return dayjs(date).utc().tz('America/Sao_Paulo').format();
+    const teste = dayjs.tz(date, "America/Sao_Paulo")
+    return dayjs(teste).utc().format();
   }
 
   dateNow(date?: Date | string | number): Date {
