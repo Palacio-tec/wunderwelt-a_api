@@ -143,8 +143,8 @@ class CreateEventUseCase {
     const calendarEvent = {
       content: await createCalendarEvent({
         id: event_id,
-        start: this.dateProvider.convertToUTC(start_date),
-        end: this.dateProvider.convertToUTC(end_date),
+        start: this.dateProvider.convertToUTC2(start_date),
+        end: this.dateProvider.convertToUTC2(end_date),
         summary: title,
         description: instruction,
         location: 'Sala virtual',
