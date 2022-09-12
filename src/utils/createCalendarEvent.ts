@@ -28,7 +28,12 @@ interface ICreateCalendarEventProps {
 
 const SCALE = 'gregorian'
 
-const EVENT_VARIABLES = {
+const EVENT_VARIABLES: {
+    TIMEZONE: string;
+    URL: string;
+    ORGANIZER_NAME: string;
+    ORGANIZER_EMAIL: string;
+} = {
     TIMEZONE: 'America/Sao_Paulo',
     URL: 'praktika.wunderwelt-a.com.br',
     ORGANIZER_NAME: 'PrAktikA',

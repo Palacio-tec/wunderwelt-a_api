@@ -97,8 +97,8 @@ class CancelEventWithoutStudentUseCase {
           const calendarEvent = {
             content: await createCalendarEvent({
               id: event.event_id,
-              start: start_date,
-              end: end_date,
+              start: this.dateProvider.convertToUTC(start_date),
+              end: this.dateProvider.convertToUTC(end_date),
               summary: title,
               description: instruction,
               location: 'Sala virtual',
@@ -138,8 +138,8 @@ class CancelEventWithoutStudentUseCase {
       const calendarEvent = {
         content: await createCalendarEvent({
           id: event.event_id,
-          start: start_date,
-          end: end_date,
+          start: this.dateProvider.convertToUTC(start_date),
+          end: this.dateProvider.convertToUTC(end_date),
           summary: title,
           description: instruction,
           location: 'Sala virtual',
