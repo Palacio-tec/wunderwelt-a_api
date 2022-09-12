@@ -140,7 +140,7 @@ class CreateEventUseCase {
       duration,
     };
 
-    const test = new Intl.DateTimeFormat('pt-BR', {timeZone: 'American/Sao_Paulo'}).format(Date.parse(start_date as string))
+    const test = new Intl.DateTimeFormat('pt-BR', {timeZone: 'America/Sao_Paulo'}).format(Date.parse(start_date as string))
 
     const calendarEvent = {
       content: await createCalendarEvent({
