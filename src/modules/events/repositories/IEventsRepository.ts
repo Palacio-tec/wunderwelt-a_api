@@ -31,6 +31,7 @@ interface IEventsRepository {
   findEventWithoutStudentByDate(refDate: string): Promise<IFindEventWithoutStudentByDateDTO[]>;
   findByHighlightAndWillStart(year: number, month: number, day: number): Promise<Event[]>;
   findByUserIdAndDate(user_id: string, eventDate: string): Promise<IFindEventWillStartDTO[]>;
+  findEventByPeriod(start_date: string, end_date: string): Promise<Event[]>;
 }
 
 export { IEventsRepository };

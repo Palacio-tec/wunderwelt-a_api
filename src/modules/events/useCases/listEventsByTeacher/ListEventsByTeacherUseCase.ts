@@ -16,11 +16,22 @@ class ListEventsByTeacherUseCase {
     start_date,
     end_date,
   }): Promise<Event[]> {
-    const events = await this.eventsRepository.findEventByTeacherAndPeriod({
-        teacher_id,
+    let events = []
+
+    if (!!teacher_id && !!start_date && !!end_date) {
+      events = await this.eventsRepository.findEventByTeacherAndPeriod({
+          teacher_id,
+          start_date,
+          end_date,
+      });
+    } else if (!!teacher_id) {
+      events = await this.eventsRepository.findEventByTeacher(teacher_id);
+    } else {
+      events = await this.eventsRepository.findEventByPeriod(
         start_date,
-        end_date,
-    });
+        end_date
+      );
+    }
 
     return events;
   }
