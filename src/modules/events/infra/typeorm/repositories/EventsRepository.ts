@@ -289,7 +289,10 @@ class EventsRepository implements IEventsRepository {
   }
 
   async findEventByTeacher(teacher_id: string): Promise<Event[]> {
-    const events = await this.repository.find({ teacher_id });
+    const events = await this.repository.find({
+      where: { teacher_id },
+      relations: ['user'],
+    });
 
     return events;
   }
@@ -422,6 +425,23 @@ class EventsRepository implements IEventsRepository {
         e.id, e.title, e.description, e.link, e.start_date, e.teacher_id,
         u.name, u.email`
     );
+
+    return events;
+  }
+
+  async findEventByPeriod(start_date: string, end_date: string): Promise<Event[]> {
+    const events = await this.repository.find({
+      where: {
+        start_date: Raw(start_dateFieldName => 
+          `to_char(${start_dateFieldName}, 'YYYY-MM-DD') BETWEEN '${start_date}' AND '${end_date}'`
+        ),
+        is_canceled: false,
+      },
+      order: {
+        start_date: "ASC",
+      },
+      relations: ['user'],
+    })
 
     return events;
   }
