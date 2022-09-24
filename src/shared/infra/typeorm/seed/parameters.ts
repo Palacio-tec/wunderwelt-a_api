@@ -72,7 +72,7 @@ async function create() {
       values(
         '${uuidV4()}',
         'ReminderEventEmail',
-        'Informa quantas horas antes do início de uma aula o aluno receberá um e-mail de lembrete.',
+        'Informa quantas horas antes do início de uma aula o aluno receberá um e-mail de lembrete, e o professor receberá o e-mail com a lista de alunos.',
         '1',
         'now()'
       )
@@ -98,6 +98,18 @@ async function create() {
         'SendNewsletter',
         'Data que será realizado o envio do próximo e-mail aos alunos com a listagem das aulas de destaque.',
         '',
+        'now()'
+      )
+    `
+  );
+
+  await connection.query(
+    `INSERT INTO PARAMETERS(id, reference, description, value, created_at)
+      values(
+        '${uuidV4()}',
+        'PreviewEventEmail',
+        'Informa quantas horas antes do início de uma aula o professor irá recer um e-mail com uma prévia da lista de alunos.',
+        '12',
         'now()'
       )
     `

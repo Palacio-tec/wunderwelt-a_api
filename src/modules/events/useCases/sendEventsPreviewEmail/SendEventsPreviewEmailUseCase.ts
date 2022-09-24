@@ -9,7 +9,7 @@ import { IDateProvider } from "@shared/container/providers/DateProvider/IDatePro
 import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
 
 @injectable()
-class SendEventsWillStartEmailUseCase {
+class SendEventsPreviewEmailUseCase {
   constructor(
     @inject("EventsRepository")
     private eventsRepository: IEventsRepository,
@@ -28,7 +28,7 @@ class SendEventsWillStartEmailUseCase {
   ) {}
 
   async execute(date: Date): Promise<void> {
-    const reminderEventEmail = await this.parametersRepository.findByReference('ReminderEventEmail');
+    const reminderEventEmail = await this.parametersRepository.findByReference('PreviewEventEmail');
 
     const reminderEventEmailValue = Number(reminderEventEmail.value)
 
@@ -43,14 +43,13 @@ class SendEventsWillStartEmailUseCase {
       endDateFormatted
     ); 
 
-
     const templatePath = resolve(
       __dirname,
       "..",
       "..",
       "views",
       "emails",
-      "eventWillStart.hbs"
+      "eventPreview.hbs"
     );
 
     events.map(async (event) => {
@@ -58,29 +57,15 @@ class SendEventsWillStartEmailUseCase {
 
       const { teacher_name, teacher_email, title, start_date, link } = event;
 
-      const linkInfo = link.split(/\r?\n/)
+      const datetime = this.dateProvider.parseFormat(start_date, "DD-MM-YYYY [às] HH:mm")
 
-      let newLink = ''
-
-      linkInfo.forEach(info => {
-        if (info.includes('http')) {
-          newLink += `<br /><a href='${info}'>${info}</a>`
-        } else {
-          newLink += `<br /><text>${info}</text>`
-        }
-      });
-
-      const date = this.dateProvider.formatInDate(start_date)
-      const time = this.dateProvider.formatInHour(start_date)
-
-      const subject = `Lista de alunos inscritos na aula - ${title} hoje às ${time}`
+      const subject = `Prévia da Lista de alunos inscritos na aula - ${title} ${datetime}`
 
       const variables = {
         name: teacher_name,
         title,
-        time,
+        datetime,
         schedules,
-        link: newLink,
       };
 
       this.mailProvider.sendMail({
@@ -93,4 +78,4 @@ class SendEventsWillStartEmailUseCase {
   }
 }
 
-export { SendEventsWillStartEmailUseCase };
+export { SendEventsPreviewEmailUseCase };
