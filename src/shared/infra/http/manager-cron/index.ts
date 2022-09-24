@@ -5,6 +5,7 @@ import EventsWithoutStudent from "./jobs/EventsWithoutStudent";
 import EventsCanRefound from "./jobs/EventsCanRefound";
 import EventsReminder from "./jobs/EventsReminder";
 import EventsNewsletter from "./jobs/EventsNewsletter"
+import PreviewEventsWillStart from "./jobs/PreviewEventsWillStart";
 
 class ManagerCron{
   private jobs: ScheduledTask[];
@@ -16,6 +17,7 @@ class ManagerCron{
       EventsWithoutStudent,
       EventsCanRefound,
       EventsNewsletter,
+      PreviewEventsWillStart,
     ];
   };
 
