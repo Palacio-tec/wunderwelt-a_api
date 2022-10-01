@@ -40,19 +40,19 @@ class CreatePurchaseOrderUseCase {
     private statementsRepository: IStatementsRepository,
   ) {}
 
-  async credit(payer_id: string, credit: number, payment_id: string): Promise<void> {
-    const hours = await this.hoursRepository.findByUser(payer_id);
+  async credit(payer_id: string, credit: number, payment_id: string, purchase_id: string): Promise<void> {
+    const expirationTimeParameter = await this.parametersRepository
+      .findByReference('ExpirationTime');
+    const validityDays = Number(expirationTimeParameter.value)
+    const expiration_date = this.dateProvider.addDays(validityDays);
 
-    hours.amount = Number(hours.amount) + Number(credit);
-
-    const parameterExpirationTime =
-      await this.parametersRepository.findByReference("ExpirationTime");
-
-    hours.expiration_date = this.dateProvider.addDays(
-      Number(parameterExpirationTime.value)
-    );
-
-    await this.hoursRepository.update(hours);
+    this.hoursRepository.create({
+      amount: credit,
+      user_id: payer_id,
+      balance: credit,
+      expiration_date,
+      purchase_id
+    });
 
     await this.statementsRepository.create({
       amount: credit,
@@ -62,14 +62,18 @@ class CreatePurchaseOrderUseCase {
       payment_id,
       origin: 'system',
     });
+
+    return
   }
 
-  async debit(payer_id: string, credit: number, payment_id: string): Promise<void> {
-    const hours = await this.hoursRepository.findByUser(payer_id);
+  async debit(payer_id: string, credit: number, payment_id: string, purchase_id: string): Promise<void> {
+    const hoursExists = await this.hoursRepository.findByPurchaseIdAndUser(purchase_id, payer_id);
 
-    hours.amount = Number(hours.amount) - Number(credit);
+    if (!hoursExists) {
+      throw new AppError('No hour record found fot this purchase id and user')
+    }
 
-    await this.hoursRepository.update(hours);
+    await this.hoursRepository.delete(hoursExists.id);
 
     await this.statementsRepository.create({
       amount: credit,
@@ -131,7 +135,7 @@ class CreatePurchaseOrderUseCase {
       });
 
       if (status === "approved") {
-        await this.credit(payer_id, credit, payment_id)
+        await this.credit(payer_id, credit, payment_id, purchaseOrder.id)
       }
   
       return purchaseOrder;
@@ -141,12 +145,12 @@ class CreatePurchaseOrderUseCase {
       }
 
       if (status === "approved") {
-        await this.credit(payer_id, credit, payment_id)
+        await this.credit(payer_id, credit, payment_id, purchaseOrderExist.id)
       } else if (
         (status === "cancelled" || status === "refunded")
         && purchaseOrderExist.status === "approved"
       ) {
-        await this.debit(payer_id, credit, payment_id)
+        await this.debit(payer_id, credit, payment_id, purchaseOrderExist.id)
       }
 
       purchaseOrderExist.status = status;

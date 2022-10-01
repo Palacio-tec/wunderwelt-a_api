@@ -12,6 +12,8 @@ interface IUsersRepository {
   findByField(field: string, value: string): Promise<User[]>;
   delete(id: string): Promise<void>;
   listTeachers(): Promise<User[]>;
+  updateAddCreditById(id: string, credit: number): Promise<void>;
+  updateCreditById(id: string, credit: string): Promise<void>;
 }
 
 export { IUsersRepository };

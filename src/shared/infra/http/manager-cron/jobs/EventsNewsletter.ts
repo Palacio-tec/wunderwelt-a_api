@@ -11,4 +11,4 @@ function EventsNewsletter() {
   sendEventsNewsletterController.handle(date);
 }
 
-export default schedule('0 0 10 * * *', EventsNewsletter, { scheduled: false }); // Every hour 10
+export default schedule('0 0 10 * * *', EventsNewsletter, { scheduled: false }); // Every 10 o'clock

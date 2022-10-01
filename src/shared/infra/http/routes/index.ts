@@ -13,6 +13,7 @@ import { usersRoutes } from "./users.routes";
 import { levelsRoutes } from "./levels.routes";
 import { productsRoutes } from "./products.routes";
 import { purchasesRoutes } from "./purchases.routes";
+import { creditsRoutes } from "./credits.routes";
 
 const router = Router();
 
@@ -29,6 +30,7 @@ router.use("/statements", statementsRoutes);
 router.use("/coupons", couponsRoutes);
 router.use("/levels", levelsRoutes);
 router.use("/products", productsRoutes);
-router.use("/purchase-orders", purchasesRoutes)
+router.use("/purchase-orders", purchasesRoutes);
+router.use("/credits", creditsRoutes);
 
 export { router };

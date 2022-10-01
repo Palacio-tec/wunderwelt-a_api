@@ -65,6 +65,9 @@ class User {
   @JoinColumn() 
   hours: Hours;
 
+  @Column({ default: 0})
+  credit: number;
+
   constructor() {
     if (!this.id) {
       this.id = uuidv4();

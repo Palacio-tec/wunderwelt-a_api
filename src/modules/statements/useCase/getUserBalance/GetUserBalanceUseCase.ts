@@ -9,7 +9,6 @@ import { IHoursRepository } from "@modules/accounts/repositories/IHoursRepositor
 interface IResponse {
   statement: Statement[];
   balance: number;
-  expirationDate: string;
 }
 
 @injectable()
@@ -34,17 +33,9 @@ class GetUserBalanceUseCase {
 
     const userHour = await this.hoursRepository.findByUser(user_id);
 
-    if (!userHour) {
-      throw new AppError("User does not has credit");
-    }
-
     const balance = await this.statementsRepository.getUserBalance({
       user_id,
       with_statement: withStatement,
-    });
-
-    Object.assign(balance, {
-      expirationDate: userHour.expiration_date,
     });
 
     return balance as IResponse;

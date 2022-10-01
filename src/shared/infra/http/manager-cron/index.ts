@@ -6,6 +6,8 @@ import EventsCanRefound from "./jobs/EventsCanRefound";
 import EventsReminder from "./jobs/EventsReminder";
 import EventsNewsletter from "./jobs/EventsNewsletter"
 import PreviewEventsWillStart from "./jobs/PreviewEventsWillStart";
+import CreditsWillExpired from "./jobs/CreditsWillExpired";
+import UpdateUserCredits from "./jobs/UpdateUserCredits"
 
 class ManagerCron{
   private jobs: ScheduledTask[];
@@ -18,6 +20,8 @@ class ManagerCron{
       EventsCanRefound,
       EventsNewsletter,
       PreviewEventsWillStart,
+      CreditsWillExpired,
+      UpdateUserCredits,
     ];
   };
 

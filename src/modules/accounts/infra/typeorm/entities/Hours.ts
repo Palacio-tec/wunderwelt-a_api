@@ -24,6 +24,12 @@ class Hours {
   @Column()
   user_id: string;
 
+  @Column()
+  balance: number;
+
+  @Column()
+  purchase_id: string;
+
   @ManyToOne(() => User)
   @JoinColumn({ name: "user_id" })
   user: User;

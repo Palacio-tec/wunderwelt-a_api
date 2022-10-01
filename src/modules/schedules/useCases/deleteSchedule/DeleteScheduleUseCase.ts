@@ -11,6 +11,7 @@ import { IQueuesRepository } from "@modules/queues/repositories/IQueuesRepositor
 import { AppError } from "@shared/errors/AppError";
 import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 import { IHoursRepository } from "@modules/accounts/repositories/IHoursRepository";
+import { ISchedulesCreditsRepository } from "@modules/schedules/repositories/ISchedulesCreditsRepository";
 
 @injectable()
 class DeleteScheduleUseCase {
@@ -37,8 +38,51 @@ class DeleteScheduleUseCase {
     private mailProvider: IMailProvider,
 
     @inject("HoursRepository")
-    private hoursRepository: IHoursRepository
+    private hoursRepository: IHoursRepository,
+
+    @inject("SchedulesCreditsRepository")
+    private schedulesCreditsRepository: ISchedulesCreditsRepository,
   ) {}
+
+  private async _deleteSchedule(schedule_id: string, user_id: string){
+    const scheduleCredits = await this.schedulesCreditsRepository.findByScheduleId(schedule_id)
+    const expirationTimeParameter = await this.parametersRepository.findByReference('CreditExtensionDays');
+    const extensionDays = Number(expirationTimeParameter.value)
+
+    let depositCredit = 0
+
+    for (let index = 0; index < scheduleCredits.length; index++) {
+      const { id, credit_id, amount_credit } = scheduleCredits[index];
+     
+      const credit = await this.hoursRepository.findById(credit_id)
+
+      let newExpirationDate = credit.expiration_date
+
+      if (credit.balance <= 0 && 
+        this.dateProvider.parseFormat(newExpirationDate, 'YYYY-MM-DD') <= this.dateProvider.parseFormat(new Date(), 'YYYY-MM-DD')
+      ) {
+        newExpirationDate = this.dateProvider.addDays(extensionDays)
+      }
+
+      await this.hoursRepository.create({
+        ...credit,
+        balance: (Number(credit.balance) + Number(amount_credit)),
+        expiration_date: newExpirationDate,
+      })
+
+      depositCredit += Number(amount_credit)
+
+      this.schedulesCreditsRepository.delete(id)
+    }
+
+    await this.schedulesRepository.deleteById(schedule_id);
+
+    if (depositCredit <= 0) {
+      return
+    }
+
+    await this.usersRepository.updateAddCreditById(user_id, depositCredit)
+  }
 
   async execute(eventId: string, user_id: string): Promise<void> {
     const scheduleExists = await this.schedulesRepository.findByEventIdAndUserId(eventId, user_id);
@@ -59,12 +103,16 @@ class DeleteScheduleUseCase {
       );
     }
 
+    await this._deleteSchedule(scheduleExists.id, user_id)
+
     const parameterRefundTimeLimit =
       await this.parametersRepository.findByReference("RefundTimeLimit");
 
     const { event } = scheduleExists;
 
+
     const { credit, start_date } = event;
+
 
     const dateNow = this.dateProvider.dateNow();
 
@@ -74,21 +122,13 @@ class DeleteScheduleUseCase {
     );
 
     if (untilEventStart >= Number(parameterRefundTimeLimit.value)) {
-      await this.statementsRepository.create({
+      this.statementsRepository.create({
         amount: credit,
         description: `Reembolso por cancelar a inscrição da aula ${event.title}`,
         type: OperationEnumTypeStatement.DEPOSIT,
         user_id,
       });
-
-      const hours = await this.hoursRepository.findByUser(user_id);
-
-      hours.amount = Number(hours.amount) + Number(credit);
-
-      await this.hoursRepository.update(hours);
     }
-
-    await this.schedulesRepository.deleteById(scheduleExists.id);
 
     const queues = await this.queuesRepository.findByEvent(event.id);
 
