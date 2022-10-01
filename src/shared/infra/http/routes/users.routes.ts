@@ -1,7 +1,6 @@
 import { Router } from "express";
 
 import { CreateUserController } from "@modules/accounts/useCases/createUser/CreateUserController";
-import { UpdateHoursController } from "@modules/accounts/useCases/updateHours/UpdateHoursController";
 import { UserFieldsController } from "@modules/accounts/useCases/validations/userFields/UserFieldsController";
 import { ListUsersController } from "@modules/accounts/useCases/listUsers/ListUsersController";
 
@@ -18,7 +17,6 @@ import { SendGiftController } from "@modules/accounts/useCases/sendGift/SendGift
 const usersRoutes = Router();
 
 const createUserController = new CreateUserController();
-const updateHoursController = new UpdateHoursController();
 const userFieldsController = new UserFieldsController();
 const listUsersController = new ListUsersController();
 const findUserController = new FindUserController();
@@ -39,12 +37,6 @@ usersRoutes.post(
 usersRoutes.post(
   "/signUp",
   createUserController.handle
-);
-
-usersRoutes.post(
-  "/credit_hours",
-  ensureAuthenticated,
-  updateHoursController.handle
 );
 
 usersRoutes.get(

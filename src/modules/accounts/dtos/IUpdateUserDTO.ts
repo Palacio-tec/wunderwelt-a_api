@@ -13,6 +13,7 @@ interface IUpdateUserDTO {
     phone?: string;
     document_type?: string;
     document?: string;
+    credit?: number;
   }
   
   export { IUpdateUserDTO };

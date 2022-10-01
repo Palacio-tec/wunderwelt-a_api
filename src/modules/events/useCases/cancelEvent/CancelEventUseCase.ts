@@ -11,6 +11,8 @@ import { IStatementsRepository } from "@modules/statements/repositories/IStateme
 import { OperationEnumTypeStatement } from "@modules/statements/dtos/ICreateStatementDTO";
 import { IHoursRepository } from "@modules/accounts/repositories/IHoursRepository";
 import { createCalendarEvent } from "@utils/createCalendarEvent";
+import { ISchedulesCreditsRepository } from "@modules/schedules/repositories/ISchedulesCreditsRepository";
+import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
 @injectable()
 class CancelEventUseCase {
   constructor(
@@ -34,7 +36,53 @@ class CancelEventUseCase {
 
     @inject("HoursRepository")
     private hoursRepository: IHoursRepository,
+
+    @inject("SchedulesCreditsRepository")
+    private schedulesCreditsRepository: ISchedulesCreditsRepository,
+
+    @inject("ParametersRepository")
+    private parametersRepository: IParametersRepository,
   ) {}
+
+  private async _deleteSchedule(schedule_id: string, user_id: string){
+    const scheduleCredits = await this.schedulesCreditsRepository.findByScheduleId(schedule_id)
+    const expirationTimeParameter = await this.parametersRepository.findByReference('CreditExtensionDays');
+    const extensionDays = Number(expirationTimeParameter.value)
+
+    let depositCredit = 0
+
+    for (let index = 0; index < scheduleCredits.length; index++) {
+      const { id, credit_id, amount_credit } = scheduleCredits[index];
+     
+      const credit = await this.hoursRepository.findById(credit_id)
+
+      let newExpirationDate = credit.expiration_date
+
+      if (credit.balance <= 0 && 
+        this.dateProvider.parseFormat(newExpirationDate, 'YYYY-MM-DD') <= this.dateProvider.parseFormat(new Date(), 'YYYY-MM-DD')
+      ) {
+        newExpirationDate = this.dateProvider.addDays(extensionDays)
+      }
+
+      await this.hoursRepository.create({
+        ...credit,
+        balance: (Number(credit.balance) + Number(amount_credit)),
+        expiration_date: newExpirationDate,
+      })
+
+      depositCredit += Number(amount_credit)
+
+      this.schedulesCreditsRepository.delete(id)
+    }
+
+    await this.schedulesRepository.deleteById(schedule_id);
+
+    if (depositCredit <= 0) {
+      return
+    }
+
+    await this.usersRepository.updateAddCreditById(user_id, depositCredit)
+  }
 
   async execute(
     id: string,
@@ -74,7 +122,7 @@ class CancelEventUseCase {
       );
 
       schedulesExists.map(async (schedule) => {
-        await this.schedulesRepository.deleteById(schedule.id);
+        this._deleteSchedule(schedule.id, schedule.user.id)
 
         const { name, email } = schedule.user;
 
@@ -109,18 +157,12 @@ class CancelEventUseCase {
           calendarEvent
         });
 
-        await this.statementsRepository.create({
+        this.statementsRepository.create({
           amount: credit,
           description: `Reembolso de aula cancelada. ${title} - ${day}`,
           type: OperationEnumTypeStatement.DEPOSIT,
           user_id: schedule.user_id,
         });
-
-        const hours = await this.hoursRepository.findByUser(schedule.user_id);
-
-        hours.amount = Number(hours.amount) + Number(credit);
-
-        await this.hoursRepository.update(hours);
       });
     }
 

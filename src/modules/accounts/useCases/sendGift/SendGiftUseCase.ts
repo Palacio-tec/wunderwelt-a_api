@@ -11,6 +11,10 @@ import { IDateProvider } from "@shared/container/providers/DateProvider/IDatePro
 import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 import { AppError } from "@shared/errors/AppError";
 
+interface ICreateCreditProps {
+  amount: number;
+  user_id: string;
+}
 @injectable()
 class SendGiftUseCase {
   constructor(
@@ -32,6 +36,29 @@ class SendGiftUseCase {
     @inject("MailProvider")
     private mailProvider: IMailProvider,
   ) {}
+
+  private async _createCredit({ amount, user_id }: ICreateCreditProps): Promise<void> {
+    const expirationTimeParameter = await this.parametersRepository
+      .findByReference('ExpirationTime');
+    const validityDays = Number(expirationTimeParameter.value)
+    const expiration_date = this.dateProvider.addDays(validityDays);
+
+    await this.hoursRepository.create({
+      amount,
+      user_id,
+      balance: amount,
+      expiration_date
+    });
+
+    const user = await this.usersRepository.findById(user_id)
+
+    await this.usersRepository.create({
+      ...user,
+      credit: (Number(user.credit) + Number(amount))
+    })
+
+    return
+  }
 
   async execute({
     credit,
@@ -58,13 +85,7 @@ class SendGiftUseCase {
         return false;
       }
 
-      const hours = await this.hoursRepository.findByUser(user_id);
-
-      if (!hours) {
-        return false;
-      }
-
-      await this.statementsRepository.create({
+      this.statementsRepository.create({
         amount: credit,
         description: `Você foi presenteado com ${credit} crédito${credit > 1 ? 's' : ''}`,
         type: OperationEnumTypeStatement.DEPOSIT,
@@ -72,16 +93,10 @@ class SendGiftUseCase {
         is_gift: true,
       });
 
-      hours.amount = Number(hours.amount) + Number(credit);
-
-      const parameterExpirationTime =
-        await this.parametersRepository.findByReference("ExpirationTime");
-
-      hours.expiration_date = this.dateProvider.addDays(
-        Number(parameterExpirationTime.value)
-      );
-
-      await this.hoursRepository.update(hours);
+      this._createCredit({
+        amount: Number(credit),
+        user_id
+      })
 
       const templatePath = resolve(
         __dirname,

@@ -44,18 +44,14 @@ class ShowProfileUseCase {
       phone,
       document_type,
       document,
+      credit,
     } = await this.usersRepository.findById(id);
-
-    const { balance } = await this.statementsRepository.getUserBalance({
-      user_id: id,
-      with_statement: false,
-    });
 
     return {
       name,
       username,
       email,
-      balance,
+      balance: credit,
       isAdmin,
       isTeacher,
       street_name,

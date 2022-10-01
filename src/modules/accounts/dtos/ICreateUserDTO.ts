@@ -14,6 +14,7 @@ interface ICreateUserDTO {
   phone?: string;
   document_type?: string;
   document?: string;
+  credit?: number;
 }
 
 export { ICreateUserDTO };

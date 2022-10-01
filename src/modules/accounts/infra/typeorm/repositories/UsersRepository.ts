@@ -27,6 +27,7 @@ class UsersRepository implements IUsersRepository {
     phone,
     document_type,
     document,
+    credit,
   }: ICreateUserDTO): Promise<User> {
     const user = this.repository.create({
       name,
@@ -44,6 +45,7 @@ class UsersRepository implements IUsersRepository {
       phone,
       document_type,
       document,
+      credit,
     });
 
     await this.repository.save(user);
@@ -128,6 +130,18 @@ class UsersRepository implements IUsersRepository {
     });
 
     return teachers
+  }
+
+  async updateAddCreditById(id: string, credit: number): Promise<void> {
+    await this.repository.query(`UPDATE users SET credit = credit + ${credit} WHERE id = '${id}'`)
+
+    return
+  }
+
+  async updateCreditById(id: string, credit: string): Promise<void> {
+    await this.repository.query(`UPDATE users SET credit = ${credit} WHERE id = '${id}'`)
+
+    return
   }
 }
 

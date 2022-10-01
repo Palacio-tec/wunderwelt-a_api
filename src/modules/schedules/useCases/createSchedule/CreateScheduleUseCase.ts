@@ -15,7 +15,13 @@ import { IStatementsRepository } from "@modules/statements/repositories/IStateme
 import { OperationEnumTypeStatement } from "@modules/statements/dtos/ICreateStatementDTO";
 import { IQueuesRepository } from "@modules/queues/repositories/IQueuesRepository";
 import { createCalendarEvent } from "@utils/createCalendarEvent";
+import { ISchedulesCreditsRepository } from "@modules/schedules/repositories/ISchedulesCreditsRepository";
+import { Hours } from "@modules/accounts/infra/typeorm/entities/Hours";
 
+type ICreditUsedProps = {
+  id: string;
+  amount: number;
+}
 @injectable()
 class CreateScheduleUseCase {
   constructor(
@@ -42,7 +48,58 @@ class CreateScheduleUseCase {
 
     @inject("QueuesRepository")
     private queuesRepository: IQueuesRepository,
+
+    @inject("SchedulesCreditsRepository")
+    private schedulesCreditsRepository: ISchedulesCreditsRepository,
   ) {}
+
+  async createCreditUsedHistoric(creditList: ICreditUsedProps[], schedule_id: string) {
+    creditList.map(credit => {
+      this.schedulesCreditsRepository.create({
+        schedule_id,
+        credit_id: credit.id,
+        amount_credit: credit.amount
+      })
+    })
+  }
+
+  private async _debitCredit(user_id: string, total_amount: number, schedule_id: string) {
+    if (total_amount <= 0) {
+      return
+    }
+
+    const creditsList = await this.hoursRepository.listAvailableByUser(user_id)
+    const creditIds: ICreditUsedProps[] = []
+
+    let remainingAmount = total_amount
+
+    for (let index = 0; index < creditsList.length; index++) {
+      const credit = creditsList[index];
+
+      let newBalance = (Number(credit.balance) - remainingAmount)
+      let amountUsed = remainingAmount
+
+      if (remainingAmount >= Number(credit.balance)) {
+        newBalance = 0
+        amountUsed = Number(credit.balance)
+      }
+
+      this.hoursRepository.update({
+        ...credit,
+        balance: newBalance
+      })
+
+      creditIds.push({id: credit.id, amount: amountUsed})
+
+      remainingAmount -= Number(credit.balance)
+
+      if (remainingAmount <= 0) {
+        break
+      }
+    }
+
+    this.createCreditUsedHistoric(creditIds, schedule_id)
+  }
 
   async execute({
     event_id,
@@ -63,13 +120,7 @@ class CreateScheduleUseCase {
 
     const { start_date, end_date, title, instruction, credit } = eventExists;
 
-    const userHours = await this.hoursRepository.findByUser(user_id);
-
-    if (!userHours) {
-      throw new AppError("User does not have a record of credits");
-    }
-
-    if (Number(userHours.amount) < Number(credit)) {
+    if (Number(userExists.credit) < Number(credit)) {
       throw new AppError("User does not have enough credits", 400, "enough.hours");
     }
 
@@ -97,6 +148,8 @@ class CreateScheduleUseCase {
       subject,
     });
 
+    this._debitCredit(user_id, Number(credit), schedule.id)
+
     const day = this.dateProvider.formatInDate(start_date);
     const start_hour = this.dateProvider.formatInHour(start_date);
 
@@ -107,11 +160,10 @@ class CreateScheduleUseCase {
       user_id,
     });
 
-    const hours = await this.hoursRepository.findByUser(user_id);
-
-    hours.amount = Number(hours.amount) - Number(credit);
-
-    await this.hoursRepository.update(hours);
+    this.usersRepository.create({
+      ...userExists,
+      credit: Number(userExists.credit) - Number(credit)
+    })
 
     const templatePath = resolve(
       __dirname,

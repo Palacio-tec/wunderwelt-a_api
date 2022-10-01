@@ -115,6 +115,18 @@ async function create() {
     `
   );
 
+  await connection.query(
+    `INSERT INTO PARAMETERS(id, reference, description, value, created_at)
+      values(
+        '${uuidV4()}',
+        'CreditExtensionDays',
+        'Informar quantos dias a mais são adicionados a data de vencimentos de créditos já vencidos quando ocorre o cancelamento de alguma aula que esses créditos foram utilizados.',
+        '7',
+        'now()'
+      )
+    `
+  );
+
   await connection.close();
 }
 

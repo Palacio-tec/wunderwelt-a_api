@@ -40,6 +40,8 @@ import { ProductsRepository } from "@modules/products/infra/typeorm/repositories
 
 import { IPurchaseOrdersRepository } from "@modules/purchases/repositories/IPurchaseOrdersRepository";
 import { PurchaseOrdersRepository } from "@modules/purchases/infra/typeorm/repositories/PurchaseOrdersRepository";
+import { ISchedulesCreditsRepository } from "@modules/schedules/repositories/ISchedulesCreditsRepository";
+import { SchedulesCreditsRepository } from "@modules/schedules/infra/typeorm/repositories/SchedulesCreditsRepository";
 
 container.registerSingleton<IUsersRepository>(
   "UsersRepository",
@@ -104,4 +106,9 @@ container.registerSingleton<IProductsRepository>(
 container.registerSingleton<IPurchaseOrdersRepository>(
   "PurchaseOrdersRepository",
   PurchaseOrdersRepository
+);
+
+container.registerSingleton<ISchedulesCreditsRepository>(
+  "SchedulesCreditsRepository",
+  SchedulesCreditsRepository
 );

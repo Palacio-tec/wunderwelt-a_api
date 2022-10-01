@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .container {
+        width: 100vw;
+        max-width: 1000px;
+        font-size: 18px;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      span {
+        margin: 10px 0;
+        display: block;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        max-width: 100%;
+      }
+
+      tr:nth-child(even){background-color: #f2f2f2;}
+
+      th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #1e2f50;
+        color: white;
+      }
+      td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+      }
+      
+      a {
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      .noReply {
+        font-size: 14px;
+        color: #687173;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <span>Olá, {{name}}</span>
+
+      <br>
+
+      <text>Gostaríamos de lembra que você possui {{amount}} crédito(s) que estão próximos do vencimento.</text>
+      <br />
+      <br />
+      <text><a href="https://praktika.wunderwelt-a.com.br/">Acesse a plataforma</a> para verificar a data de vencimento do(s) crédito(s) e encontre uma aula que melhor se enquadre as suas necessidades.</text>
+      <br />
+      <br />
+
+      <strong>Atenciosamente,</strong>
+
+      <p>Equipe | <strong>PrAktikA - Wunderwelt-A</strong></p>
+
+      <p class="noReply">
+        Não responda a esta mensagem. Este e-mail foi enviado por um sistema automático que não processa respostas.
+      </p>
+    </div>
+  </body>
+</html>
