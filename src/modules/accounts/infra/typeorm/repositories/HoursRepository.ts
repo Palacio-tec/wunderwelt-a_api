@@ -90,7 +90,7 @@ class HoursRepository implements IHoursRepository {
       on
         u.id = h.user_id 
       where
-        h.expiration_date between '${startDate}' and '${endDate}'
+        to_char(h.expiration_date, 'YYYY-MM-DD') between '${startDate}' and '${endDate}'
       group by
         h.user_id,
         u."name",
@@ -116,7 +116,7 @@ class HoursRepository implements IHoursRepository {
         hours h
       on
         h.user_id = u.id
-        and expiration_date >= '${new Intl
+        and to_char(expiration_date, 'YYYY-MM-DD') >= '${new Intl
           .DateTimeFormat('fr-CA', {
             year: "numeric", month: "2-digit", day: "2-digit",
             timeZone: 'America/Sao_Paulo'

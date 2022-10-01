@@ -19,18 +19,16 @@ class ListWillExpiredHoursUseCase {
     private dateProvider: IDateProvider,
   ) {}
 
-  async execute(date: Date): Promise<void> {
-    const nextDaysToVerify = 15;
-
-    const startDate = this.dateProvider.addDaysInDate(date, nextDaysToVerify);
-    const startDateFormated = this.dateProvider.parseFormatUTC(startDate);
+  async execute(date: Date, addDays: number): Promise<void> {
+    const startDate = this.dateProvider.addDaysInDate(date, addDays);
+    const startDateFormatted = this.dateProvider.parseFormat(startDate, 'YYYY-MM-DD');
 
     const endDate = this.dateProvider.addDaysInDate(startDate, 1);
-    const endDateFormated = this.dateProvider.parseFormatUTC(endDate);
+    const endDateFormatted = this.dateProvider.parseFormat(endDate, 'YYYY-MM-DD');
 
     const credits = await this.hoursRepository.findWillExpired(
-      startDateFormated,
-      endDateFormated
+      startDateFormatted,
+      endDateFormatted
     ); 
 
     const templatePath = resolve(
@@ -46,6 +44,7 @@ class ListWillExpiredHoursUseCase {
         const variables = {
             name: credit.name,
             amount: credit.amount,
+            days: addDays,
         };
 
         this.mailProvider.sendMail({
