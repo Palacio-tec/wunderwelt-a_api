@@ -53,7 +53,7 @@ class HoursRepository implements IHoursRepository {
   }
 
   async findByPurchaseIdAndUser(purchase_id: string, user_id: string): Promise<Hours> {
-    const hour = this.repository.findOne({
+    const hour = await this.repository.findOne({
       user_id, purchase_id
     })
 
@@ -101,7 +101,7 @@ class HoursRepository implements IHoursRepository {
   }
 
   async listAllBalance(): Promise<IListAllBalanceDTO[]> {
-    const listBalance = this.repository.query(`
+    const listBalance = await this.repository.query(`
       select
         u.id as user_id,
         sum(
