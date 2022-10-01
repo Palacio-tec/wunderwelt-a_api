@@ -8,4 +8,4 @@ function UpdateUsersHours() {
   updateUsersHoursController.handle();
 }
 
-export default schedule('0 * * * * *', UpdateUsersHours, { scheduled: false }); // Every 3 o`clock
+export default schedule('0 0 3 * * *', UpdateUsersHours, { scheduled: false }); // Every 3 o`clock

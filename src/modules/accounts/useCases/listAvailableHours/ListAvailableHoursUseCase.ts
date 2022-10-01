@@ -16,7 +16,7 @@ class ListAvailableHoursUseCase {
   ) {}
 
   async execute(user_id: string): Promise<Hours[]> {
-    const userExists = this.usersRepository.findById(user_id)
+    const userExists = await this.usersRepository.findById(user_id)
 
     if (!userExists) {
         throw new AppError("User does not exists");
