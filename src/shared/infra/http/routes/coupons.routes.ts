@@ -90,7 +90,7 @@ couponsRoutes.get(
 )
 
 couponsRoutes.get(
-  "/available",
+  "/list/available",
   ensureAuthenticated,
   ensureAdmin,
   listAvailableCouponsController.handle
