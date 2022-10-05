@@ -42,6 +42,8 @@ import { IPurchaseOrdersRepository } from "@modules/purchases/repositories/IPurc
 import { PurchaseOrdersRepository } from "@modules/purchases/infra/typeorm/repositories/PurchaseOrdersRepository";
 import { ISchedulesCreditsRepository } from "@modules/schedules/repositories/ISchedulesCreditsRepository";
 import { SchedulesCreditsRepository } from "@modules/schedules/infra/typeorm/repositories/SchedulesCreditsRepository";
+import { IPromotionsRepository } from "@modules/promotions/repositories/IPromotionsRepository";
+import { PromotionsRepository } from "@modules/promotions/infra/typeorm/repositories/PromotionsRepository";
 
 container.registerSingleton<IUsersRepository>(
   "UsersRepository",
@@ -111,4 +113,9 @@ container.registerSingleton<IPurchaseOrdersRepository>(
 container.registerSingleton<ISchedulesCreditsRepository>(
   "SchedulesCreditsRepository",
   SchedulesCreditsRepository
+);
+
+container.registerSingleton<IPromotionsRepository>(
+  "PromotionsRepository",
+  PromotionsRepository
 );

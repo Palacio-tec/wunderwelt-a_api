@@ -1,5 +1,3 @@
-// import { getRepository, Repository } from "typeorm";
-
 import { getRepository, Repository } from "typeorm";
 
 import { ICreatePurchaseOrdersDTO } from "@modules/purchases/dtos/ICreatePurchaseOrdersDTO";
