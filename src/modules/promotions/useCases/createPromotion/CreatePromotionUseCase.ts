@@ -42,10 +42,8 @@ class CreatePromotionUseCase {
         );
     }
 
-    if (!userExists) {
-      throw new AppError(
-          "User does not exists."
-      );
+    if (!userExists.is_admin) {
+      throw new AppError("Only administrators could be update an event");
     }
 
     const promotion = await this.promotionsRepository.create({
