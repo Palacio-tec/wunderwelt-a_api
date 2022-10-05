@@ -8,6 +8,7 @@ import { IParametersRepository } from "@modules/parameters/repositories/IParamet
 import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
+import { IPromotionsRepository } from "@modules/promotions/repositories/IPromotionsRepository";
 
 const NUMBER_OF_DAYS_FOR_NEXT_SHIPMENT = 14
 
@@ -65,6 +66,9 @@ class SendEventsNewsletterUseCase {
 
     @inject("UsersRepository")
     private usersRepository: IUsersRepository,
+
+    @inject("PromotionsRepository")
+    private promotionsRepository: IPromotionsRepository
   ) {}
 
   async execute(date: Date): Promise<void> {
@@ -93,6 +97,8 @@ class SendEventsNewsletterUseCase {
     const month = this.dateProvider.getMonth(date) + 1
     const year = this.dateProvider.getYear(date)
 
+    const hasPromotion = await this.promotionsRepository.findByDate(`${year}-${month}-${day}`)
+
     const events = await this.eventsRepository
       .findByHighlightAndWillStart(year, month, day); 
 
@@ -108,7 +114,10 @@ class SendEventsNewsletterUseCase {
     const mailData = await formatValues(events)
 
     const variables = {
-      mailData
+      mailData,
+      hasPromotion: !!hasPromotion,
+      message: hasPromotion?.message || null,
+      coupon: hasPromotion?.coupon || null
     };
 
     const allUsers = await this.usersRepository.findAllStudentUsers()

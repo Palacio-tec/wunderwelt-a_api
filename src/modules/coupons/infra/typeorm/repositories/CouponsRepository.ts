@@ -1,7 +1,7 @@
 import { ICreateCouponsDTO } from "@modules/coupons/dtos/ICreateCouponDTO";
 import { ICouponsRepository } from "@modules/coupons/repositories/ICouponsRepository";
 import { format } from "date-fns";
-import { getRepository, IsNull, Not, Repository } from "typeorm";
+import { getRepository, IsNull, Not, Raw, Repository } from "typeorm";
 import { Coupon } from "../entities/Coupon";
 
 class CouponsRepository implements ICouponsRepository {
@@ -97,6 +97,17 @@ class CouponsRepository implements ICouponsRepository {
     );
 
     return coupons;
+  }
+
+  async listAvailable(): Promise<Coupon[]> {
+    const coupons = await this.repository.query(
+      `SELECT c.* FROM coupons c
+      WHERE
+        c.used < c.limit
+        AND c.expiration_date >= '${format(new Date(), 'yyyy-MM-dd')}'`
+    );
+
+    return coupons
   }
 }
 

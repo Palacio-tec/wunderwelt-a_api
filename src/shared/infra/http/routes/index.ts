@@ -14,6 +14,7 @@ import { levelsRoutes } from "./levels.routes";
 import { productsRoutes } from "./products.routes";
 import { purchasesRoutes } from "./purchases.routes";
 import { creditsRoutes } from "./credits.routes";
+import { promotionsRoutes } from "./promotions.routes";
 
 const router = Router();
 
@@ -32,5 +33,6 @@ router.use("/levels", levelsRoutes);
 router.use("/products", productsRoutes);
 router.use("/purchase-orders", purchasesRoutes);
 router.use("/credits", creditsRoutes);
+router.use("/promotions", promotionsRoutes);
 
 export { router };

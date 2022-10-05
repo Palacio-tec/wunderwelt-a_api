@@ -10,6 +10,7 @@ interface ICouponsRepository {
   findAvailableByCodeForOtherId(id: string, code: string): Promise<Coupon[]>;
   findByFieldForOtherCoupon(field: string, value: string, id: string): Promise<Coupon[]>;
   findByField(field: string, value: string): Promise<Coupon[]>;
+  listAvailable(): Promise<Coupon[]>;
 }
 
 export { ICouponsRepository };
