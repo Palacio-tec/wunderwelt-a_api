@@ -19,6 +19,7 @@ export class CreatePromotions1664836884411 implements MigrationInterface {
                 {
                   name: "coupon_id",
                   type: "uuid",
+                  isNullable: true,
                 },
                 {
                   name: "promotion_date",

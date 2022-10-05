@@ -12,7 +12,7 @@ class Promotion {
   @Column()
   message: string;
 
-  @Column()
+  @Column({nullable: true})
   coupon_id: string;
 
   @ManyToOne(() => Coupon)
