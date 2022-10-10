@@ -338,6 +338,7 @@ class EventsRepository implements IEventsRepository {
         s.event_id = e.id
       WHERE
         e.start_date BETWEEN '${startDate}' and '${endDate}'
+        and e.is_canceled = false
       GROUP BY
         e.id, e.title, e.description, e.link, e.start_date, e.teacher_id,
         u.name, u.email`
