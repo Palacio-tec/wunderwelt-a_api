@@ -2,14 +2,17 @@
 <html>
   <head>
     <style>
+      * {
+        color: #1e2f50;
+      }
+
       .header {
-        display: flex;
-        justify-content: center;
         width: 100vw;
         max-width: 600px;
         margin: 0 auto;
         background-color: #1e2f50;
         margin-bottom: 1rem;
+        text-align: center;
       }
 
       .container {
@@ -45,8 +48,6 @@
       }
 
       .article {
-        display: flex;
-        flex-direction: column;
         justify-content: space-between;
         width: fit-content;
         padding: 10px;
@@ -60,10 +61,18 @@
         margin: 10px 0 0 0;
       }
 
+      .event-a {
+        align-items: flex-start;
+        color: #1e2f50;
+        margin: 10px 0 0 0;
+      }
+
       .title {
         font-size: larger;
         text-align: left;
         font-weight: bold;
+        color: #1e2f50;
+        margin: 10px 0 0 0;
       }
 
       a {
@@ -72,7 +81,7 @@
         color: inherit;
       }
 
-      .time {
+      .event-time {
         padding-left: 1rem;
         font-size: smaller;
       }
@@ -128,9 +137,9 @@
         {{message}}
         <p />
         {{#with coupon}}
-          <div class="coupon">
+          <text class="coupon">
             {{code}}
-          </div>
+          </text>
           <p />
         {{/with}}
       {{/if}}
@@ -142,16 +151,17 @@
       <div class="eventlist">
         {{#each mailData}}
           <div id={{id}} class="article">
-              <header class="event-header">
-                  <a href='https://praktika.wunderwelt-a.com.br'>
-                    ✓ <span class="title"> {{title}}</span>
-                  </a>
-                  <text class="time">{{date}} (horário de Brasília)</text>
-              </header>
+              {{!-- <header class="event-header"> --}}
+              <a class="event-a" href='https://praktika.wunderwelt-a.com.br'>
+                ✓ <span class="title"> {{title}}</span>
+              </a>
               <br />
-              <text class="content">
+              <span class="event-time">{{date}} (horário de Brasília)</span>
+              {{!-- </header> --}}
+              <p />
+              <span class="content">
                   {{description}}
-              </text>
+              </span>
           </div>
         {{/each}}
       </div>
