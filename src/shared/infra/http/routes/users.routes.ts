@@ -13,6 +13,7 @@ import { UpdateUserController } from "@modules/accounts/useCases/updateUser/Upda
 import { CanDeleteUserController } from "@modules/accounts/useCases/validations/canDeleteUser/CanDeleteUserController";
 import { ListTeachersController } from "@modules/accounts/useCases/listTeachers/ListTeachersController";
 import { SendGiftController } from "@modules/accounts/useCases/sendGift/SendGiftController";
+import { ImpersonateUserController } from "@modules/accounts/useCases/impersonateUser/ImpersonateUserController";
 
 const usersRoutes = Router();
 
@@ -26,6 +27,7 @@ const updateUserController = new UpdateUserController();
 const canDeleteUserController = new CanDeleteUserController();
 const listTeachersController = new ListTeachersController();
 const sendGiftController = new SendGiftController();
+const impersonateUserController = new ImpersonateUserController();
 
 usersRoutes.post(
   "/",
@@ -99,5 +101,12 @@ usersRoutes.post(
   ensureAdmin,
   sendGiftController.handle
 )
+
+usersRoutes.post(
+  "/impersonate",
+  ensureAuthenticated,
+  ensureAdmin,
+  impersonateUserController.handle
+);
 
 export { usersRoutes };

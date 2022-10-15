@@ -54,7 +54,13 @@ class SESMailProvider implements IMailProvider {
       }
     }
 
-    await this.client.sendMail(mailOptions);
+    try {
+      await this.client.sendMail(mailOptions);
+    } catch (error) {
+      console.log(`${new Date()} - ERRO NO ENVIO DO EMAIL`)
+      console.log(error)
+      console.log('--------------------------')
+    }
   }
 }
 

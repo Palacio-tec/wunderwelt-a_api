@@ -18,6 +18,7 @@ type Profile = {
   phone?: string;
   document_type?: string;
   document?: string;
+  credit: number;
 };
 
 @injectable()
@@ -61,6 +62,7 @@ class ShowProfileUseCase {
       phone,
       document_type,
       document,
+      credit,
     };
   }
 }

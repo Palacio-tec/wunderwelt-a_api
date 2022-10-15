@@ -5,6 +5,8 @@ import { resolve } from "path";
 import { IHoursRepository } from "@modules/accounts/repositories/IHoursRepository";
 import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
+import { spliceIntoChunks } from "@utils/spliceIntoChunks";
+import { sleep } from "@utils/sleep";
 
 @injectable()
 class ListWillExpiredHoursUseCase {
@@ -40,7 +42,16 @@ class ListWillExpiredHoursUseCase {
       "creditWillExpired.hbs"
     );
 
-    credits.map(async (credit) => {
+    if (!credits) {
+      return
+    }
+
+    const creditsChunk = spliceIntoChunks(credits, 20)
+
+    for (let index = 0; index < creditsChunk.length; index++) {
+      const credits = creditsChunk[index];
+
+      credits.map(async (credit) => {
         const variables = {
             name: credit.name,
             amount: credit.amount,
@@ -53,7 +64,10 @@ class ListWillExpiredHoursUseCase {
             variables,
             path: templatePath,
         });
-    })
+      })
+
+      await sleep(10)
+    }
   }
 }
 
