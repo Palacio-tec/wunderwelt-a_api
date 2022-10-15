@@ -9,6 +9,8 @@ import { IMailProvider } from "@shared/container/providers/MailProvider/IMailPro
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
 import { IPromotionsRepository } from "@modules/promotions/repositories/IPromotionsRepository";
+import { spliceIntoChunks } from "@utils/spliceIntoChunks";
+import { sleep } from "@utils/sleep";
 
 const NUMBER_OF_DAYS_FOR_NEXT_SHIPMENT = 14
 
@@ -123,14 +125,24 @@ class SendEventsNewsletterUseCase {
 
     const allUsers = await this.usersRepository.findAllStudentUsers()
 
-    allUsers.map((user) => {
-      this.mailProvider.sendMail({
-        to: user.email,
-        subject: 'Confira as aulas incríveis que estão por vir',
-        variables,
-        path: templatePath,
-      });
-    })
+    if (allUsers) {
+      const usersChunk = spliceIntoChunks(allUsers, 40)
+
+      for (let index = 0; index < usersChunk.length; index++) {
+        const allUsers = usersChunk[index];
+
+        allUsers.map((user) => {
+          this.mailProvider.sendMail({
+            to: user.email,
+            subject: 'Confira as aulas incríveis que estão por vir',
+            variables,
+            path: templatePath,
+          });
+        })
+
+        await sleep(10)
+      }
+    }
 
     this.parametersRepository.create({
       ...sendNewsletterParameter,

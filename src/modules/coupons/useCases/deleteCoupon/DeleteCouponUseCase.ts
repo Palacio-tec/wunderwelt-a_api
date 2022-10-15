@@ -25,7 +25,7 @@ class DeleteCouponUseCase {
       throw new AppError("Coupon does not exists");
     }
 
-    if (coupon.user_id) {
+    if (coupon.used) {
       throw new AppError(
         "Coupon already used. Therefore, it cannot be deleted"
       );

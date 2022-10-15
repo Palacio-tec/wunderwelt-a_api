@@ -1,5 +1,4 @@
 import { inject, injectable } from "tsyringe";
-import { compare } from "bcryptjs";
 import { sign } from "jsonwebtoken";
 
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
@@ -8,12 +7,10 @@ import { IUsersTokensRepository } from "@modules/accounts/repositories/IUsersTok
 import auth from "@config/auth";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { IStatementsRepository } from "@modules/statements/repositories/IStatementsRepository";
-import { isMail } from "@utils/isMail";
-import { User } from "@modules/accounts/infra/typeorm/entities/User";
 
 interface IRequest {
-  username: string;
-  password: string;
+  user_id: string;
+  admin_user: string;
 }
 
 interface IResponse {
@@ -37,7 +34,7 @@ interface IResponse {
 }
 
 @injectable()
-class AuthenticateUserUseCase {
+class ImpersonateUserUseCase {
   constructor(
     @inject("UsersRepository")
     private userRepository: IUsersRepository,
@@ -52,13 +49,21 @@ class AuthenticateUserUseCase {
     private statementsRepository: IStatementsRepository,
   ) {}
 
-  async execute({ username, password }: IRequest): Promise<IResponse> {
-    let user: User;
+  async execute({ admin_user, user_id }: IRequest): Promise<IResponse> {
+    const adminUser = await this.userRepository.findById(admin_user);
 
-    if (isMail(username)) {
-      user = await this.userRepository.findByEmail(username);
-    } else {
-      user = await this.userRepository.findByUsername(username);
+    if (!adminUser) {
+      throw new AppError('User does not exists')
+    }
+
+    if (!adminUser.is_admin) {
+      throw new AppError('User is not an admin')
+    }
+
+    const impersonateUser = await this.userRepository.findById(user_id);
+
+    if (!impersonateUser) {
+      throw new AppError('User does not exists')
     }
 
     const {
@@ -69,49 +74,38 @@ class AuthenticateUserUseCase {
       expires_refresh_token_days,
     } = auth;
 
-    if (!user) {
-      throw new AppError("User or password incorrect");
-    }
-
-    const passwordMatch = await compare(password, user.password);
-
-    if (!passwordMatch) {
-      throw new AppError("User or password incorrect");
-    }
-
     const token = sign({}, secret_token, {
-      subject: user.id,
+      subject: user_id,
       expiresIn: expires_in_token,
     });
 
-    const refresh_token = sign({ username }, secret_refresh_token, {
-      subject: user.id,
+    const refresh_token = sign({ username: impersonateUser.username }, secret_refresh_token, {
+      subject: user_id,
       expiresIn: expires_in_refresh_token,
     });
 
     const expires_date = this.dateProvider.addDays(expires_refresh_token_days);
 
     await this.usersTokensRepository.create({
-      user_id: user.id,
+      user_id: user_id,
       refresh_token,
       expires_date,
     });
-
     const tokenReturn: IResponse = {
       user: {
-        name: user.name,
-        username: user.username,
-        email: user.email,
-        isAdmin: user.is_admin,
-        isTeacher: user.is_teacher,
-        street_name: user.street_name,
-        street_number: user.street_number,
-        zip_code: user.zip_code,
-        area_code: user.area_code,
-        phone: user.phone,
-        document: user.document,
-        balance: user.credit,
-        credit: user.credit,
+        name: impersonateUser.name,
+        username: impersonateUser.username,
+        email: impersonateUser.email,
+        isAdmin: impersonateUser.is_admin,
+        isTeacher: impersonateUser.is_teacher,
+        street_name: impersonateUser.street_name,
+        street_number: impersonateUser.street_number,
+        zip_code: impersonateUser.zip_code,
+        area_code: impersonateUser.area_code,
+        phone: impersonateUser.phone,
+        document: impersonateUser.document,
+        balance: impersonateUser.credit,
+        credit: impersonateUser.credit,
       },
       token,
       refresh_token,
@@ -121,4 +115,4 @@ class AuthenticateUserUseCase {
   }
 }
 
-export { AuthenticateUserUseCase };
+export { ImpersonateUserUseCase };

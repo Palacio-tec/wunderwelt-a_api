@@ -72,7 +72,7 @@ class DeleteScheduleUseCase {
 
       depositCredit += Number(amount_credit)
 
-      this.schedulesCreditsRepository.delete(id)
+      await this.schedulesCreditsRepository.delete(id)
     }
 
     await this.schedulesRepository.deleteById(schedule_id);
