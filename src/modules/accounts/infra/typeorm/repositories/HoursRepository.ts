@@ -103,7 +103,7 @@ class HoursRepository implements IHoursRepository {
   async listAllBalance(): Promise<IListAllBalanceDTO[]> {
     const listBalance = await this.repository.query(`
       select
-        u.id as user_id,
+        u.id as user_id, u.credit,
         sum(
           case
             when h.balance is null then 0
