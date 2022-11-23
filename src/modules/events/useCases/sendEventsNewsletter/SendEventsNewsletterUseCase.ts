@@ -73,7 +73,7 @@ class SendEventsNewsletterUseCase {
     private promotionsRepository: IPromotionsRepository
   ) {}
 
-  async execute(date: Date): Promise<void> {
+  async execute(date: Date, isTest = false, fakeData ?: any): Promise<void> {
     const sendNewsletterParameter = await this.parametersRepository
       .findByReference('SendNewsletter');
 
@@ -84,7 +84,7 @@ class SendEventsNewsletterUseCase {
       dateToSendNewsletter = this.dateProvider.dateNow(sendNewsletterParameter.value)
     }
 
-    if (date < dateToSendNewsletter) return
+    if (date < dateToSendNewsletter && !isTest) return
 
     const nextExecutionDate = this.dateProvider.addDaysInDate(
       dateToSendNewsletter,
@@ -118,10 +118,23 @@ class SendEventsNewsletterUseCase {
 
     const variables = {
       mailData,
-      hasPromotion: !!hasPromotion,
+      hasPromotion: true,
       message: hasPromotion?.message || null,
       coupon: hasPromotion?.coupon || null
     };
+
+    if (isTest) {
+      variables.message = fakeData.message
+
+      await this.mailProvider.sendMail({
+        to: fakeData.to,
+        subject: '[TESTE] - Confira as aulas incríveis que estão por vir',
+        variables,
+        path: templatePath,
+      });
+
+      return
+    }
 
     const allUsers = await this.usersRepository.findAllStudentUsers()
 
