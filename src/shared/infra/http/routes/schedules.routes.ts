@@ -6,6 +6,7 @@ import { ListSchedulesByUserController } from "@modules/schedules/useCases/listS
 import { DeleteScheduleController } from "@modules/schedules/useCases/deleteSchedule/DeleteScheduleController";
 import { ListSchedulesController } from "@modules/schedules/useCases/listSchedules/ListSchedulesController";
 import { ListParticipationsController } from "@modules/schedules/useCases/listParticipations/ListParticipationsController";
+import { FindByEventIdController } from "@modules/schedules/useCases/findByEventId/FindByEventIdController";
 
 import { ensureAdmin } from "../middlewares/ensureAdmin";
 
@@ -16,8 +17,13 @@ const listSchedulesByUserController = new ListSchedulesByUserController();
 const deleteScheduleController = new DeleteScheduleController();
 const listSchedulesController = new ListSchedulesController();
 const listParticipationsController = new ListParticipationsController();
+const findByEventIdController = new FindByEventIdController();
 
-schedulesRoutes.post("/", ensureAuthenticated, createScheduleController.handle);
+schedulesRoutes.post(
+  "/",
+  ensureAuthenticated,
+  createScheduleController.handle
+);
 
 schedulesRoutes.get(
   "/",
@@ -43,6 +49,13 @@ schedulesRoutes.get(
   ensureAuthenticated,
   ensureAdmin,
   listParticipationsController.handle
+)
+
+schedulesRoutes.get(
+  "/students/:eventId",
+  ensureAuthenticated,
+  ensureAdmin,
+  findByEventIdController.handle
 )
 
 export { schedulesRoutes };
