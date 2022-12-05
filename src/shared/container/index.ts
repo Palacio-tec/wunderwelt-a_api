@@ -44,6 +44,8 @@ import { ISchedulesCreditsRepository } from "@modules/schedules/repositories/ISc
 import { SchedulesCreditsRepository } from "@modules/schedules/infra/typeorm/repositories/SchedulesCreditsRepository";
 import { IPromotionsRepository } from "@modules/promotions/repositories/IPromotionsRepository";
 import { PromotionsRepository } from "@modules/promotions/infra/typeorm/repositories/PromotionsRepository";
+import { IFQAsRepository } from "@modules/fqas/repositories/IFQAsRepository";
+import { FQAsRepository } from "@modules/fqas/infra/typeorm/repositories/FQAsRepository";
 
 container.registerSingleton<IUsersRepository>(
   "UsersRepository",
@@ -118,4 +120,9 @@ container.registerSingleton<ISchedulesCreditsRepository>(
 container.registerSingleton<IPromotionsRepository>(
   "PromotionsRepository",
   PromotionsRepository
+);
+
+container.registerSingleton<IFQAsRepository>(
+  "FQAsRepository",
+  FQAsRepository
 );
