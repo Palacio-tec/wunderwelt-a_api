@@ -16,6 +16,7 @@ import { purchasesRoutes } from "./purchases.routes";
 import { creditsRoutes } from "./credits.routes";
 import { promotionsRoutes } from "./promotions.routes";
 import { configurationsRoutes } from "./configurations.routes";
+import { fqasRoutes } from "./fqas.routes";
 
 const router = Router();
 
@@ -36,5 +37,6 @@ router.use("/purchase-orders", purchasesRoutes);
 router.use("/credits", creditsRoutes);
 router.use("/promotions", promotionsRoutes);
 router.use("/configurations", configurationsRoutes);
+router.use("/fqas", fqasRoutes)
 
 export { router };
