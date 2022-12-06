@@ -37,7 +37,7 @@ const EVENT_VARIABLES: {
     TIMEZONE: 'America/Sao_Paulo',
     URL: 'praktika.wunderwelt-a.com.br',
     ORGANIZER_NAME: 'PrAktikA',
-    ORGANIZER_EMAIL: 'info@wunderwelt-a.com.br',
+    ORGANIZER_EMAIL: process.env.GENERAL_MAIL,
 }
 
 async function createCalendarEvent({
