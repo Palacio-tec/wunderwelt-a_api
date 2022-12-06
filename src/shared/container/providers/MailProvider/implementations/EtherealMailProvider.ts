@@ -6,7 +6,7 @@ import fs from "fs";
 import { IMailProvider } from "../IMailProvider";
 
 const CALENDAR_FILE_NAME = 'invitation.ics'
-const MAIL_FROM = 'PrAktikA <info@wunderwelt-a.com.br>'
+const MAIL_FROM = `PrAktikA <${process.env.GENERAL_MAIL}>`
 
 @injectable()
 class EtherealMailProvider implements IMailProvider {

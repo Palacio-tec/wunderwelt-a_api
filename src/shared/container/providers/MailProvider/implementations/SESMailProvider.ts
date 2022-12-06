@@ -7,7 +7,7 @@ import { injectable } from "tsyringe";
 import { IMailProvider, IMailProviderProps } from "../IMailProvider";
 
 const CALENDAR_FILE_NAME = 'invitation.ics'
-const MAIL_FROM = 'PrAktikA <info@wunderwelt-a.com.br>'
+const MAIL_FROM = `PrAktikA <${process.env.GENERAL_MAIL}>`
 const SES_API_VERSION = '2010-12-01'
 
 @injectable()
