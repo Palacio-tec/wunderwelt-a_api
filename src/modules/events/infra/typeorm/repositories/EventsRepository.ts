@@ -230,7 +230,7 @@ class EventsRepository implements IEventsRepository {
     const events = await this.repository.find({
       where: {
         start_date: Raw(start_dateFieldName => 
-          `to_char(${start_dateFieldName}, 'YYYY-MM-DD') = '${year}-${parsedMonth}-${parsedDay}'`
+          `to_char(${start_dateFieldName} at time zone 'utc' at time zone 'America/Sao_Paulo', 'YYYY-MM-DD') = '${year}-${parsedMonth}-${parsedDay}'`
         ),
       },
       order: {
