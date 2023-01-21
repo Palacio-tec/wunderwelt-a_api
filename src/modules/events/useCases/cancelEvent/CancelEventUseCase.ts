@@ -5,7 +5,7 @@ import { ISchedulesRepository } from "@modules/schedules/repositories/ISchedules
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 import { AppError } from "@shared/errors/AppError";
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 import { resolve } from "path";
 import { IStatementsRepository } from "@modules/statements/repositories/IStatementsRepository";
 import { OperationEnumTypeStatement } from "@modules/statements/dtos/ICreateStatementDTO";
@@ -13,6 +13,8 @@ import { IHoursRepository } from "@modules/accounts/repositories/IHoursRepositor
 import { createCalendarEvent } from "@utils/createCalendarEvent";
 import { ISchedulesCreditsRepository } from "@modules/schedules/repositories/ISchedulesCreditsRepository";
 import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
+import { SendMailWithLog } from "@utils/sendMailWithLog";
+
 @injectable()
 class CancelEventUseCase {
   constructor(
@@ -107,6 +109,8 @@ class CancelEventUseCase {
 
     const { title, start_date, end_date, instruction, credit, teacher_id } = eventExists;
 
+    const sendMailWithLog = container.resolve(SendMailWithLog);
+
     const schedulesExists = await this.schedulesRepository.findByEventId(id);
 
     if (schedulesExists.length > 0) {
@@ -149,13 +153,17 @@ class CancelEventUseCase {
           method: 'CANCEL',
         }
 
-        this.mailProvider.sendMail({
+        const subject = `Aula Cancelada - ${title}`
+
+        sendMailWithLog.execute({
           to: email,
-          subject: `Aula Cancelada - ${title}`,
+          subject,
           variables,
           path: templatePath,
-          calendarEvent
-        });
+          mailLog: {
+            userId: schedule.user.id
+          },
+        })
 
         this.statementsRepository.create({
           amount: credit,
@@ -218,13 +226,17 @@ class CancelEventUseCase {
       method: 'CANCEL',
     }
 
-    this.mailProvider.sendMail({
+    const subject = `Aula cancelada - ${title}`
+
+    sendMailWithLog.execute({
       to: eventTeacher.email,
-      subject: `Aula cancelada - ${title}`,
+      subject,
       variables,
       path: templatePath,
-      calendarEvent
-    });
+      mailLog: {
+        userId: teacher_id
+      },
+    })
 
     return event;
   }

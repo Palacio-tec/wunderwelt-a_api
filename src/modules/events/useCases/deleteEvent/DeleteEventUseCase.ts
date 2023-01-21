@@ -1,4 +1,4 @@
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 import { resolve } from "path";
 import { parseISO } from "date-fns";
 
@@ -15,6 +15,7 @@ import { IHoursRepository } from "@modules/accounts/repositories/IHoursRepositor
 import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
 import { createCalendarEvent } from "@utils/createCalendarEvent";
 import { ISchedulesCreditsRepository } from "@modules/schedules/repositories/ISchedulesCreditsRepository";
+import { SendMailWithLog } from "@utils/sendMailWithLog";
 
 @injectable()
 class DeleteEventUseCase {
@@ -113,6 +114,8 @@ class DeleteEventUseCase {
 
     const { start_date, end_date } = eventExists;
 
+    const sendMailWithLog = container.resolve(SendMailWithLog);
+
     const schedulesExists = await this.schedulesRepository.findByEventId(id);
 
     if (schedulesExists) {
@@ -160,13 +163,15 @@ class DeleteEventUseCase {
           method: 'CANCEL',
         }
 
-        this.mailProvider.sendMail({
+        sendMailWithLog.execute({
           to: email,
           subject: "Aula Removida",
           variables,
           path: templatePath,
-          calendarEvent,
-        });
+          mailLog: {
+            userId: schedule.user.id
+          },
+        })
 
         await this.statementsRepository.create({
           amount: eventDurationInHours,
@@ -226,13 +231,17 @@ class DeleteEventUseCase {
       mailMessage: `A aula "${title}" agendada para o dia ${this.dateProvider.parseFormat(start_date, "DD-MM-YYYY [às] HH:mm")} foi cancelada.`,
     };
 
-    this.mailProvider.sendMail({
+    const subject = `Aula cancelada - ${title}`
+
+    sendMailWithLog.execute({
       to: eventTeacher.email,
-      subject: `Aula cancelada - ${title}`,
+      subject,
       variables,
       path: templatePath,
-      calendarEvent,
-    });
+      mailLog: {
+        userId: teacher_id
+      },
+    })
 
     await this.eventsLevelsRepository.deleteByEvent(id);
 

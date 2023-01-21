@@ -352,7 +352,7 @@ class EventsRepository implements IEventsRepository {
       `SELECT * FROM (
         SELECT
           e.id as event_id, e.title, e.start_date, e.minimum_number_of_students,
-          u.name as teacher_name, u.email as teacher_email,
+          u.id as teacher_id, u.name as teacher_name, u.email as teacher_email,
           SUM(
             CASE WHEN s.id IS NULL THEN 0 ELSE 1 END
           ) as student_qty

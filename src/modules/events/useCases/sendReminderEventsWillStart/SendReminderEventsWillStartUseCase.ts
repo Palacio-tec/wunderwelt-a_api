@@ -1,5 +1,5 @@
 
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 import { format } from "date-fns";
 import { resolve } from "path";
 
@@ -9,6 +9,7 @@ import { IMailProvider } from "@shared/container/providers/MailProvider/IMailPro
 import { EventsRepository } from "@modules/events/infra/typeorm/repositories/EventsRepository";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
+import { SendMailWithLog } from "@utils/sendMailWithLog";
 
 @injectable()
 class SendReminderEventsWillStartUseCase {
@@ -40,8 +41,6 @@ class SendReminderEventsWillStartUseCase {
     const endDate = this.dateProvider.addMinutesInDate(startDate, 59);
     const endDateFormated = this.dateProvider.parseFormatUTC(endDate);
 
-    // console.log( `[EventsReminder - ${date}] startDate = '${startDateFormated}' - endDate ='${endDateFormated}'` )
-
     const events = await this.eventsRepository.findEventWillStart(
       startDateFormated,
       endDateFormated
@@ -55,6 +54,8 @@ class SendReminderEventsWillStartUseCase {
       "emails",
       "eventReminder.hbs"
     );
+
+    const sendMailWithLog = container.resolve(SendMailWithLog);
 
     events.map(async (event) => {
       const schedules = await this.schedulesRepository.findByEventId(event.event_id);
@@ -82,13 +83,16 @@ class SendReminderEventsWillStartUseCase {
           link: newLink,
           time: reminderEventEmailValue,
         };
-  
-        this.mailProvider.sendMail({
+
+        sendMailWithLog.execute({
           to: user.email,
           subject: "A sua aula vai começar daqui a pouco!",
           variables,
-          path: templatePath
-        });
+          path: templatePath,
+          mailLog: {
+            userId: user.id
+          },
+        })
       })
     })
   }

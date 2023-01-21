@@ -1,5 +1,5 @@
 
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 import { resolve } from "path";
 
 import { Event } from "@modules/events/infra/typeorm/entities/Event";
@@ -11,6 +11,7 @@ import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepositor
 import { IPromotionsRepository } from "@modules/promotions/repositories/IPromotionsRepository";
 import { spliceIntoChunks } from "@utils/spliceIntoChunks";
 import { sleep } from "@utils/sleep";
+import { SendMailWithLog } from "@utils/sendMailWithLog";
 
 const NUMBER_OF_DAYS_FOR_NEXT_SHIPMENT = 14
 
@@ -114,6 +115,8 @@ class SendEventsNewsletterUseCase {
       "newsletter.hbs"
     );
 
+    const sendMailWithLog = container.resolve(SendMailWithLog);
+
     const mailData = await formatValues(events)
 
     const variables = {
@@ -145,12 +148,15 @@ class SendEventsNewsletterUseCase {
         const allUsers = usersChunk[index];
 
         allUsers.map((user) => {
-          this.mailProvider.sendMail({
+          sendMailWithLog.execute({
             to: user.email,
             subject: 'Confira as aulas incríveis que estão por vir',
             variables,
             path: templatePath,
-          });
+            mailLog: {
+              userId: user.id
+            },
+          })
         })
 
         await sleep(10)

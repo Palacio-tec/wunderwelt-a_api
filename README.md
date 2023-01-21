@@ -63,6 +63,12 @@ sudo docker run --name redis -p 6379:6379 -d -t redis:alpine
 ```
 Quando reiniciar a máquina, executar o comando `sudo docker start redis`
 
+## Criando container Docker para o MongoDB
+```bash
+sudo docker run --name mongo-praktika -p 27017:27017 -d -t mongo
+```
+Quando reiniciar a máquina, executar o comando `sudo docker start mongo-praktika`
+
 ## Criar banco de dados
 Acessar a imagem docker pelo software de sua preferencia. Atualmente utilizamos o [DBeaver](https://dbeaver.io/download/).
 Crie o database `praktika`.

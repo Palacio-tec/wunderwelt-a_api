@@ -1,4 +1,4 @@
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 import { resolve } from "path";
 
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
@@ -12,6 +12,7 @@ import { IDateProvider } from "@shared/container/providers/DateProvider/IDatePro
 import { AppError } from "@shared/errors/AppError";
 import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 import { createCalendarEvent } from "@utils/createCalendarEvent";
+import { SendMailWithLog } from "@utils/sendMailWithLog";
 
 @injectable()
 class UpdateEventUseCase {
@@ -74,6 +75,8 @@ class UpdateEventUseCase {
       throw new AppError("Event does not exists");
     }
 
+    const sendMailWithLog = container.resolve(SendMailWithLog);
+
     if (eventExists.start_date.toISOString() !== start_date || eventExists.end_date.toISOString() !== end_date) {
       const eventTeacher = await this.usersRepository.findById(teacher_id);
       const dateTimeFormatted = this.dateProvider.parseFormat(start_date, "DD-MM-YYYY [às] HH:mm")
@@ -112,14 +115,16 @@ class UpdateEventUseCase {
         }),
         method: 'REQUEST',
       }
-  
-      this.mailProvider.sendMail({
+
+      sendMailWithLog.execute({
         to: eventTeacher.email,
         subject: `Mudança de horário - ${title}`,
         variables,
         path: templatePath,
-        calendarEvent
-      });
+        mailLog: {
+          userId: teacher_id
+        },
+      })
     }
 
     const haveLimitIncrease = Number(eventExists.student_limit) < student_limit;
@@ -176,7 +181,7 @@ class UpdateEventUseCase {
             "queueAvailableEvent.hbs"
           );
 
-          const { name, email } = queue.user;
+          const { name, email, id } = queue.user;
 
           const { title, start_date, link } = queue.event;
 
@@ -191,12 +196,15 @@ class UpdateEventUseCase {
             link,
           };
 
-          this.mailProvider.sendMail({
+          sendMailWithLog.execute({
             to: email,
             subject: 'Abriu uma vaga para a aula que você queria! Aproveite!',
             variables,
             path: templatePath,
-          });
+            mailLog: {
+              userId: id
+            },
+          })
         });
       }
     }
