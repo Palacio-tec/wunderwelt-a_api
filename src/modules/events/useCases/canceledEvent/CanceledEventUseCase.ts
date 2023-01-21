@@ -1,4 +1,4 @@
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 import { resolve } from "path";
 
 import { AppError } from "@shared/errors/AppError";
@@ -8,6 +8,7 @@ import { IMailProvider } from "@shared/container/providers/MailProvider/IMailPro
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { createCalendarEvent } from "@utils/createCalendarEvent";
+import { SendMailWithLog } from "@utils/sendMailWithLog";
 
 @injectable()
 class CanceledEventUseCase {
@@ -81,13 +82,17 @@ class CanceledEventUseCase {
       method: 'REQUEST',
     }
 
-    this.mailProvider.sendMail({
+    const sendMailWithLog = container.resolve(SendMailWithLog);
+
+    sendMailWithLog.execute({
       to: email,
       subject: `Nova aula - ${dateTimeFormatted} - ${title}`,
       variables,
       path: templatePath,
-      calendarEvent
-    });
+      mailLog: {
+        userId: teacher_id
+      },
+    })
 
     return event;
   }

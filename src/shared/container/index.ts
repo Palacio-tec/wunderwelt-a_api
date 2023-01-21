@@ -46,6 +46,8 @@ import { IPromotionsRepository } from "@modules/promotions/repositories/IPromoti
 import { PromotionsRepository } from "@modules/promotions/infra/typeorm/repositories/PromotionsRepository";
 import { IFQAsRepository } from "@modules/fqas/repositories/IFQAsRepository";
 import { FQAsRepository } from "@modules/fqas/infra/typeorm/repositories/FQAsRepository";
+import { IMailLogsRepository } from "@modules/mailLogs/repositories/IMailLogsRepository";
+import { MailLogsRepository } from "@modules/mailLogs/infra/typeorm/repositories/MailLogsRepository";
 
 container.registerSingleton<IUsersRepository>(
   "UsersRepository",
@@ -126,3 +128,8 @@ container.registerSingleton<IFQAsRepository>(
   "FQAsRepository",
   FQAsRepository
 );
+
+container.registerSingleton<IMailLogsRepository>(
+  "MailLogsRepository",
+  MailLogsRepository
+)

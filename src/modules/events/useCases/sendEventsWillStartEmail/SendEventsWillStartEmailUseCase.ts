@@ -1,5 +1,5 @@
 
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 import { resolve } from "path";
 
 import { IEventsRepository } from "@modules/events/repositories/IEventsRepository";
@@ -7,6 +7,7 @@ import { ISchedulesRepository } from "@modules/schedules/repositories/ISchedules
 import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
+import { SendMailWithLog } from "@utils/sendMailWithLog";
 
 @injectable()
 class SendEventsWillStartEmailUseCase {
@@ -53,10 +54,12 @@ class SendEventsWillStartEmailUseCase {
       "eventWillStart.hbs"
     );
 
+    const sendMailWithLog = container.resolve(SendMailWithLog);
+
     events.map(async (event) => {
       const schedules = await this.schedulesRepository.findByEventId(event.event_id);
 
-      const { teacher_name, teacher_email, title, start_date, link } = event;
+      const { teacher_name, teacher_email, title, start_date, link, teacher_id } = event;
 
       const linkInfo = link.split(/\r?\n/)
 
@@ -70,7 +73,6 @@ class SendEventsWillStartEmailUseCase {
         }
       });
 
-      const date = this.dateProvider.formatInDate(start_date)
       const time = this.dateProvider.formatInHour(start_date)
 
       const subject = `Lista de alunos inscritos na aula - ${title} hoje às ${time}`
@@ -83,12 +85,15 @@ class SendEventsWillStartEmailUseCase {
         link: newLink,
       };
 
-      this.mailProvider.sendMail({
+      sendMailWithLog.execute({
         to: teacher_email,
         subject,
         variables,
-        path: templatePath
-      });
+        path: templatePath,
+        mailLog: {
+          userId: teacher_id
+        },
+      })
     })
   }
 }

@@ -1,5 +1,5 @@
 
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 import { format } from "date-fns";
 import { resolve } from "path";
 
@@ -8,6 +8,7 @@ import { ISchedulesRepository } from "@modules/schedules/repositories/ISchedules
 import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
+import { SendMailWithLog } from "@utils/sendMailWithLog";
 
 @injectable()
 class SendCanRefoundReminderEventsUseCase {
@@ -40,12 +41,12 @@ class SendCanRefoundReminderEventsUseCase {
     const endDate = this.dateProvider.addHoursInDate(startDate, 1);
     const endDateFormated = this.dateProvider.parseFormatUTC(endDate);
 
-    // console.log( `[EventsCanRefound - ${date}] startDate = '${startDateFormated}' - endDate ='${endDateFormated}'` )
-
     const events = await this.eventsRepository.findEventWillStart(
       startDateFormated,
       endDateFormated
     ); 
+
+    const sendMailWithLog = container.resolve(SendMailWithLog);
 
     const templatePath = resolve(
       __dirname,
@@ -71,13 +72,16 @@ class SendCanRefoundReminderEventsUseCase {
           eventDate,
           refundTimeLimit: refundTimeLimit.value,
         };
-  
-        this.mailProvider.sendMail({
+
+        sendMailWithLog.execute({
           to: user.email,
           subject: "Deseja manter ou cancelar sua próxima aula?",
           variables,
           path: templatePath,
-        });
+          mailLog: {
+            userId: user.id
+          },
+        })
       })
     })
   }

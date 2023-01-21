@@ -1,9 +1,9 @@
-import { injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import nodemailer, { Transporter } from "nodemailer";
 import handlebars from "handlebars";
 import fs from "fs";
 
-import { IMailProvider } from "../IMailProvider";
+import { IMailProvider, IMailProviderProps } from "../IMailProvider";
 
 const CALENDAR_FILE_NAME = 'invitation.ics'
 const MAIL_FROM = `PrAktikA <${process.env.GENERAL_MAIL}>`
@@ -37,7 +37,7 @@ class EtherealMailProvider implements IMailProvider {
     variables,
     path,
     calendarEvent,
-  }): Promise<void> {
+  }: IMailProviderProps): Promise<void> {
     const templateFileContent = fs.readFileSync(path).toString("utf-8");
 
     const templateParse = handlebars.compile(templateFileContent);
