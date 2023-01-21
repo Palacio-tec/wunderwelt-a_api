@@ -1,4 +1,4 @@
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 import { resolve } from "path";
 
 import { IEventsRepository } from "@modules/events/repositories/IEventsRepository";
@@ -12,6 +12,7 @@ import { IHoursRepository } from "@modules/accounts/repositories/IHoursRepositor
 import { createCalendarEvent } from "@utils/createCalendarEvent";
 import { ISchedulesCreditsRepository } from "@modules/schedules/repositories/ISchedulesCreditsRepository";
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
+import { SendMailWithLog } from "@utils/sendMailWithLog";
 
 @injectable()
 class CancelEventWithoutStudentUseCase {
@@ -114,8 +115,10 @@ class CancelEventWithoutStudentUseCase {
 
       await this.eventsRepository.create(eventData);
 
-      const { teacher_name, teacher_email, title, start_date } = event;
+      const { teacher_name, teacher_email, title, start_date, teacher_id } = event;
       const { end_date, instruction } = eventData;
+
+      const sendMailWithLog = container.resolve(SendMailWithLog);
 
       const schedulesExists = await this.schedulesRepository.findByEventId(event.event_id);
 
@@ -160,13 +163,17 @@ class CancelEventWithoutStudentUseCase {
             method: 'CANCEL',
           }
 
-          this.mailProvider.sendMail({
+          const subject = `Aula Cancelada - ${title}`
+
+          sendMailWithLog.execute({
             to: email,
-            subject: `Aula Cancelada - ${title}`,
+            subject,
             variables,
             path: templatePath,
-            calendarEvent
-          });
+            mailLog: {
+              userId: schedule.user.id
+            },
+          })
 
           await this.statementsRepository.create({
             amount: eventData.credit,
@@ -210,13 +217,17 @@ class CancelEventWithoutStudentUseCase {
         mailMessage,
       };
 
-      this.mailProvider.sendMail({
+      const subject = `Aula cancelada - ${title}`
+
+      sendMailWithLog.execute({
         to: teacher_email,
-        subject: `Aula cancelada - ${title}`,
+        subject,
         variables,
         path: templatePath,
-        calendarEvent
-      });
+        mailLog: {
+          userId: teacher_id
+        },
+      })
     })
   }
 }

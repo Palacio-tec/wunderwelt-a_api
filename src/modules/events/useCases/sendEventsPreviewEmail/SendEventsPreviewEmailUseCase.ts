@@ -1,5 +1,5 @@
 
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 import { resolve } from "path";
 
 import { IEventsRepository } from "@modules/events/repositories/IEventsRepository";
@@ -7,6 +7,7 @@ import { ISchedulesRepository } from "@modules/schedules/repositories/ISchedules
 import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
+import { SendMailWithLog } from "@utils/sendMailWithLog";
 
 @injectable()
 class SendEventsPreviewEmailUseCase {
@@ -52,10 +53,12 @@ class SendEventsPreviewEmailUseCase {
       "eventPreview.hbs"
     );
 
+    const sendMailWithLog = container.resolve(SendMailWithLog);
+
     events.map(async (event) => {
       const schedules = await this.schedulesRepository.findByEventId(event.event_id);
 
-      const { teacher_name, teacher_email, title, start_date, link } = event;
+      const { teacher_name, teacher_email, title, start_date, teacher_id } = event;
 
       const datetime = this.dateProvider.parseFormat(start_date, "DD-MM-YYYY [às] HH:mm")
 
@@ -68,12 +71,15 @@ class SendEventsPreviewEmailUseCase {
         schedules,
       };
 
-      this.mailProvider.sendMail({
+      sendMailWithLog.execute({
         to: teacher_email,
         subject,
         variables,
-        path: templatePath
-      });
+        path: templatePath,
+        mailLog: {
+          userId: teacher_id
+        },
+      })
     })
   }
 }

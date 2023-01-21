@@ -1,5 +1,5 @@
 
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 import { resolve } from "path";
 
 import { IHoursRepository } from "@modules/accounts/repositories/IHoursRepository";
@@ -7,6 +7,7 @@ import { IMailProvider } from "@shared/container/providers/MailProvider/IMailPro
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { spliceIntoChunks } from "@utils/spliceIntoChunks";
 import { sleep } from "@utils/sleep";
+import { SendMailWithLog } from "@utils/sendMailWithLog";
 
 @injectable()
 class ListWillExpiredHoursUseCase {
@@ -46,6 +47,8 @@ class ListWillExpiredHoursUseCase {
       return
     }
 
+    const sendMailWithLog = container.resolve(SendMailWithLog);
+
     const creditsChunk = spliceIntoChunks(credits, 20)
 
     for (let index = 0; index < creditsChunk.length; index++) {
@@ -58,12 +61,15 @@ class ListWillExpiredHoursUseCase {
             days: addDays,
         };
 
-        this.mailProvider.sendMail({
-            to: credit.email,
-            subject: "Existem créditos próximo do vencimento",
-            variables,
-            path: templatePath,
-        });
+        sendMailWithLog.execute({
+          to: credit.email,
+          subject: "Existem créditos próximo do vencimento",
+          variables,
+          path: templatePath,
+          mailLog: {
+            userId: credit.userId
+          },
+        })
       })
 
       await sleep(10)

@@ -17,6 +17,7 @@ import { creditsRoutes } from "./credits.routes";
 import { promotionsRoutes } from "./promotions.routes";
 import { configurationsRoutes } from "./configurations.routes";
 import { fqasRoutes } from "./fqas.routes";
+import { mailLogsRoutes } from "./mailLogs.routes";
 
 const router = Router();
 
@@ -38,5 +39,6 @@ router.use("/credits", creditsRoutes);
 router.use("/promotions", promotionsRoutes);
 router.use("/configurations", configurationsRoutes);
 router.use("/fqas", fqasRoutes)
+router.use("/mail-logs", mailLogsRoutes)
 
 export { router };

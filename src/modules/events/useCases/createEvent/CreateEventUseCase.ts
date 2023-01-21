@@ -1,4 +1,4 @@
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 import { resolve } from "path";
 
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
@@ -11,6 +11,7 @@ import { IEventsLevelsRepository } from "@modules/events/repositories/IEventsLev
 import { ILevelsRepository } from "@modules/levels/repositories/ILevelsRepository";
 import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 import { createCalendarEvent } from "@utils/createCalendarEvent";
+import { SendMailWithLog } from "@utils/sendMailWithLog";
 
 @injectable()
 class CreateEventUseCase {
@@ -158,13 +159,19 @@ class CreateEventUseCase {
       method: 'REQUEST',
     }
 
-    this.mailProvider.sendMail({
+    const subject = `Nova aula - ${dateTimeFormatted} - ${title}`
+
+    const sendMailWithLog = container.resolve(SendMailWithLog);
+
+    sendMailWithLog.execute({
       to: email,
-      subject: `Nova aula - ${dateTimeFormatted} - ${title}`,
+      subject,
       variables,
       path: templatePath,
-      calendarEvent
-    });
+      mailLog: {
+        userId: teacher_id
+      },
+    })
 
     return event;
   }
