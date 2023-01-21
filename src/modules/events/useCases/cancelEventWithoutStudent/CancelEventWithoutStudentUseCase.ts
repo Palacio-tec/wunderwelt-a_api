@@ -122,6 +122,8 @@ class CancelEventWithoutStudentUseCase {
 
       const schedulesExists = await this.schedulesRepository.findByEventId(event.event_id);
 
+      const dateFormated = this.dateProvider.parseFormat(start_date, 'DD-MM-YYYY [às] HH:mm')
+
       if (schedulesExists.length > 0) {
         const day = this.dateProvider.formatInDate(start_date);
 
@@ -138,7 +140,7 @@ class CancelEventWithoutStudentUseCase {
           await this._deleteSchedule(schedule.id, schedule.user.id)
 
           const { name, email } = schedule.user;
-          const mailMessage = `Infelizmente a aula "${title}" foi cancelada por não atingir a quantidade mínima de alunos. Não se preocupe que os seus créditos foram reembolsados.`
+          const mailMessage = `Infelizmente a aula "${title}" programada para o dia ${dateFormated} foi cancelada por não atingir a quantidade mínima de alunos. Não se preocupe que os seus créditos foram reembolsados.`
 
           const variables = {
             name,
@@ -207,8 +209,6 @@ class CancelEventWithoutStudentUseCase {
         }),
         method: 'CANCEL',
       }
-
-      const dateFormated = this.dateProvider.parseFormat(start_date, 'DD-MM-YYYY [às] HH:mm')
 
       const mailMessage = `A aula "${title}" que teria início em ${dateFormated} foi cancelada por não haver alunos suficientes.`
 
