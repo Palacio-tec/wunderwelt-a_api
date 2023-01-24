@@ -1,4 +1,4 @@
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 import { resolve } from "path";
 import { format } from "date-fns";
 
@@ -16,7 +16,7 @@ import { OperationEnumTypeStatement } from "@modules/statements/dtos/ICreateStat
 import { IQueuesRepository } from "@modules/queues/repositories/IQueuesRepository";
 import { createCalendarEvent } from "@utils/createCalendarEvent";
 import { ISchedulesCreditsRepository } from "@modules/schedules/repositories/ISchedulesCreditsRepository";
-import { Hours } from "@modules/accounts/infra/typeorm/entities/Hours";
+import { SendMailWithLog } from "@utils/sendMailWithLog";
 
 type ICreditUsedProps = {
   id: string;
@@ -174,6 +174,8 @@ class CreateScheduleUseCase {
       "createSchedule.hbs"
     );
 
+    const sendMailWithLog = container.resolve(SendMailWithLog);
+
     const { name, email } = userExists;
 
     const instructionInfo = instruction.split(/\r?\n/)
@@ -215,13 +217,16 @@ class CreateScheduleUseCase {
       method: 'REQUEST',
     }
 
-    this.mailProvider.sendMail({
+    sendMailWithLog.execute({
       to: email,
       subject: "Inscrição na aula realizada com sucesso!",
       variables,
       path: templatePath,
-      calendarEvent
-    });
+      calendarEvent,
+      mailLog: {
+        userId: user_id
+      },
+    })
 
     return schedule;
   }

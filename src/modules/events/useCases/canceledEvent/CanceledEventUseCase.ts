@@ -89,6 +89,7 @@ class CanceledEventUseCase {
       subject: `Nova aula - ${dateTimeFormatted} - ${title}`,
       variables,
       path: templatePath,
+      calendarEvent,
       mailLog: {
         userId: teacher_id
       },

@@ -34,9 +34,6 @@ class UpdateEventUseCase {
 
     @inject("QueuesRepository")
     private queuesRepository: IQueuesRepository,
-
-    @inject("MailProvider")
-    private mailProvider: IMailProvider,
   ) {}
 
   async execute(
@@ -121,6 +118,7 @@ class UpdateEventUseCase {
         subject: `Mudança de horário - ${title}`,
         variables,
         path: templatePath,
+        calendarEvent,
         mailLog: {
           userId: teacher_id
         },

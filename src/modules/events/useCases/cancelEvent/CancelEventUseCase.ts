@@ -160,6 +160,7 @@ class CancelEventUseCase {
           subject,
           variables,
           path: templatePath,
+          calendarEvent,
           mailLog: {
             userId: schedule.user.id
           },
@@ -233,6 +234,7 @@ class CancelEventUseCase {
       subject,
       variables,
       path: templatePath,
+      calendarEvent,
       mailLog: {
         userId: teacher_id
       },
