@@ -371,7 +371,7 @@ class EventsRepository implements IEventsRepository {
           e.is_canceled = false
         GROUP BY
           e.id, e.title, e.start_date, e.minimum_number_of_students,
-          u.name, u.email
+          u.id, u.name, u.email
       ) eventWithoutStudent
       WHERE
         eventWithoutStudent.student_qty = 0 OR
