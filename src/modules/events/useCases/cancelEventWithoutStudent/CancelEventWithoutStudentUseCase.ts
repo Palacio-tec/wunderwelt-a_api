@@ -2,7 +2,6 @@ import { container, inject, injectable } from "tsyringe";
 import { resolve } from "path";
 
 import { IEventsRepository } from "@modules/events/repositories/IEventsRepository";
-import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
 import { ISchedulesRepository } from "@modules/schedules/repositories/ISchedulesRepository";
@@ -19,9 +18,6 @@ class CancelEventWithoutStudentUseCase {
   constructor(
     @inject("EventsRepository")
     private eventsRepository: IEventsRepository,
-
-    @inject("MailProvider")
-    private mailProvider: IMailProvider,
 
     @inject("DateProvider")
     private dateProvider: IDateProvider,
@@ -92,8 +88,6 @@ class CancelEventWithoutStudentUseCase {
 
     const startDate = this.dateProvider.addHoursInDate(date, studentlessPeriodValue);
     const startDateFormated = this.dateProvider.parseISO(startDate).toISOString();
-
-    // console.log( `[EventsWithoutStudent - ${date}] startDate = '${startDateFormated}'` )
 
     const events = await this.eventsRepository.findEventWithoutStudentByDate(
       startDateFormated
@@ -172,6 +166,7 @@ class CancelEventWithoutStudentUseCase {
             subject,
             variables,
             path: templatePath,
+            calendarEvent,
             mailLog: {
               userId: schedule.user.id
             },
@@ -224,6 +219,7 @@ class CancelEventWithoutStudentUseCase {
         subject,
         variables,
         path: templatePath,
+        calendarEvent,
         mailLog: {
           userId: teacher_id
         },

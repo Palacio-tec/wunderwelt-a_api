@@ -168,6 +168,7 @@ class DeleteEventUseCase {
           subject: "Aula Removida",
           variables,
           path: templatePath,
+          calendarEvent,
           mailLog: {
             userId: schedule.user.id
           },
@@ -238,6 +239,7 @@ class DeleteEventUseCase {
       subject,
       variables,
       path: templatePath,
+      calendarEvent,
       mailLog: {
         userId: teacher_id
       },

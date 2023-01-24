@@ -26,6 +26,7 @@ class SendMailWithLog {
     subject,
     variables,
     path,
+    calendarEvent,
     mailLog,
   }: ISendMailWithLogProps): Promise<void> {
     try {
@@ -34,6 +35,7 @@ class SendMailWithLog {
             subject,
             variables,
             path,
+            calendarEvent,
         })
 
         await this.mailLogsRepository.create({
