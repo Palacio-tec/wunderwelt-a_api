@@ -26,9 +26,14 @@ class MercadoPagoPaymentProvider implements IPaymentProvider {
   async createPurchaseOrder(
     payload: CreatePurchaseOrderPayload
   ): Promise<PreferenceCreateResponse> {
-    const purchaseOrder = await this.mercadoPago.preferences.create(payload as any);
-
-    return purchaseOrder;
+    try {
+      const purchaseOrder = await this.mercadoPago.preferences.create(payload as any);
+  
+      return purchaseOrder;
+    } catch (err) {
+      console.log(err)
+      throw new AppError("Error with payment provider");
+    }
   };
 
   async getPayment(payment_id: number): Promise<PaymentGetResponse> {
