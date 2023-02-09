@@ -100,11 +100,13 @@ class CreatePaymentReferenceUseCase {
 
     const { body, response } = await this.paymentProvider.createPurchaseOrder(payload);
 
-    const coupon = await this.couponsRepository.findById(couponId);
+    if (couponId) {
+      const coupon = await this.couponsRepository.findById(couponId);
 
-    coupon.used = Number(coupon.used) + 1
+      coupon.used = Number(coupon.used) + 1
 
-    this.couponsRepository.create(coupon);
+      this.couponsRepository.create(coupon);
+    }
 
     return {
       id: body.id,
