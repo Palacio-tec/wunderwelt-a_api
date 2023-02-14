@@ -139,7 +139,7 @@ class SendEventsNewsletterUseCase {
       return
     }
 
-    const allUsers = await this.usersRepository.findAllStudentUsers()
+    const allUsers = await this.usersRepository.findAllStudentAndTeacherUsers()
 
     if (allUsers) {
       const usersChunk = spliceIntoChunks(allUsers, 40)

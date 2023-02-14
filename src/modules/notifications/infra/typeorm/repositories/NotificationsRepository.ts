@@ -1,4 +1,4 @@
-import { getMongoRepository, MongoRepository } from "typeorm";
+import { getMongoRepository, MongoRepository, ObjectID } from "typeorm";
 import fs from "fs";
 import handlebars from "handlebars";
 
@@ -51,6 +51,19 @@ class NotificationsRepository implements INotificationsRepository {
 
         return notifications;
     }
+
+    async updateToRead(id: string): Promise<void> {
+        const objectId = new ObjectID(id);
+    
+        await this.repository.findOneAndUpdate(
+          { _id: objectId },
+          {
+            $set: {
+              read: true,
+            },
+          }
+        );
+      }
 }
 
 export { NotificationsRepository };
