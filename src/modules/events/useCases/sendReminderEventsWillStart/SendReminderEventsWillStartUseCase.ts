@@ -10,6 +10,7 @@ import { EventsRepository } from "@modules/events/infra/typeorm/repositories/Eve
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
 import { SendMailWithLog } from "@utils/sendMailWithLog";
+import { INotificationsRepository } from '@modules/notifications/repositories/INotificationsRepository'
 
 @injectable()
 class SendReminderEventsWillStartUseCase {
@@ -28,6 +29,9 @@ class SendReminderEventsWillStartUseCase {
 
     @inject("ParametersRepository")
     private parametersRepository: IParametersRepository,
+
+    @inject("NotificationsRepository")
+    private notificationsRepository: INotificationsRepository,
   ) {}
 
   async execute(date: Date): Promise<void> {
@@ -84,9 +88,18 @@ class SendReminderEventsWillStartUseCase {
           time: reminderEventEmailValue,
         };
 
+        const subject = "A sua aula vai começar daqui a pouco!"
+
+        await this.notificationsRepository.create({
+          user_id: user.id,
+          title: subject,
+          path: templatePath,
+          variables
+        })
+
         sendMailWithLog.execute({
           to: user.email,
-          subject: "A sua aula vai começar daqui a pouco!",
+          subject: subject,
           variables,
           path: templatePath,
           mailLog: {

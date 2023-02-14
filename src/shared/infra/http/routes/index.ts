@@ -18,6 +18,7 @@ import { promotionsRoutes } from "./promotions.routes";
 import { configurationsRoutes } from "./configurations.routes";
 import { fqasRoutes } from "./fqas.routes";
 import { mailLogsRoutes } from "./mailLogs.routes";
+import { notificationsRoutes } from "./notifications.routes";
 
 const router = Router();
 
@@ -40,5 +41,6 @@ router.use("/promotions", promotionsRoutes);
 router.use("/configurations", configurationsRoutes);
 router.use("/fqas", fqasRoutes)
 router.use("/mail-logs", mailLogsRoutes)
+router.use("/notifications", notificationsRoutes)
 
 export { router };

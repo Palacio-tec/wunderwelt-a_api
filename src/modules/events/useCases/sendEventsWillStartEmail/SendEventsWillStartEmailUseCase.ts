@@ -8,6 +8,7 @@ import { IMailProvider } from "@shared/container/providers/MailProvider/IMailPro
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
 import { SendMailWithLog } from "@utils/sendMailWithLog";
+import { INotificationsRepository } from '@modules/notifications/repositories/INotificationsRepository'
 
 @injectable()
 class SendEventsWillStartEmailUseCase {
@@ -26,6 +27,9 @@ class SendEventsWillStartEmailUseCase {
 
     @inject("ParametersRepository")
     private parametersRepository: IParametersRepository,
+
+    @inject("NotificationsRepository")
+    private notificationsRepository: INotificationsRepository,
   ) {}
 
   async execute(date: Date): Promise<void> {
@@ -84,6 +88,13 @@ class SendEventsWillStartEmailUseCase {
         schedules,
         link: newLink,
       };
+
+      await this.notificationsRepository.create({
+        user_id: teacher_id,
+        title: subject,
+        path: templatePath,
+        variables
+      })
 
       sendMailWithLog.execute({
         to: teacher_email,

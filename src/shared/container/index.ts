@@ -38,6 +38,9 @@ import { EventsLevelsRepository } from "@modules/events/infra/typeorm/repositori
 import { IProductsRepository } from "@modules/products/repositories/IProductsRepository";
 import { ProductsRepository } from "@modules/products/infra/typeorm/repositories/ProductsRepository";
 
+import { NotificationsRepository } from "@modules/notifications/infra/typeorm/repositories/NotificationsRepository";
+import { INotificationsRepository } from "@modules/notifications/repositories/INotificationsRepository";
+
 import { IPurchaseOrdersRepository } from "@modules/purchases/repositories/IPurchaseOrdersRepository";
 import { PurchaseOrdersRepository } from "@modules/purchases/infra/typeorm/repositories/PurchaseOrdersRepository";
 import { ISchedulesCreditsRepository } from "@modules/schedules/repositories/ISchedulesCreditsRepository";
@@ -132,4 +135,9 @@ container.registerSingleton<IFQAsRepository>(
 container.registerSingleton<IMailLogsRepository>(
   "MailLogsRepository",
   MailLogsRepository
+)
+
+container.registerSingleton<INotificationsRepository>(
+  "NotificationsRepository",
+  NotificationsRepository
 )
