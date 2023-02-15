@@ -12,6 +12,7 @@ import { createCalendarEvent } from "@utils/createCalendarEvent";
 import { ISchedulesCreditsRepository } from "@modules/schedules/repositories/ISchedulesCreditsRepository";
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
 import { SendMailWithLog } from "@utils/sendMailWithLog";
+import { INotificationsRepository } from '@modules/notifications/repositories/INotificationsRepository'
 
 @injectable()
 class CancelEventWithoutStudentUseCase {
@@ -39,6 +40,9 @@ class CancelEventWithoutStudentUseCase {
 
     @inject("UsersRepository")
     private usersRepository: IUsersRepository,
+
+    @inject("NotificationsRepository")
+    private notificationsRepository: INotificationsRepository,
   ) {}
 
   private async _deleteSchedule(schedule_id: string, user_id: string){
@@ -213,6 +217,13 @@ class CancelEventWithoutStudentUseCase {
       };
 
       const subject = `Aula cancelada - ${title}`
+
+      await this.notificationsRepository.create({
+        user_id: teacher_id,
+        title: subject,
+        path: templatePath,
+        variables
+      })
 
       sendMailWithLog.execute({
         to: teacher_email,

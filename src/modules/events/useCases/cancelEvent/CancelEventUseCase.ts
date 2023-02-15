@@ -14,6 +14,7 @@ import { createCalendarEvent } from "@utils/createCalendarEvent";
 import { ISchedulesCreditsRepository } from "@modules/schedules/repositories/ISchedulesCreditsRepository";
 import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
 import { SendMailWithLog } from "@utils/sendMailWithLog";
+import { INotificationsRepository } from '@modules/notifications/repositories/INotificationsRepository'
 
 @injectable()
 class CancelEventUseCase {
@@ -44,6 +45,9 @@ class CancelEventUseCase {
 
     @inject("ParametersRepository")
     private parametersRepository: IParametersRepository,
+
+    @inject("NotificationsRepository")
+    private notificationsRepository: INotificationsRepository,
   ) {}
 
   private async _deleteSchedule(schedule_id: string, user_id: string){
@@ -128,7 +132,7 @@ class CancelEventUseCase {
       schedulesExists.map(async (schedule) => {
         this._deleteSchedule(schedule.id, schedule.user.id)
 
-        const { name, email } = schedule.user;
+        const { name, email, id } = schedule.user;
 
         const variables = {
           name,
@@ -154,6 +158,13 @@ class CancelEventUseCase {
         }
 
         const subject = `Aula Cancelada - ${title}`
+
+        await this.notificationsRepository.create({
+          user_id: id,
+          title: subject,
+          path: templatePath,
+          variables
+        })
 
         sendMailWithLog.execute({
           to: email,
@@ -228,6 +239,13 @@ class CancelEventUseCase {
     }
 
     const subject = `Aula cancelada - ${title}`
+
+    await this.notificationsRepository.create({
+      user_id: teacher_id,
+      title: subject,
+      path: templatePath,
+      variables
+    })
 
     sendMailWithLog.execute({
       to: eventTeacher.email,

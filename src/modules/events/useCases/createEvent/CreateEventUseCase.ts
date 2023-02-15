@@ -9,9 +9,9 @@ import { AppError } from "@shared/errors/AppError";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { IEventsLevelsRepository } from "@modules/events/repositories/IEventsLevelsRepository";
 import { ILevelsRepository } from "@modules/levels/repositories/ILevelsRepository";
-import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 import { createCalendarEvent } from "@utils/createCalendarEvent";
 import { SendMailWithLog } from "@utils/sendMailWithLog";
+import { INotificationsRepository } from '@modules/notifications/repositories/INotificationsRepository'
 
 @injectable()
 class CreateEventUseCase {
@@ -31,8 +31,8 @@ class CreateEventUseCase {
     @inject("LevelsRepository")
     private levelsRepository: ILevelsRepository,
 
-    @inject("MailProvider")
-    private mailProvider: IMailProvider,
+    @inject("NotificationsRepository")
+    private notificationsRepository: INotificationsRepository,
   ) {}
 
   async execute(
@@ -132,7 +132,7 @@ class CreateEventUseCase {
       "teacherEventCreated.hbs"
     );
 
-    const { name, email } = teacherExists;
+    const { name, email, id } = teacherExists;
 
     const variables = {
       name,
@@ -160,6 +160,13 @@ class CreateEventUseCase {
     }
 
     const subject = `Nova aula - ${dateTimeFormatted} - ${title}`
+
+    await this.notificationsRepository.create({
+      user_id: id,
+      title: subject,
+      path: templatePath,
+      variables
+    })
 
     const sendMailWithLog = container.resolve(SendMailWithLog);
 
