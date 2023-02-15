@@ -85,7 +85,6 @@ couponsRoutes.get(
 couponsRoutes.get(
   "/available/:code",
   ensureAuthenticated,
-  ensureAdmin,
   availableCouponControler.handle
 )
 
