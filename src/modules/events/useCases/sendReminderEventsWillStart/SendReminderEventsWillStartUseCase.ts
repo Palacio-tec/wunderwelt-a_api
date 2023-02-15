@@ -99,7 +99,7 @@ class SendReminderEventsWillStartUseCase {
 
         sendMailWithLog.execute({
           to: user.email,
-          subject: subject,
+          subject,
           variables,
           path: templatePath,
           mailLog: {

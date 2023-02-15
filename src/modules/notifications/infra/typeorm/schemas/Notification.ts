@@ -21,6 +21,9 @@ class Notifications {
     @Column()
     content: string;
 
+    @Column({ default: false })
+    read: boolean = false;
+
     @CreateDateColumn()
     created_at: Date;
 

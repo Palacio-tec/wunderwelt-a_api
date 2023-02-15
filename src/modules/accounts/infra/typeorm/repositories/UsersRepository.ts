@@ -143,6 +143,20 @@ class UsersRepository implements IUsersRepository {
 
     return
   }
+
+  async findAllStudentAndTeacherUsers(): Promise<User[]> {
+    const studentsAndTeacherUsers = await this.repository.query(
+      `SELECT 
+        u.*
+      FROM
+        users u
+      WHERE
+        u.is_teacher = true OR
+        (u.is_teacher = false and u.is_admin = false)`
+    );
+
+    return studentsAndTeacherUsers;
+  }
 }
 
 export { UsersRepository };

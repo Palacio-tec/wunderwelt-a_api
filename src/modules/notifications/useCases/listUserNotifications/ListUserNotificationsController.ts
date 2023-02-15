@@ -15,7 +15,7 @@ class ListUserNotificationController {
       user_id: id,
     });
 
-    return response.status(200).json(notifications);
+    return response.status(201).json(notifications);
   }
 }
 

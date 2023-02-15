@@ -14,6 +14,7 @@ interface IUsersRepository {
   listTeachers(): Promise<User[]>;
   updateAddCreditById(id: string, credit: number): Promise<void>;
   updateCreditById(id: string, credit: string): Promise<void>;
+  findAllStudentAndTeacherUsers(): Promise<User[]>
 }
 
 export { IUsersRepository };
