@@ -39,18 +39,21 @@ class FindEventUseCase {
       minimum_number_of_students,
       has_highlight,
       for_teachers,
+      registered_students,
     } = event;
 
     let levelsInfo = [];
 
     if (levels) {
       const eventLevels = await this.eventsLevelsRepository.findByEvent(id);
+      const eventLevelsSorted = eventLevels.sort((a, b) => a.level.name.localeCompare(b.level.name))
 
       levelsInfo = await Promise.all<{value: string, label: string}>(
-        eventLevels.map(async (eventLevel) => {
+        eventLevelsSorted.map(async (eventLevel) => {
           return {
             value: eventLevel.level_id,
             label: eventLevel.level.name,
+            info: eventLevel
           }
         })
       );
@@ -74,6 +77,7 @@ class FindEventUseCase {
       levels: levelsInfo,
       has_highlight,
       for_teachers,
+      registered_students,
     };
   }
 }
