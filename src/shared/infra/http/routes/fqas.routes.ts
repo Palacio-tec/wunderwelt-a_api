@@ -29,7 +29,6 @@ fqasRoutes.post(
 fqasRoutes.get(
   "/",
   ensureAuthenticated,
-  ensureAdmin,
   listFQAsController.handle
 )
 

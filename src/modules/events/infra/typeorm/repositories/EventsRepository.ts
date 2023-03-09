@@ -154,6 +154,7 @@ class EventsRepository implements IEventsRepository {
         e.instruction, e.is_canceled, e.credit, e.teacher_id, e.request_subject,
         e.minimum_number_of_students, e.has_highlight, e.for_teachers,
         u.name,
+        COUNT(s.event_id) AS registered_students,
         string_agg(l.name, ', ') levels
       FROM
         events e
@@ -169,6 +170,10 @@ class EventsRepository implements IEventsRepository {
         levels l
       ON
         l.id = el.level_id
+      LEFT JOIN
+        schedules s
+      ON
+        s.event_id = e.id
       WHERE
         e.id = '${id}'
       GROUP BY

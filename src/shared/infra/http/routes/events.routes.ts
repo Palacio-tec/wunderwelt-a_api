@@ -86,7 +86,6 @@ eventsRoutes.get(
 eventsRoutes.get(
   "/find/:id",
   ensureAuthenticated,
-  ensureAdmin,
   findEventController.handle
 );
 

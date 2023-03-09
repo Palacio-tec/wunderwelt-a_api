@@ -62,9 +62,11 @@ class ListAvailableEventsUseCase {
     const eventsWithLevels = await Promise.all(events.map(async event => {
       const levels = await this.eventsLevelsRepository.findByEvent(event.id)
 
+      const levelsSorted = levels.sort((a, b) => a.level.name.localeCompare(b.level.name))
+
       return {
         ...event,
-        levels
+        levels: levelsSorted
       }
     }))
 
