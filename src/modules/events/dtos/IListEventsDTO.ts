@@ -16,6 +16,7 @@ interface IListEventsDTO {
   levels: string;
   has_highlight?: boolean;
   for_teachers?: boolean;
+  registered_students?: number;
 }
 
 export { IListEventsDTO }
