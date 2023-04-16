@@ -53,6 +53,8 @@ class UpdateEventUseCase {
       levels,
       has_highlight,
       for_teachers,
+      modality,
+      description_formatted,
     }: ICreateEventDTO,
     user_id: string
   ): Promise<Event> {
@@ -145,6 +147,8 @@ class UpdateEventUseCase {
       instruction,
       has_highlight,
       for_teachers,
+      modality,
+      description_formatted,
     });
 
     await this.eventsLevelsRepository.deleteByEvent(id);

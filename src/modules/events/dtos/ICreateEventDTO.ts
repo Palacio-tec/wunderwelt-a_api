@@ -1,3 +1,8 @@
+enum OperationEnumModalityEvent {
+  FACE_TO_FACE = "face_to_face",
+  REMOTE = "remote",
+}
+
 interface ICreateEventDTO {
   id?: string;
   title: string;
@@ -15,6 +20,8 @@ interface ICreateEventDTO {
   minimum_number_of_students?: number;
   has_highlight?: boolean;
   for_teachers?: boolean;
+  modality: OperationEnumModalityEvent;
+  description_formatted: string;
 }
 
-export { ICreateEventDTO };
+export { ICreateEventDTO, OperationEnumModalityEvent };

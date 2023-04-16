@@ -40,6 +40,8 @@ class FindEventUseCase {
       has_highlight,
       for_teachers,
       registered_students,
+      modality,
+      description_formatted,
     } = event;
 
     let levelsInfo = [];
@@ -78,6 +80,8 @@ class FindEventUseCase {
       has_highlight,
       for_teachers,
       registered_students,
+      modality,
+      description_formatted,
     };
   }
 }

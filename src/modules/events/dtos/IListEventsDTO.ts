@@ -1,3 +1,5 @@
+import { OperationEnumModalityEvent } from "./ICreateEventDTO";
+
 interface IListEventsDTO {
   id: string;
   title: string;
@@ -17,6 +19,8 @@ interface IListEventsDTO {
   has_highlight?: boolean;
   for_teachers?: boolean;
   registered_students?: number;
+  modality: OperationEnumModalityEvent;
+  description_formatted: string;
 }
 
 export { IListEventsDTO }

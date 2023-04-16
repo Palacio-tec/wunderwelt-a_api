@@ -20,6 +20,8 @@ class UpdateEventControllet {
       levels,
       has_highlight,
       for_teachers,
+      modality,
+      description_formatted,
     } = request.body;
     const { id } = request.params;
     const { id: user_id } = request.user;
@@ -43,6 +45,8 @@ class UpdateEventControllet {
         levels,
         has_highlight,
         for_teachers,
+        modality,
+        description_formatted,
       },
       user_id
     );
