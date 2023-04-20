@@ -11,7 +11,7 @@
         color: #1e2f50;
       }
 
-      span {
+      .contentSpan {
         margin: 10px 0;
         display: block;
       }
@@ -24,11 +24,11 @@
   </head>
   <body>
     <div class="container">
-      <span>Olá, {{name}}</span>
+      <span class="contentSpan">Olá, {{name}}</span>
 
       <br />
 
-      <span>
+      <span class="contentSpan">
         {{#if plural}}
             Você acabou de ganhar {{credit}} créditos de presente!
         {{else}}

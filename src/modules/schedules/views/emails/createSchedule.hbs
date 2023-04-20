@@ -16,7 +16,7 @@
         font-weight: bold;
       }
 
-      span {
+      .contentSpan {
         margin: 10px 0;
         display: block;
       }
@@ -29,20 +29,20 @@
   </head>
   <body>
     <div class="container">
-      <span>Olá, {{name}}</span>
+      <span class="contentSpan">Olá, {{name}}</span>
 
       <br />
 
-      <span>Você realizou a inscrição para a aula "{{title}}", que acontecerá no dia {{day}} às {{start_hour}} (horário de Brasília).</span>
+      <span class="contentSpan">Você realizou a inscrição para a aula "{{title}}", que acontecerá no dia {{day}} às {{start_hour}} (horário de Brasília).</span>
 
       {{#if hasInstruction}}
         <p>Para se preparar para a aula é importante seguir a(s) instrução(ões) abaixo:</p>
-        <span>{{{instruction}}}</span>
+        <span class="contentSpan">{{{instruction}}}</span>
         <br />
       {{else}}
       {{/if}}
 
-      <span>O link para a sala virtual será enviado por e-mail quando a aula estiver próxima do início.</span>
+      <span class="contentSpan">O link para a sala virtual será enviado por e-mail quando a aula estiver próxima do início.</span>
 
       <br />
 
