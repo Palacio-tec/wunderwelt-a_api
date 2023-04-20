@@ -1,3 +1,5 @@
+import { OperationEnumModalityEvent } from "./ICreateEventDTO";
+
 type LevelsProps = {
     value: string;
     label: string;
@@ -22,6 +24,8 @@ interface IFindEventDTO {
     has_highlight?: boolean;
     for_teachers?: boolean;
     registered_students?: number;
+    modality: OperationEnumModalityEvent;
+    description_formatted: string;
 }
 
 export { IFindEventDTO }

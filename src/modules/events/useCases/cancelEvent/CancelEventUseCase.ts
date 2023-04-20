@@ -202,6 +202,8 @@ class CancelEventUseCase {
       credit: eventExists.credit,
       request_subject: eventExists.request_subject,
       minimum_number_of_students: Number(eventExists.minimum_number_of_students),
+      modality: eventExists.modality,
+      description_formatted: eventExists.description_formatted,
     });
 
     const templatePath = resolve(

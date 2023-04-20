@@ -12,6 +12,7 @@ import {
 import { User } from "@modules/accounts/infra/typeorm/entities/User";
 import { Exclude } from "class-transformer";
 import { EventLevels } from "./EventsLevels";
+import { OperationEnumModalityEvent } from "@modules/events/dtos/ICreateEventDTO";
 
 @Entity("events")
 class Event {
@@ -72,6 +73,12 @@ class Event {
   @OneToMany(() => EventLevels, eventLevels => eventLevels.event)
   @JoinColumn({ name: 'id' })
   event_levels: EventLevels[];
+
+  @Column({ type: "enum", enum: OperationEnumModalityEvent })
+  modality: OperationEnumModalityEvent;
+
+  @Column()
+  description_formatted: string;
 
   constructor() {
     if (!this.id) {

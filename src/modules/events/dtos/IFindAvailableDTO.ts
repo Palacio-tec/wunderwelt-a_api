@@ -1,3 +1,5 @@
+import { OperationEnumModalityEvent } from "./ICreateEventDTO";
+
 interface IFindAvailableProps {
     date: string;
     user_id: string;
@@ -15,6 +17,8 @@ interface IFindAvailableDTO {
     registered_students: string;
     credit: Number;
     request_subject: boolean;
+    modality: OperationEnumModalityEvent;
+    description_formatted: string;
 }
 
 export { IFindAvailableDTO, IFindAvailableProps }
