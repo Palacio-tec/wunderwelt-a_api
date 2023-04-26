@@ -31,7 +31,7 @@ class UpdateUsersHoursUseCase {
           this.statementsRepository.create({
             amount: amountExpired,
             description: `${amountExpired} crédito${amountExpired > 1 ? 's' : ''} expir${amountExpired > 1 ? 'aram' : 'ou'}`,
-            type: OperationEnumTypeStatement.DEPOSIT,
+            type: OperationEnumTypeStatement.WITHDRAW,
             user_id: hour.user_id,
           });
         }
