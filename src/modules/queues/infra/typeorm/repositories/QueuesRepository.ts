@@ -45,6 +45,7 @@ class QueuesRepository implements IQueuesRepository {
 
   async list(): Promise<Queue[]> {
     const queues = await this.repository.find({
+      order: {created_at: 'DESC'},
       relations: ['event', 'user']
     });
 

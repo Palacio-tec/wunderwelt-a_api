@@ -1,4 +1,4 @@
-import { getRepository, Repository } from "typeorm";
+import { getRepository, IsNull, Repository } from "typeorm";
 
 import { ICreateUserDTO } from "@modules/accounts/dtos/ICreateUserDTO";
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
@@ -87,7 +87,7 @@ class UsersRepository implements IUsersRepository {
   }
 
   async list(): Promise<User[]> {
-    const users = await this.repository.find({ order: { name: "ASC" }, relations: ['hours'] });
+    const users = await this.repository.find({ order: { created_at: "DESC" }, relations: ['hours'] });
 
     return users;
   }
@@ -125,7 +125,7 @@ class UsersRepository implements IUsersRepository {
 
   async listTeachers(): Promise<User[]> {
     const teachers = await this.repository.find({
-      where: { is_teacher: true },
+      where: { is_teacher: true, inactivation_date: IsNull() },
       order: { name: "ASC" },
     });
 
