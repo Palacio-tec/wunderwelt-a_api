@@ -4,15 +4,22 @@ import { resolve } from "path";
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
 import { ICreateEventDTO } from "@modules/events/dtos/ICreateEventDTO";
 import { Event } from "@modules/events/infra/typeorm/entities/Event";
+import { User } from "@modules/accounts/infra/typeorm/entities/User";
 import { IEventsLevelsRepository } from "@modules/events/repositories/IEventsLevelsRepository";
 import { IEventsRepository } from "@modules/events/repositories/IEventsRepository";
 import { ILevelsRepository } from "@modules/levels/repositories/ILevelsRepository";
 import { IQueuesRepository } from "@modules/queues/repositories/IQueuesRepository";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { AppError } from "@shared/errors/AppError";
-import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 import { createCalendarEvent } from "@utils/createCalendarEvent";
 import { SendMailWithLog } from "@utils/sendMailWithLog";
+import { INotificationsRepository } from '@modules/notifications/repositories/INotificationsRepository'
+
+interface ChangeTeacherProps {
+  newTeacher: User,
+  oldTeacherId: string,
+  event: Event
+}
 
 @injectable()
 class UpdateEventUseCase {
@@ -34,7 +41,137 @@ class UpdateEventUseCase {
 
     @inject("QueuesRepository")
     private queuesRepository: IQueuesRepository,
+
+    @inject("NotificationsRepository")
+    private notificationsRepository: INotificationsRepository,
   ) {}
+
+  private async __newTeacher(teacher: User, event: Event) {
+    const templatePath = resolve(
+      __dirname,
+      "..",
+      "..",
+      "views",
+      "emails",
+      "teacherEventCreated.hbs"
+    );
+
+    const dateTimeFormatted = this.dateProvider.parseFormat(event.start_date, "DD-MM-YYYY [às] HH:mm")
+    const duration = this.dateProvider.differenceInMinutes(event.start_date, event.end_date)
+
+    const variables = {
+      name: teacher.name,
+      title: event.title,
+      dateTime: dateTimeFormatted,
+      duration,
+    };
+
+    const calendarEvent = {
+      content: await createCalendarEvent({
+        id: event.id,
+        start: event.start_date,
+        end: event.end_date,
+        summary: event.title,
+        description: event.instruction,
+        location: 'Sala virtual',
+        status: "CONFIRMED",
+        method: 'REQUEST',
+        attendee: {
+          name: teacher.name,
+          email: teacher.email
+        },
+      }),
+      method: 'REQUEST',
+    }
+
+    const subject = `Nova aula - ${dateTimeFormatted} - ${event.title}`
+
+    await this.notificationsRepository.create({
+      user_id: teacher.id,
+      title: subject,
+      path: templatePath,
+      variables
+    })
+
+    const sendMailWithLog = container.resolve(SendMailWithLog);
+
+    sendMailWithLog.execute({
+      to: teacher.email,
+      subject,
+      variables,
+      path: templatePath,
+      calendarEvent,
+      mailLog: {
+        userId: teacher.id
+      },
+    })
+  }
+  private async __oldTeacher(teacherId: string, event: Event) {
+    const teacher = await this.usersRepository.findById(teacherId)
+
+    const templatePath = resolve(
+      __dirname,
+      "..",
+      "..",
+      "views",
+      "emails",
+      "cancelEvent.hbs"
+    );
+
+    const variables = {
+      name: teacher.name,
+      mailMessage: `A aula "${event.title}" agendada para o dia ${this.dateProvider.parseFormat(event.start_date, "DD-MM-YYYY [às] HH:mm")} foi cancelada.`,
+    };
+
+    const calendarEvent = {
+      content: await createCalendarEvent({
+        id: event.id,
+        start: event.start_date,
+        end: event.end_date,
+        summary: event.title,
+        description: event.instruction,
+        location: 'Sala virtual',
+        status: "CANCELLED",
+        method: 'CANCEL',
+        attendee: {
+          name: teacher.name,
+          email: teacher.email
+        }
+      }),
+      method: 'CANCEL',
+    }
+
+    const subject = `Aula cancelada - ${event.title}`
+
+    await this.notificationsRepository.create({
+      user_id: teacher.id,
+      title: subject,
+      path: templatePath,
+      variables
+    })
+
+    const sendMailWithLog = container.resolve(SendMailWithLog);
+
+    sendMailWithLog.execute({
+      to: teacher.email,
+      subject,
+      variables,
+      path: templatePath,
+      calendarEvent,
+      mailLog: {
+        userId: teacher.id
+      },
+    })
+  }
+
+  private async __changeTeacher({
+    newTeacher,
+    oldTeacherId,
+    event
+  }: ChangeTeacherProps) {
+    await this.__newTeacher(newTeacher, event)
+    await this.__oldTeacher(oldTeacherId, event)
+  }
 
   async execute(
     {
@@ -58,6 +195,7 @@ class UpdateEventUseCase {
     }: ICreateEventDTO,
     user_id: string
   ): Promise<Event> {
+    let teacherExists: User | null = null
     const userExists = await this.usersRepository.findById(user_id);
 
     if (!userExists) {
@@ -72,6 +210,20 @@ class UpdateEventUseCase {
 
     if (!eventExists) {
       throw new AppError("Event does not exists");
+    }
+
+    const hasTeacherChanged = eventExists.teacher_id !== teacher_id
+
+    if (hasTeacherChanged) {
+      teacherExists = await this.usersRepository.findById(teacher_id);
+
+      if (!teacherExists) {
+        throw new AppError("Teacher does not exists");
+      }
+
+      if (!teacherExists.is_teacher) {
+        throw new AppError("The teacher_id is not from a teacher");
+      }
     }
 
     const sendMailWithLog = container.resolve(SendMailWithLog);
@@ -150,6 +302,14 @@ class UpdateEventUseCase {
       modality,
       description_formatted,
     });
+
+    if (hasTeacherChanged) {
+      await this.__changeTeacher({
+        newTeacher: teacherExists,
+        oldTeacherId: eventExists.teacher_id,
+        event
+      })
+    }
 
     await this.eventsLevelsRepository.deleteByEvent(id);
 
