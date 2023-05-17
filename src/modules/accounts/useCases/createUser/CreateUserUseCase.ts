@@ -41,6 +41,8 @@ class CreateUserUseCase {
     phone,
     document_type,
     document,
+    receive_email,
+    receive_newsletter,
   }: ICreateUserDTO): Promise<User> {
     username = username.toLocaleLowerCase().trim();
     email = email.toLocaleLowerCase().trim();
@@ -81,15 +83,17 @@ class CreateUserUseCase {
       phone,
       document_type,
       document,
+      receive_email,
+      receive_newsletter,
     });
 
-    const amount = 0;
     const expiration_date = this.dateProvider.dateNow();
 
     await this.hoursRepository.create({
-      amount,
+      amount: 0,
       expiration_date,
       user_id: user.id,
+      balance: 0
     });
 
     if (sendPasswordEmail) {

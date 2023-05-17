@@ -9,7 +9,6 @@ import { ICreateScheduleDTO } from "@modules/schedules/dtos/ICreateScheduleDTO";
 import { Schedule } from "@modules/schedules/infra/typeorm/entities/Schedule";
 import { ISchedulesRepository } from "@modules/schedules/repositories/ISchedulesRepository";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
-import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 import { AppError } from "@shared/errors/AppError";
 import { IStatementsRepository } from "@modules/statements/repositories/IStatementsRepository";
 import { OperationEnumTypeStatement } from "@modules/statements/dtos/ICreateStatementDTO";
@@ -42,9 +41,6 @@ class CreateScheduleUseCase {
 
     @inject("StatementsRepository")
     private statementsRepository: IStatementsRepository,
-
-    @inject("MailProvider")
-    private mailProvider: IMailProvider,
 
     @inject("QueuesRepository")
     private queuesRepository: IQueuesRepository,

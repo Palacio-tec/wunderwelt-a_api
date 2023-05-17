@@ -12,6 +12,8 @@ interface IUpdateProfileDTO {
     phone?: string;
     document_type?: string;
     document?: string;
+    receive_newsletter?: boolean;
+    receive_email?: boolean;
   }
   
   export { IUpdateProfileDTO };
