@@ -16,6 +16,8 @@ type Profile = {
   phone: string;
   document_type: string;
   document: string;
+  receive_email: boolean;
+  receive_newsletter: boolean;
 };
 
 @injectable()
@@ -40,6 +42,8 @@ class FindUserUseCase {
       phone,
       document_type,
       document,
+      receive_email,
+      receive_newsletter,
     } = await this.usersRepository.findById(id);
 
     return {
@@ -56,6 +60,8 @@ class FindUserUseCase {
       phone,
       document_type,
       document,
+      receive_email,
+      receive_newsletter,
     };
   }
 }

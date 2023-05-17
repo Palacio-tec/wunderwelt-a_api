@@ -18,6 +18,7 @@ interface IDateProvider {
   getDay(date: Date): number;
   getMonth(date: Date): number;
   getYear(date: Date): number;
+  getNextDay(date: Date, dayOfWeek: number): Date;
 }
 
 export { IDateProvider };

@@ -14,6 +14,8 @@ interface IUpdateUserDTO {
     document_type?: string;
     document?: string;
     credit?: number;
+    receive_newsletter?: boolean;
+    receive_email?: boolean;
   }
   
   export { IUpdateUserDTO };

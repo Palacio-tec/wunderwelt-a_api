@@ -100,6 +100,16 @@ class DayjsDateProvider implements IDateProvider {
 
     return day
   }
+
+  getNextDay(date: Date, dayOfWeek: number): Date {
+    let day = dayjs(date).day(dayOfWeek).toDate()
+
+    if (day < new Date()) {
+      day = dayjs(day).add(1, 'week').toDate()
+    }
+
+    return day
+  }
 }
 
 export { DayjsDateProvider };

@@ -83,15 +83,15 @@ class HoursRepository implements IHoursRepository {
 
   async findWillExpired(startDate: string, endDate: string): Promise<IFindWillExpiredHoursDTO[]> {
     const hours = await this.repository.query(`
-      select
-        h.user_id, u."name", u.email, sum(h.balance) as amount from hours h
-      inner join
+      SELECT
+        h.user_id, u."name", u.email, sum(h.balance) AS amount from hours h
+      INNER JOIN
         users u 
-      on
-        u.id = h.user_id 
-      where
-        to_char(h.expiration_date, 'YYYY-MM-DD') between '${startDate}' and '${endDate}'
-      group by
+      ON
+        u.id = h.user_id AND u.inactivation_date IS NULL AND u.receive_email = true
+      WHERE
+        to_char(h.expiration_date, 'YYYY-MM-DD') BETWEEN '${startDate}' AND '${endDate}'
+      GROUP BY
         h.user_id,
         u."name",
         u.email

@@ -8,20 +8,20 @@ import { IEventsRepository } from "@modules/events/repositories/IEventsRepositor
 import { ICreateScheduleDTO } from "@modules/schedules/dtos/ICreateScheduleDTO";
 import { Schedule } from "@modules/schedules/infra/typeorm/entities/Schedule";
 import { ISchedulesRepository } from "@modules/schedules/repositories/ISchedulesRepository";
-import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
-import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
-import { AppError } from "@shared/errors/AppError";
 import { IStatementsRepository } from "@modules/statements/repositories/IStatementsRepository";
 import { OperationEnumTypeStatement } from "@modules/statements/dtos/ICreateStatementDTO";
 import { IQueuesRepository } from "@modules/queues/repositories/IQueuesRepository";
-import { createCalendarEvent } from "@utils/createCalendarEvent";
 import { ISchedulesCreditsRepository } from "@modules/schedules/repositories/ISchedulesCreditsRepository";
+import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
+import { AppError } from "@shared/errors/AppError";
+import { createCalendarEvent } from "@utils/createCalendarEvent";
 import { SendMailWithLog } from "@utils/sendMailWithLog";
 
 type ICreditUsedProps = {
   id: string;
   amount: number;
 }
+
 @injectable()
 class CreateScheduleUseCase {
   constructor(
@@ -43,9 +43,6 @@ class CreateScheduleUseCase {
     @inject("StatementsRepository")
     private statementsRepository: IStatementsRepository,
 
-    @inject("MailProvider")
-    private mailProvider: IMailProvider,
-
     @inject("QueuesRepository")
     private queuesRepository: IQueuesRepository,
 
@@ -63,7 +60,7 @@ class CreateScheduleUseCase {
     })
   }
 
-  private async _debitCredit(user_id: string, total_amount: number, schedule_id: string) {
+  private async __debitCredit(user_id: string, total_amount: number, schedule_id: string) {
     if (total_amount <= 0) {
       return
     }
@@ -148,7 +145,7 @@ class CreateScheduleUseCase {
       subject,
     });
 
-    this._debitCredit(user_id, Number(credit), schedule.id)
+    this.__debitCredit(user_id, Number(credit), schedule.id)
 
     const day = this.dateProvider.formatInDate(start_date);
     const start_hour = this.dateProvider.formatInHour(start_date);

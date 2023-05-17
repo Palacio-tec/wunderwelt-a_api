@@ -343,7 +343,11 @@ class UpdateEventUseCase {
             "queueAvailableEvent.hbs"
           );
 
-          const { name, email, id } = queue.user;
+          const { name, email, id, receive_email } = queue.user;
+
+          if (!receive_email) {
+            return
+          }
 
           const { title, start_date, link } = queue.event;
 

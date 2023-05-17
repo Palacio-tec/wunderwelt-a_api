@@ -68,6 +68,12 @@ class User {
   @Column({ default: 0})
   credit: number;
 
+  @Column({ default: true })
+  receive_newsletter: boolean
+
+  @Column({ default: true })
+  receive_email: boolean
+
   constructor() {
     if (!this.id) {
       this.id = uuidv4();

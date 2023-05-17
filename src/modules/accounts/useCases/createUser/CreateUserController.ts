@@ -18,6 +18,8 @@ class CreateUserController {
       phone,
       document_type,
       document,
+      receive_email,
+      receive_newsletter,
     } = request.body;
     const createUserUseCase = container.resolve(CreateUserUseCase);
 
@@ -35,6 +37,8 @@ class CreateUserController {
       phone,
       document_type,
       document,
+      receive_email,
+      receive_newsletter,
     });
 
     return response.status(201).json(user);

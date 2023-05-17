@@ -17,6 +17,8 @@ class UpdateProfileController {
       phone,
       document_type,
       document,
+      receive_email,
+      receive_newsletter,
     } = request.body;
     const { id } = request.user;
 
@@ -38,6 +40,8 @@ class UpdateProfileController {
       phone,
       document_type,
       document,
+      receive_email,
+      receive_newsletter,
     });
 
     return response.status(201).send();

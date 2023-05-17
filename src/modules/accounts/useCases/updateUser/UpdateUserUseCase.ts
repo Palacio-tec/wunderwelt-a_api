@@ -28,6 +28,8 @@ class UpdateUserUseCase {
     phone,
     document_type,
     document,
+    receive_email,
+    receive_newsletter
   }: IUpdateUserDTO): Promise<User> {
     const userUsernameAlreadyExists = await this.usersRepository.findByFieldForOtherUser(
       'username',
@@ -59,6 +61,8 @@ class UpdateUserUseCase {
     user.phone = phone;
     user.document_type = document_type;
     user.document = document;
+    user.receive_email = receive_email;
+    user.receive_newsletter = receive_newsletter;
     if (inactivation_date) {
       user.inactivation_date = inactivation_date;
     }

@@ -7,7 +7,6 @@ import { AppError } from "@shared/errors/AppError";
 import { IUsersTokensRepository } from "@modules/accounts/repositories/IUsersTokensRepository";
 import auth from "@config/auth";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
-import { IStatementsRepository } from "@modules/statements/repositories/IStatementsRepository";
 import { isMail } from "@utils/isMail";
 import { User } from "@modules/accounts/infra/typeorm/entities/User";
 
@@ -31,6 +30,8 @@ interface IResponse {
     phone: string;
     document: string;
     credit: number;
+    receive_email: boolean;
+    receive_newsletter: boolean;
   };
   token: string;
   refresh_token: string;
@@ -47,9 +48,6 @@ class AuthenticateUserUseCase {
 
     @inject("DateProvider")
     private dateProvider: IDateProvider,
-
-    @inject("StatementsRepository")
-    private statementsRepository: IStatementsRepository,
   ) {}
 
   async execute({ username, password }: IRequest): Promise<IResponse> {
@@ -112,6 +110,8 @@ class AuthenticateUserUseCase {
         document: user.document,
         balance: user.credit,
         credit: user.credit,
+        receive_email: user.receive_email,
+        receive_newsletter: user.receive_newsletter,
       },
       token,
       refresh_token,

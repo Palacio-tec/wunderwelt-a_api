@@ -28,6 +28,8 @@ class UsersRepository implements IUsersRepository {
     document_type,
     document,
     credit,
+    receive_email,
+    receive_newsletter,
   }: ICreateUserDTO): Promise<User> {
     const user = this.repository.create({
       name,
@@ -46,6 +48,8 @@ class UsersRepository implements IUsersRepository {
       document_type,
       document,
       credit,
+      receive_email,
+      receive_newsletter,
     });
 
     await this.repository.save(user);
@@ -151,8 +155,9 @@ class UsersRepository implements IUsersRepository {
       FROM
         users u
       WHERE
-        u.is_teacher = true OR
-        (u.is_teacher = false and u.is_admin = false)`
+        u.inactivation_date IS NULL AND
+        u.receive_newsletter = true AND u.receive_email = true AND
+        (u.is_teacher = true OR (u.is_teacher = false and u.is_admin = false))`
     );
 
     return studentsAndTeacherUsers;

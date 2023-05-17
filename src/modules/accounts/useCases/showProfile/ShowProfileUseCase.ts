@@ -1,7 +1,6 @@
 import { inject, injectable } from "tsyringe";
 
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
-import { IStatementsRepository } from "@modules/statements/repositories/IStatementsRepository";
 
 type Profile = {
   name: string;
@@ -19,6 +18,8 @@ type Profile = {
   document_type?: string;
   document?: string;
   credit: number;
+  receive_email: boolean;
+  receive_newsletter: boolean;
 };
 
 @injectable()
@@ -26,9 +27,6 @@ class ShowProfileUseCase {
   constructor(
     @inject("UsersRepository")
     private usersRepository: IUsersRepository,
-
-    @inject("StatementsRepository")
-    private statementsRepository: IStatementsRepository,
   ) {}
 
   async execute(id: string): Promise<Profile> {
@@ -46,6 +44,8 @@ class ShowProfileUseCase {
       document_type,
       document,
       credit,
+      receive_email,
+      receive_newsletter,
     } = await this.usersRepository.findById(id);
 
     return {
@@ -63,6 +63,8 @@ class ShowProfileUseCase {
       document_type,
       document,
       credit,
+      receive_email,
+      receive_newsletter,
     };
   }
 }

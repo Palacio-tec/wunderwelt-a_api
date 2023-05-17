@@ -137,44 +137,47 @@ class CancelEventWithoutStudentUseCase {
         schedulesExists.map(async (schedule) => {
           await this._deleteSchedule(schedule.id, schedule.user.id)
 
-          const { name, email } = schedule.user;
-          const mailMessage = `Infelizmente a aula "${title}" programada para o dia ${dateFormated} foi cancelada por não atingir a quantidade mínima de alunos. Não se preocupe que os seus créditos foram reembolsados.`
+          const { name, email, receive_email } = schedule.user;
 
-          const variables = {
-            name,
-            mailMessage,
-          };
+          if (receive_email) {
+            const mailMessage = `Infelizmente a aula "${title}" programada para o dia ${dateFormated} foi cancelada por não atingir a quantidade mínima de alunos. Não se preocupe que os seus créditos foram reembolsados.`
 
-          const calendarEvent = {
-            content: await createCalendarEvent({
-              id: event.event_id,
-              start: start_date,
-              end: end_date,
-              summary: title,
-              description: instruction,
-              location: 'Sala virtual',
-              status: "CANCELLED",
+            const variables = {
+              name,
+              mailMessage,
+            };
+
+            const calendarEvent = {
+              content: await createCalendarEvent({
+                id: event.event_id,
+                start: start_date,
+                end: end_date,
+                summary: title,
+                description: instruction,
+                location: 'Sala virtual',
+                status: "CANCELLED",
+                method: 'CANCEL',
+                attendee: {
+                  name,
+                  email
+                },
+              }),
               method: 'CANCEL',
-              attendee: {
-                name,
-                email
+            }
+
+            const subject = `Aula Cancelada - ${title}`
+
+            sendMailWithLog.execute({
+              to: email,
+              subject,
+              variables,
+              path: templatePath,
+              calendarEvent,
+              mailLog: {
+                userId: schedule.user.id
               },
-            }),
-            method: 'CANCEL',
+            })
           }
-
-          const subject = `Aula Cancelada - ${title}`
-
-          sendMailWithLog.execute({
-            to: email,
-            subject,
-            variables,
-            path: templatePath,
-            calendarEvent,
-            mailLog: {
-              userId: schedule.user.id
-            },
-          })
 
           await this.statementsRepository.create({
             amount: eventData.credit,

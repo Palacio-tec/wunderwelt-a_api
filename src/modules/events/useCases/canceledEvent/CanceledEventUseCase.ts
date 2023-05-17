@@ -4,7 +4,6 @@ import { resolve } from "path";
 import { AppError } from "@shared/errors/AppError";
 import { IEventsRepository } from "@modules/events/repositories/IEventsRepository";
 import { Event } from "@modules/events/infra/typeorm/entities/Event";
-import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { createCalendarEvent } from "@utils/createCalendarEvent";
@@ -21,30 +20,19 @@ class CanceledEventUseCase {
 
     @inject("DateProvider")
     private dateProvider: IDateProvider,
-
-    @inject("MailProvider")
-    private mailProvider: IMailProvider,
   ) {}
 
-  async execute(id: string): Promise<Event> {
-    const event = await this.eventsRepository.findByIdToCreate(id);
-
-    if (!event) {
-      throw new AppError("Event does not exists");
-    }
-    event.is_canceled = !event.is_canceled;
-
-    await this.eventsRepository.create(event);
-
-    if (!event.is_canceled) {
-      return event
-    }
-
+  private async __sendMail(event: Event) {
     const { start_date, end_date, title, teacher_id, instruction } = event;
+
     const duration = this.dateProvider.differenceInMinutes(start_date, end_date)
     const dateTimeFormatted = this.dateProvider.parseFormat(event.start_date, "DD-MM-YYYY [às] HH:mm")
 
     const teacher = await this.usersRepository.findById(teacher_id);
+
+    if (!teacher.receive_email) {
+      return
+    }
 
     const templatePath = resolve(
       __dirname,
@@ -66,7 +54,7 @@ class CanceledEventUseCase {
 
     const calendarEvent = {
       content: await createCalendarEvent({
-        id,
+        id: event.id,
         start: start_date,
         end: end_date,
         summary: title,
@@ -94,6 +82,25 @@ class CanceledEventUseCase {
         userId: teacher_id
       },
     })
+
+    return
+  }
+
+  async execute(id: string): Promise<Event> {
+    const event = await this.eventsRepository.findByIdToCreate(id);
+
+    if (!event) {
+      throw new AppError("Event does not exists");
+    }
+    event.is_canceled = !event.is_canceled;
+
+    await this.eventsRepository.create(event);
+
+    if (!event.is_canceled) {
+      return event
+    }
+
+    await this.__sendMail(event)
 
     return event;
   }
