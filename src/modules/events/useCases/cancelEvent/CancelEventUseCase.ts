@@ -132,50 +132,7 @@ class CancelEventUseCase {
       schedulesExists.map(async (schedule) => {
         this._deleteSchedule(schedule.id, schedule.user.id)
 
-        const { name, email, id } = schedule.user;
-
-        const variables = {
-          name,
-          mailMessage,
-        };
-
-        const calendarEvent = {
-          content: await createCalendarEvent({
-            id,
-            start: start_date,
-            end: end_date,
-            summary: title,
-            description: instruction,
-            location: 'Sala virtual',
-            status: "CANCELLED",
-            method: 'CANCEL',
-            attendee: {
-              name,
-              email
-            }
-          }),
-          method: 'CANCEL',
-        }
-
-        const subject = `Aula Cancelada - ${title}`
-
-        await this.notificationsRepository.create({
-          user_id: id,
-          title: subject,
-          path: templatePath,
-          variables
-        })
-
-        sendMailWithLog.execute({
-          to: email,
-          subject,
-          variables,
-          path: templatePath,
-          calendarEvent,
-          mailLog: {
-            userId: schedule.user.id
-          },
-        })
+        const { name, email, id, receive_email } = schedule.user;
 
         this.statementsRepository.create({
           amount: credit,
@@ -183,6 +140,51 @@ class CancelEventUseCase {
           type: OperationEnumTypeStatement.DEPOSIT,
           user_id: schedule.user_id,
         });
+
+        if (receive_email) {
+          const variables = {
+            name,
+            mailMessage,
+          };
+
+          const calendarEvent = {
+            content: await createCalendarEvent({
+              id,
+              start: start_date,
+              end: end_date,
+              summary: title,
+              description: instruction,
+              location: 'Sala virtual',
+              status: "CANCELLED",
+              method: 'CANCEL',
+              attendee: {
+                name,
+                email
+              }
+            }),
+            method: 'CANCEL',
+          }
+
+          const subject = `Aula Cancelada - ${title}`
+
+          await this.notificationsRepository.create({
+            user_id: id,
+            title: subject,
+            path: templatePath,
+            variables
+          })
+
+          sendMailWithLog.execute({
+            to: email,
+            subject,
+            variables,
+            path: templatePath,
+            calendarEvent,
+            mailLog: {
+              userId: schedule.user.id
+            },
+          })
+        }
       });
     }
 
@@ -217,48 +219,50 @@ class CancelEventUseCase {
 
     const eventTeacher = await this.usersRepository.findById(teacher_id);
 
-    const variables = {
-      name: eventTeacher.name,
-      mailMessage: `A aula "${title}" agendada para o dia ${this.dateProvider.parseFormat(start_date, "DD-MM-YYYY [às] HH:mm")} foi cancelada.`,
-    };
+    if (eventTeacher.receive_email) {
+      const variables = {
+        name: eventTeacher.name,
+        mailMessage: `A aula "${title}" agendada para o dia ${this.dateProvider.parseFormat(start_date, "DD-MM-YYYY [às] HH:mm")} foi cancelada.`,
+      };
 
-    const calendarEvent = {
-      content: await createCalendarEvent({
-        id,
-        start: start_date,
-        end: end_date,
-        summary: title,
-        description: instruction,
-        location: 'Sala virtual',
-        status: "CANCELLED",
+      const calendarEvent = {
+        content: await createCalendarEvent({
+          id,
+          start: start_date,
+          end: end_date,
+          summary: title,
+          description: instruction,
+          location: 'Sala virtual',
+          status: "CANCELLED",
+          method: 'CANCEL',
+          attendee: {
+            name: eventTeacher.name,
+            email: eventTeacher.email
+          }
+        }),
         method: 'CANCEL',
-        attendee: {
-          name: eventTeacher.name,
-          email: eventTeacher.email
-        }
-      }),
-      method: 'CANCEL',
+      }
+
+      const subject = `Aula cancelada - ${title}`
+
+      await this.notificationsRepository.create({
+        user_id: teacher_id,
+        title: subject,
+        path: templatePath,
+        variables
+      })
+
+      sendMailWithLog.execute({
+        to: eventTeacher.email,
+        subject,
+        variables,
+        path: templatePath,
+        calendarEvent,
+        mailLog: {
+          userId: teacher_id
+        },
+      })
     }
-
-    const subject = `Aula cancelada - ${title}`
-
-    await this.notificationsRepository.create({
-      user_id: teacher_id,
-      title: subject,
-      path: templatePath,
-      variables
-    })
-
-    sendMailWithLog.execute({
-      to: eventTeacher.email,
-      subject,
-      variables,
-      path: templatePath,
-      calendarEvent,
-      mailLog: {
-        userId: teacher_id
-      },
-    })
 
     return event;
   }

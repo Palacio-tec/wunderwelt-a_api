@@ -81,31 +81,33 @@ class SendReminderEventsWillStartUseCase {
       schedules.map(async (schedule) => {
         const { user } = schedule;
 
-        const variables = {
-          name: user.name,
-          title,
-          link: newLink,
-          time: reminderEventEmailValue,
-        };
+        if (user.receive_email) {
+          const variables = {
+            name: user.name,
+            title,
+            link: newLink,
+            time: reminderEventEmailValue,
+          };
 
-        const subject = "A sua aula vai começar daqui a pouco!"
+          const subject = "A sua aula vai começar daqui a pouco!"
 
-        await this.notificationsRepository.create({
-          user_id: user.id,
-          title: subject,
-          path: templatePath,
-          variables
-        })
+          await this.notificationsRepository.create({
+            user_id: user.id,
+            title: subject,
+            path: templatePath,
+            variables
+          })
 
-        sendMailWithLog.execute({
-          to: user.email,
-          subject,
-          variables,
-          path: templatePath,
-          mailLog: {
-            userId: user.id
-          },
-        })
+          sendMailWithLog.execute({
+            to: user.email,
+            subject,
+            variables,
+            path: templatePath,
+            mailLog: {
+              userId: user.id
+            },
+          })
+        }
       })
     })
   }

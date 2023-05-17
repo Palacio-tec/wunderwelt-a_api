@@ -5,7 +5,6 @@ import { resolve } from "path";
 
 import { IEventsRepository } from "@modules/events/repositories/IEventsRepository";
 import { ISchedulesRepository } from "@modules/schedules/repositories/ISchedulesRepository";
-import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
 import { SendMailWithLog } from "@utils/sendMailWithLog";
@@ -18,9 +17,6 @@ class SendCanRefoundReminderEventsUseCase {
 
     @inject("SchedulesRepository")
     private schedulesRepository: ISchedulesRepository,
-
-    @inject("MailProvider")
-    private mailProvider: IMailProvider,
 
     @inject("DateProvider")
     private dateProvider: IDateProvider,
@@ -64,24 +60,27 @@ class SendCanRefoundReminderEventsUseCase {
 
       schedules.map(async (schedule) => {
         const { user } = schedule;
-        const eventDate = this.dateProvider.parseFormat(event.start_date, "DD-MM-YYYY [às] HH:mm")
 
-        const variables = {
-          name: user.name,
-          title,
-          eventDate,
-          refundTimeLimit: refundTimeLimit.value,
-        };
+        if (user.receive_email) {
+          const eventDate = this.dateProvider.parseFormat(event.start_date, "DD-MM-YYYY [às] HH:mm")
 
-        sendMailWithLog.execute({
-          to: user.email,
-          subject: "Deseja manter ou cancelar sua próxima aula?",
-          variables,
-          path: templatePath,
-          mailLog: {
-            userId: user.id
-          },
-        })
+          const variables = {
+            name: user.name,
+            title,
+            eventDate,
+            refundTimeLimit: refundTimeLimit.value,
+          };
+
+          sendMailWithLog.execute({
+            to: user.email,
+            subject: "Deseja manter ou cancelar sua próxima aula?",
+            variables,
+            path: templatePath,
+            mailLog: {
+              userId: user.id
+            },
+          })
+        }
       })
     })
   }

@@ -4,7 +4,6 @@ import { resolve } from "path";
 
 import { IEventsRepository } from "@modules/events/repositories/IEventsRepository";
 import { ISchedulesRepository } from "@modules/schedules/repositories/ISchedulesRepository";
-import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
 import { SendMailWithLog } from "@utils/sendMailWithLog";
@@ -18,9 +17,6 @@ class SendEventsWillStartEmailUseCase {
 
     @inject("SchedulesRepository")
     private schedulesRepository: ISchedulesRepository,
-
-    @inject("MailProvider")
-    private mailProvider: IMailProvider,
 
     @inject("DateProvider")
     private dateProvider: IDateProvider,
@@ -47,7 +43,6 @@ class SendEventsWillStartEmailUseCase {
       startDateFormatted,
       endDateFormatted
     ); 
-
 
     const templatePath = resolve(
       __dirname,

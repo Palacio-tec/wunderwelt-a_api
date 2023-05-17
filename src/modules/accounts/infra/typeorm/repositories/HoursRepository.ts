@@ -88,7 +88,7 @@ class HoursRepository implements IHoursRepository {
       INNER JOIN
         users u 
       ON
-        u.id = h.user_id AND u.inactivation_date IS NULL
+        u.id = h.user_id AND u.inactivation_date IS NULL AND u.receive_email = true
       WHERE
         to_char(h.expiration_date, 'YYYY-MM-DD') BETWEEN '${startDate}' AND '${endDate}'
       GROUP BY

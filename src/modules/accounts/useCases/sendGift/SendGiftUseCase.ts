@@ -98,6 +98,10 @@ class SendGiftUseCase {
         user_id
       })
 
+      if (!student.receive_email) {
+        return false
+      }
+
       const templatePath = resolve(
         __dirname,
         "..",

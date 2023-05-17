@@ -156,6 +156,7 @@ class UsersRepository implements IUsersRepository {
         users u
       WHERE
         u.inactivation_date IS NULL AND
+        u.receive_newsletter = true AND u.receive_email = true AND
         (u.is_teacher = true OR (u.is_teacher = false and u.is_admin = false))`
     );
 

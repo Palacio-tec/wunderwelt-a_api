@@ -145,7 +145,11 @@ class DeleteScheduleUseCase {
           "queueAvailableEvent.hbs"
         );
 
-        const { name, email } = queue.user;
+        const { name, email, receive_email } = queue.user;
+
+        if (!receive_email) {
+          return
+        }
 
         const { title, start_date, link } = queue.event;
 
