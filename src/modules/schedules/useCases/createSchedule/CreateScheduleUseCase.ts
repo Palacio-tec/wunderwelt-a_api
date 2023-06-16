@@ -98,6 +98,14 @@ class CreateScheduleUseCase {
     this.createCreditUsedHistoric(creditIds, schedule_id)
   }
 
+  private async __checkHasVacancies(event_id: string, student_limit: number) {
+    const schedules = await this.schedulesRepository.findByEventId(event_id);
+    
+    if (schedules.length >= student_limit) {
+      throw new AppError("There are no vacancies available for this event", 400, 'SC0001')
+    }
+  }
+
   async execute({
     event_id,
     user_id,
@@ -109,13 +117,15 @@ class CreateScheduleUseCase {
       throw new AppError("User does not exists");
     }
 
+    console.log(new Date().getTime(), "Realizando a inscrição -> ", userExists.name)
+
     const eventExists = await this.eventsRepository.findById(event_id);
 
     if (!eventExists) {
       throw new AppError("Event does not exists");
     }
 
-    const { start_date, end_date, title, instruction, credit } = eventExists;
+    const { start_date, end_date, title, instruction, credit, student_limit } = eventExists;
 
     if (Number(userExists.credit) < Number(credit)) {
       throw new AppError("User does not have enough credits", 400, "enough.hours");
@@ -130,14 +140,7 @@ class CreateScheduleUseCase {
       throw new AppError("User already have an event on this date");
     }
 
-    const queueExists = await this.queuesRepository.findByEventAndUser(
-      event_id,
-      user_id
-    );
-
-    if (queueExists) {
-      await this.queuesRepository.delete(queueExists.id);
-    }
+    await this.__checkHasVacancies(event_id, Number(student_limit))
 
     const schedule = await this.schedulesRepository.create({
       event_id,
@@ -161,6 +164,15 @@ class CreateScheduleUseCase {
       ...userExists,
       credit: Number(userExists.credit) - Number(credit)
     })
+
+    const queueExists = await this.queuesRepository.findByEventAndUser(
+      event_id,
+      user_id
+    );
+
+    if (queueExists) {
+      await this.queuesRepository.delete(queueExists.id);
+    }
 
     const templatePath = resolve(
       __dirname,
@@ -224,6 +236,8 @@ class CreateScheduleUseCase {
         userId: user_id
       },
     })
+
+    console.log(new Date().getTime(), "Realizando a inscrição -> ", userExists.name)
 
     return schedule;
   }
