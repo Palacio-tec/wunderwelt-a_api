@@ -7,6 +7,7 @@ import { DeleteScheduleController } from "@modules/schedules/useCases/deleteSche
 import { ListSchedulesController } from "@modules/schedules/useCases/listSchedules/ListSchedulesController";
 import { ListParticipationsController } from "@modules/schedules/useCases/listParticipations/ListParticipationsController";
 import { FindByEventIdController } from "@modules/schedules/useCases/findByEventId/FindByEventIdController";
+import { RemoveScheduleController } from "@modules/schedules/useCases/removeSchedule/RemoveScheduleController";
 
 import { ensureAdmin } from "../middlewares/ensureAdmin";
 
@@ -18,6 +19,7 @@ const deleteScheduleController = new DeleteScheduleController();
 const listSchedulesController = new ListSchedulesController();
 const listParticipationsController = new ListParticipationsController();
 const findByEventIdController = new FindByEventIdController();
+const removeScheduleController = new RemoveScheduleController();
 
 schedulesRoutes.post(
   "/",
@@ -56,6 +58,13 @@ schedulesRoutes.get(
   ensureAuthenticated,
   ensureAdmin,
   findByEventIdController.handle
+)
+
+schedulesRoutes.post(
+  "/remove/student",
+  ensureAuthenticated,
+  ensureAdmin,
+  removeScheduleController.handle
 )
 
 export { schedulesRoutes };

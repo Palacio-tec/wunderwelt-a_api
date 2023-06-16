@@ -103,7 +103,7 @@ class SendEventsNewsletterUseCase {
     const year = this.dateProvider.getYear(initialEventDate)
 
     const hasPromotion = await this.promotionsRepository
-      .findByDate(`${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`)
+      .findByDate(`${this.dateProvider.getYear(date)}-${String(this.dateProvider.getMonth(date) + 1).padStart(2, '0')}-${String(this.dateProvider.getDay(date)).padStart(2, '0')}`)
 
     const events = await this.eventsRepository
       .findByHighlightAndWillStart(year, month, day); 
