@@ -237,8 +237,6 @@ class CreateScheduleUseCase {
       },
     })
 
-    console.log(new Date().getTime(), "Realizando a inscrição -> ", userExists.name)
-
     return schedule;
   }
 }
