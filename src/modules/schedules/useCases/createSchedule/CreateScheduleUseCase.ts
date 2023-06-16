@@ -117,8 +117,6 @@ class CreateScheduleUseCase {
       throw new AppError("User does not exists");
     }
 
-    console.log(new Date().getTime(), "Realizando a inscrição -> ", userExists.name)
-
     const eventExists = await this.eventsRepository.findById(event_id);
 
     if (!eventExists) {
