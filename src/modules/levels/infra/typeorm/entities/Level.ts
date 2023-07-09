@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
-import { v4 as uuidV4 } from "uuid";
+import { randomUUID as uuidV4 } from 'crypto'
 
 @Entity("levels")
 class Level {

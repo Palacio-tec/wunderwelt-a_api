@@ -12,6 +12,7 @@ class SchedulesRepository implements ISchedulesRepository {
   constructor() {
     this.repository = getRepository(Schedule);
   }
+
   async create({
     id,
     event_id,
@@ -108,6 +109,7 @@ class SchedulesRepository implements ISchedulesRepository {
         WHERE
           u.inactivation_date is null
           AND is_admin = false
+          AND is_company = false
         GROUP BY
           u.id, u.name, u.email, u.created_at
       ) base_gift
@@ -129,6 +131,32 @@ class SchedulesRepository implements ISchedulesRepository {
     )
 
     return participations;
+  }
+
+  async listUserHistoric(user_id: string): Promise<{id: string, name: string, title: string, start_date: string}[]> {
+    const historic = await this.repository.query(
+      `select
+        s.id,
+        u."name",
+        e.title,
+        e.start_date
+      from
+        schedules s
+      inner join
+        users u
+      on
+        u.id = s.user_id
+      inner join
+        events e
+      on
+        e.id = s.event_id 
+      where
+        s.user_id = '${user_id}'
+      order by
+        u."name",
+        e.start_date DESC`)
+
+    return historic
   }
 
 }

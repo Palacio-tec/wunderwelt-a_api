@@ -10,4 +10,8 @@ function EventsWillStart() {
   sendEventsWillStartEmailController.handle(date);
 }
 
-export default schedule('0 0 * * * *', EventsWillStart, { scheduled: false }); // Every minute 00
+export default schedule(
+  process.env.EVENTS_WILL_START || "0 0 * * * *", // Every minute 00
+  EventsWillStart,
+  { scheduled: false }
+);

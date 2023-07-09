@@ -6,7 +6,7 @@ import {
   OneToMany,
   PrimaryColumn,
 } from "typeorm";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID as uuidV4 } from 'crypto'
 import { Exclude } from "class-transformer";
 
 import { Hours } from "./Hours";
@@ -74,9 +74,12 @@ class User {
   @Column({ default: true })
   receive_email: boolean
 
+  @Column({ default: false })
+  is_company: boolean;
+
   constructor() {
     if (!this.id) {
-      this.id = uuidv4();
+      this.id = uuidV4();
     }
   }
 }

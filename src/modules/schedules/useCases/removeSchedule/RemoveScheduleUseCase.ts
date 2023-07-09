@@ -1,4 +1,4 @@
-import { inject, injectable } from "tsyringe";
+import { container, inject, injectable } from "tsyringe";
 import { resolve } from "path";
 
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
@@ -12,6 +12,9 @@ import { AppError } from "@shared/errors/AppError";
 import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 import { IHoursRepository } from "@modules/accounts/repositories/IHoursRepository";
 import { ISchedulesCreditsRepository } from "@modules/schedules/repositories/ISchedulesCreditsRepository";
+import { SendMailWithLog } from "@utils/sendMailWithLog";
+import { createCalendarEvent } from "@utils/createCalendarEvent";
+import { IEventsRepository } from "@modules/events/repositories/IEventsRepository";
 
 @injectable()
 class RemoveScheduleUseCase {
@@ -42,6 +45,9 @@ class RemoveScheduleUseCase {
 
     @inject("SchedulesCreditsRepository")
     private schedulesCreditsRepository: ISchedulesCreditsRepository,
+
+    @inject("EventsRepository")
+    private eventsRepository: IEventsRepository,
   ) {}
 
   private async __deleteSchedule(schedule_id: string, user_id: string) {
@@ -150,7 +156,56 @@ class RemoveScheduleUseCase {
     }
   }
 
-  async execute(eventId: string, student_id: string, admin_id: string, reason: string): Promise<void> {
+  private async __sendMail(user_id: string, name: string, email: string, title: string, event_id: string) {
+    const templatePath = resolve(
+      __dirname,
+      "..",
+      "..",
+      "views",
+      "emails",
+      "studentRemoved.hbs"
+    );
+
+    const event = await this.eventsRepository.findById(event_id);
+
+    const sendMailWithLog = container.resolve(SendMailWithLog);
+
+    const variables = {
+      name,
+      title,
+    };
+
+    const calendarEvent = {
+      content: await createCalendarEvent({
+        id: event_id,
+        start: event.start_date,
+        end: event.end_date,
+        summary: title,
+        description: event.instruction,
+        location: 'Sala virtual',
+        status: "CANCELLED",
+        method: 'CANCEL',
+        attendee: {
+          name,
+          email
+        }
+      }),
+      method: 'CANCEL',
+    }
+
+    sendMailWithLog.execute({
+      to: email,
+      subject: "Inscrição na aula realizada com sucesso!",
+      variables,
+      path: templatePath,
+      calendarEvent,
+      mailLog: {
+        userId: user_id
+      },
+    })
+  }
+
+  async execute(eventId: string, student_id: string, admin_id: string): Promise<void> {
     const scheduleExists = await this.schedulesRepository.findByEventIdAndUserId(eventId, student_id);
 
     if (!scheduleExists) {
@@ -180,6 +235,8 @@ class RemoveScheduleUseCase {
     await this.__refundCredits(student_id, title, credit, start_date)
 
     await this.__queueAvailable(eventId)
+
+    this.__sendMail(student_id, studentExists.name, studentExists.email, title, eventId)
   }
 }
 
