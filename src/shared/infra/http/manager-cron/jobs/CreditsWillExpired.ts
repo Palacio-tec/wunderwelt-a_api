@@ -12,4 +12,8 @@ function CreditsWillExpired() {
   listWillExpiredHoursController.handle(date, 30);
 }
 
-export default schedule('0 0 10 * * *', CreditsWillExpired, { scheduled: false }); // Every 10 o'clock
+export default schedule(
+  process.env.CREDITS_WILL_EXPIRED || "0 0 10 * * *", // Every 10 o'clock
+  CreditsWillExpired,
+  { scheduled: false }
+);

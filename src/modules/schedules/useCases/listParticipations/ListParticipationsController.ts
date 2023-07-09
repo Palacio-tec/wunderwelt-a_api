@@ -10,7 +10,7 @@ class ListParticipationsController {
 
     const participations = await listPaticipationsUseCase.execute();
 
-    return response.status(201).json(classToClass(participations));
+    return response.status(202).json(classToClass(participations));
   }
 }
 

@@ -10,4 +10,8 @@ function PreviewEventsWillStart() {
   sendEventsPreviewEmailController.handle(date);
 }
 
-export default schedule('0 0 * * * *', PreviewEventsWillStart, { scheduled: false }); // Every minute 00
+export default schedule(
+  process.env.PREVIEW_EVENTS_WILL_START || "0 0 * * * *", // Every minute 00
+  PreviewEventsWillStart,
+  { scheduled: false }
+);

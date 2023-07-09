@@ -14,6 +14,8 @@ import { CanDeleteUserController } from "@modules/accounts/useCases/validations/
 import { ListTeachersController } from "@modules/accounts/useCases/listTeachers/ListTeachersController";
 import { SendGiftController } from "@modules/accounts/useCases/sendGift/SendGiftController";
 import { ImpersonateUserController } from "@modules/accounts/useCases/impersonateUser/ImpersonateUserController";
+import { ListCompanyUsersController } from "@modules/accounts/useCases/listCompanyUsers/ListCompanyUsersController";
+import { ListCompanyUsersAvailableController } from "@modules/accounts/useCases/listCompanyUsersAvailable/ListCompanyUsersAvailableController";
 
 const usersRoutes = Router();
 
@@ -28,6 +30,8 @@ const canDeleteUserController = new CanDeleteUserController();
 const listTeachersController = new ListTeachersController();
 const sendGiftController = new SendGiftController();
 const impersonateUserController = new ImpersonateUserController();
+const listCompanyUsersController = new ListCompanyUsersController();
+const listCompanyUsersAvailableController = new ListCompanyUsersAvailableController();
 
 usersRoutes.post(
   "/",
@@ -107,6 +111,20 @@ usersRoutes.post(
   ensureAuthenticated,
   ensureAdmin,
   impersonateUserController.handle
+);
+
+usersRoutes.get(
+  "/list/company",
+  ensureAuthenticated,
+  ensureAdmin,
+  listCompanyUsersController.handle
+);
+
+usersRoutes.get(
+  "/list/company-available",
+  ensureAuthenticated,
+  ensureAdmin,
+  listCompanyUsersAvailableController.handle
 );
 
 export { usersRoutes };

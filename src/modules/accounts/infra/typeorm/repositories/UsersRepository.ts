@@ -30,6 +30,7 @@ class UsersRepository implements IUsersRepository {
     credit,
     receive_email,
     receive_newsletter,
+    is_company,
   }: ICreateUserDTO): Promise<User> {
     const user = this.repository.create({
       name,
@@ -50,6 +51,7 @@ class UsersRepository implements IUsersRepository {
       credit,
       receive_email,
       receive_newsletter,
+      is_company,
     });
 
     await this.repository.save(user);
@@ -84,6 +86,7 @@ class UsersRepository implements IUsersRepository {
       where: {
         is_admin: false,
         is_teacher: false,
+        is_company: false,
       },
     });
 
@@ -157,10 +160,36 @@ class UsersRepository implements IUsersRepository {
       WHERE
         u.inactivation_date IS NULL AND
         u.receive_newsletter = true AND u.receive_email = true AND
-        (u.is_teacher = true OR (u.is_teacher = false and u.is_admin = false))`
+        (u.is_teacher = true OR (u.is_teacher = false and u.is_admin = false and u.is_company = false))`
     );
 
     return studentsAndTeacherUsers;
+  }
+
+  async listCompanyUsers(): Promise<User[]> {
+    const users = await this.repository.find({ is_company: true })
+
+    return users
+  }
+
+  async listCompanyUsersWithoutMembers(): Promise<{id: string, name: string}[]> {
+    const users = await this.repository.query(
+      `SELECT
+        u.id,
+        u.name
+      FROM
+        users u
+      LEFT JOIN
+        company_members cm
+      ON
+        cm.company_id = u.id
+      WHERE
+        u.is_company = true AND
+        cm.company_id IS NULL
+      `
+    );
+
+    return users
   }
 }
 

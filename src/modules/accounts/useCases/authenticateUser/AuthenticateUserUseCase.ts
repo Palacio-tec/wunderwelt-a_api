@@ -22,6 +22,7 @@ interface IResponse {
     email: string;
     isAdmin: boolean;
     isTeacher: boolean;
+    isCompany: boolean;
     balance: number;
     street_name: string;
     street_number: string;
@@ -102,6 +103,7 @@ class AuthenticateUserUseCase {
         email: user.email,
         isAdmin: user.is_admin,
         isTeacher: user.is_teacher,
+        isCompany: user.is_company,
         street_name: user.street_name,
         street_number: user.street_number,
         zip_code: user.zip_code,

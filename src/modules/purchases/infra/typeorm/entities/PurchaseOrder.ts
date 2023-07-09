@@ -1,7 +1,7 @@
 import { User } from "@modules/accounts/infra/typeorm/entities/User";
 import { Product } from "@modules/products/infra/typeorm/entities/Product";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
-import { v4 as uuidV4 } from "uuid";
+import { randomUUID as uuidV4 } from 'crypto'
 
 @Entity("purchase_orders")
 class PurchaseOrder {

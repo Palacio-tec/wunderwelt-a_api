@@ -1,7 +1,7 @@
 import { ICreateCouponsDTO } from "@modules/coupons/dtos/ICreateCouponDTO";
 import { ICouponsRepository } from "@modules/coupons/repositories/ICouponsRepository";
 import { format } from "date-fns";
-import { getRepository, IsNull, Not, Raw, Repository } from "typeorm";
+import { getRepository, Repository } from "typeorm";
 import { Coupon } from "../entities/Coupon";
 
 class CouponsRepository implements ICouponsRepository {
