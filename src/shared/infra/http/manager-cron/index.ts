@@ -9,7 +9,24 @@ import PreviewEventsWillStart from "./jobs/PreviewEventsWillStart";
 import CreditsWillExpired from "./jobs/CreditsWillExpired";
 import UpdateUserCredits from "./jobs/UpdateUserCredits"
 
-const { ENVIRONMENT } = process.env
+const { ENVIRONMENT, LOCAL_JOBS } = process.env
+
+const cronJobs = {
+  eventsWillStart: EventsWillStart,
+  eventsWithoutStudent: EventsWithoutStudent,
+  eventsCanRefound: EventsCanRefound,
+  eventsReminder: EventsReminder,
+  eventsNewsletter: EventsNewsletter,
+  previewEventsWillStart: PreviewEventsWillStart,
+  creditsWillExpired: CreditsWillExpired,
+  updateUserCredits: UpdateUserCredits,
+};
+
+const localJobs = LOCAL_JOBS.split(',')
+
+const localCronJobs = localJobs 
+  ? localJobs.map(job => cronJobs[job]) as unknown as ScheduledTask[]
+  : []
 
 class ManagerCron{
   private jobs: ScheduledTask[];
@@ -26,11 +43,13 @@ class ManagerCron{
         CreditsWillExpired,
         UpdateUserCredits,
       ]
-      : [];
+      : localCronJobs;
   };
 
   run() {
-    
+    if (localJobs) {
+      console.log(`[CronJobs] ${localJobs}`)
+    }
     this.jobs.forEach(job => job.start());
   }
 }

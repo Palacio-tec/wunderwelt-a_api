@@ -6,7 +6,6 @@ import { AppError } from "@shared/errors/AppError";
 import { IUsersTokensRepository } from "@modules/accounts/repositories/IUsersTokensRepository";
 import auth from "@config/auth";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
-import { IStatementsRepository } from "@modules/statements/repositories/IStatementsRepository";
 
 interface IRequest {
   user_id: string;
@@ -44,9 +43,6 @@ class ImpersonateUserUseCase {
 
     @inject("DateProvider")
     private dateProvider: IDateProvider,
-
-    @inject("StatementsRepository")
-    private statementsRepository: IStatementsRepository,
   ) {}
 
   async execute({ admin_user, user_id }: IRequest): Promise<IResponse> {

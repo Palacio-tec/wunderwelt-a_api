@@ -20,6 +20,7 @@ class CreateUserController {
       document,
       receive_email,
       receive_newsletter,
+      is_company,
     } = request.body;
     const createUserUseCase = container.resolve(CreateUserUseCase);
 
@@ -28,8 +29,8 @@ class CreateUserController {
       username,
       password,
       email,
-      is_admin,
-      is_teacher,
+      is_admin: is_company ? false : is_admin,
+      is_teacher: is_company ? false : is_teacher,
       street_name,
       street_number,
       zip_code,
@@ -39,6 +40,7 @@ class CreateUserController {
       document,
       receive_email,
       receive_newsletter,
+      is_company,
     });
 
     return response.status(201).json(user);

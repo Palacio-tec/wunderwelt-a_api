@@ -10,4 +10,8 @@ function EventsReminder() {
   sendReminderEventsWillStartController.handle(date);
 }
 
-export default schedule('0 0 * * * *', EventsReminder, { scheduled: false }); // Every minute 00
+export default schedule(
+  process.env.EVENTS_REMINDER || "0 0 * * * *", // Every minute 00
+  EventsReminder,
+  { scheduled: false }
+);

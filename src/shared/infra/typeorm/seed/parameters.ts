@@ -1,4 +1,4 @@
-import { v4 as uuidV4 } from "uuid";
+import { randomUUID as uuidV4 } from 'crypto'
 import { hash } from "bcryptjs";
 
 import createConnection from "../index";

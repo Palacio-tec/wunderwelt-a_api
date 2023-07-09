@@ -17,6 +17,7 @@ interface ICreateUserDTO {
   credit?: number;
   receive_newsletter?: boolean;
   receive_email?: boolean;
+  is_company?: boolean;
 }
 
 export { ICreateUserDTO };

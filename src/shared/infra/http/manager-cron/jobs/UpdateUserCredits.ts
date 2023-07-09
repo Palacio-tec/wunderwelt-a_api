@@ -8,4 +8,8 @@ function UpdateUsersHours() {
   updateUsersHoursController.handle();
 }
 
-export default schedule('0 0 3 * * *', UpdateUsersHours, { scheduled: false }); // Every 3 o`clock
+export default schedule(
+  process.env.UPDATE_USER_CREDITS || "0 0 3 * * *", // Every 3 o`clock
+  UpdateUsersHours,
+  { scheduled: false }
+);

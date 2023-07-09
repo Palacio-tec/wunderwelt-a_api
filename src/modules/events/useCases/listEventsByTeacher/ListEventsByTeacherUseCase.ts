@@ -1,5 +1,4 @@
 import { inject, injectable } from "tsyringe";
-import { getDaysInMonth, getDate, isAfter } from 'date-fns';
 
 import { Event } from "@modules/events/infra/typeorm/entities/Event";
 import { IEventsRepository } from "@modules/events/repositories/IEventsRepository";

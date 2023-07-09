@@ -85,7 +85,7 @@ class SendEventsNewsletterUseCase {
       dateToSendNewsletter = this.dateProvider.dateNow(sendNewsletterParameter.value)
     }
 
-    if (date < dateToSendNewsletter && !isTest) return
+    // if (date < dateToSendNewsletter && !isTest) return
 
     const nextExecutionDate = this.dateProvider.addDaysInDate(
       dateToSendNewsletter,
@@ -125,7 +125,8 @@ class SendEventsNewsletterUseCase {
       mailData,
       hasPromotion: true,
       message: hasPromotion?.message || null,
-      coupon: hasPromotion?.coupon || null
+      coupon: hasPromotion?.coupon || null,
+      user_id: null
     };
 
     if (isTest) {
@@ -150,6 +151,8 @@ class SendEventsNewsletterUseCase {
         const allUsers = usersChunk[index];
 
         allUsers.map((user) => {
+          variables.user_id = user.id
+
           sendMailWithLog.execute({
             to: user.email,
             subject: 'Confira as aulas incríveis que estão por vir',
@@ -165,10 +168,10 @@ class SendEventsNewsletterUseCase {
       }
     }
 
-    this.parametersRepository.create({
-      ...sendNewsletterParameter,
-      value: nextExecutionDateFormatted
-    })
+    // this.parametersRepository.create({
+    //   ...sendNewsletterParameter,
+    //   value: nextExecutionDateFormatted
+    // })
   }
 }
 

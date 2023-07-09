@@ -4,7 +4,6 @@ import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepositor
 import { Statement } from "@modules/statements/infra/typeorm/entities/Statement";
 import { IStatementsRepository } from "@modules/statements/repositories/IStatementsRepository";
 import { AppError } from "@shared/errors/AppError";
-import { IHoursRepository } from "@modules/accounts/repositories/IHoursRepository";
 
 interface IResponse {
   statement: Statement[];
@@ -19,9 +18,6 @@ class GetUserBalanceUseCase {
 
     @inject("UsersRepository")
     private usersRepository: IUsersRepository,
-
-    @inject("HoursRepository")
-    private hoursRepository: IHoursRepository,
   ) {}
 
   async execute(user_id: string, withStatement: boolean): Promise<IResponse> {
@@ -30,8 +26,6 @@ class GetUserBalanceUseCase {
     if (!userExists) {
       throw new AppError("User does not exists");
     }
-
-    const userHour = await this.hoursRepository.findByUser(user_id);
 
     const balance = await this.statementsRepository.getUserBalance({
       user_id,

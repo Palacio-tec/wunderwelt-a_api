@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryColumn,
 } from "typeorm";
-import { v4 as uuidV4 } from "uuid";
+import { randomUUID as uuidV4 } from 'crypto'
 
 import { User } from "./User";
 
