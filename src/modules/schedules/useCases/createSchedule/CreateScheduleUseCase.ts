@@ -123,7 +123,11 @@ class CreateScheduleUseCase {
       throw new AppError("Event does not exists");
     }
 
-    const { start_date, end_date, title, instruction, credit, student_limit } = eventExists;
+    const { start_date, end_date, title, instruction, credit, student_limit, is_canceled } = eventExists;
+
+    if (is_canceled) {
+      throw new AppError("Event is cancel", 400, "SC0003")
+    }
 
     if (Number(userExists.credit) < Number(credit)) {
       throw new AppError("User does not have enough credits", 400, "enough.hours");
@@ -135,7 +139,7 @@ class CreateScheduleUseCase {
       await this.schedulesRepository.findByEventDate(parsedStartDate, user_id);
 
     if (scheduleDateAvailable.length > 0) {
-      throw new AppError("User already have an event on this date");
+      throw new AppError("User already have an event on this date", 400, "SC0002");
     }
 
     await this.__checkHasVacancies(event_id, Number(student_limit))

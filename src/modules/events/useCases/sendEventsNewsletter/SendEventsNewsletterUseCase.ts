@@ -85,7 +85,7 @@ class SendEventsNewsletterUseCase {
       dateToSendNewsletter = this.dateProvider.dateNow(sendNewsletterParameter.value)
     }
 
-    // if (date < dateToSendNewsletter && !isTest) return
+    if (date < dateToSendNewsletter && !isTest) return
 
     const nextExecutionDate = this.dateProvider.addDaysInDate(
       dateToSendNewsletter,
@@ -168,10 +168,10 @@ class SendEventsNewsletterUseCase {
       }
     }
 
-    // this.parametersRepository.create({
-    //   ...sendNewsletterParameter,
-    //   value: nextExecutionDateFormatted
-    // })
+    this.parametersRepository.create({
+      ...sendNewsletterParameter,
+      value: nextExecutionDateFormatted
+    })
   }
 }
 
