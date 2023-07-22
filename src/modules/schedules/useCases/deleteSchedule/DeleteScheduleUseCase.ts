@@ -124,8 +124,15 @@ class DeleteScheduleUseCase {
     if (untilEventStart >= Number(parameterRefundTimeLimit.value)) {
       this.statementsRepository.create({
         amount: credit,
-        description: `Reembolso por cancelar a inscrição da aula ${event.title}`,
+        description: `Reembolso por cancelar a inscrição da aula "${event.title}" ${this.dateProvider.parseFormat(event.start_date, "DD-MM-YYYY [às] HH:mm")}`,
         type: OperationEnumTypeStatement.DEPOSIT,
+        user_id,
+      });
+    } else {
+      this.statementsRepository.create({
+        amount: 0,
+        description: `Inscrição para aula "${event.title}" ${this.dateProvider.parseFormat(event.start_date, "DD-MM-YYYY [às] HH:mm")} cancelada sem reembolso`,
+        type: OperationEnumTypeStatement.WITHDRAW,
         user_id,
       });
     }
