@@ -47,10 +47,10 @@ class ManagerCron{
   };
 
   run() {
-    if (localJobs) {
-      console.log(`[CronJobs] ${localJobs}`)
+    console.log(`[CronJobs] ${localJobs}`)
+    if (LOCAL_JOBS) {
+      this.jobs.forEach(job => job.start());
     }
-    this.jobs.forEach(job => job.start());
   }
 }
 
