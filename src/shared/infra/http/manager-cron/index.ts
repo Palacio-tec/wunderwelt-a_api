@@ -47,8 +47,7 @@ class ManagerCron{
   };
 
   run() {
-    console.log(`[CronJobs] ${localJobs}`)
-    if (LOCAL_JOBS) {
+    if (this.jobs.length > 0 && this.jobs[0] !== undefined) {
       this.jobs.forEach(job => job.start());
     }
   }
