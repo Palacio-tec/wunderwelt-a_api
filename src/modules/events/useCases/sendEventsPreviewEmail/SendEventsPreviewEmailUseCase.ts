@@ -18,9 +18,6 @@ class SendEventsPreviewEmailUseCase {
     @inject("SchedulesRepository")
     private schedulesRepository: ISchedulesRepository,
 
-    @inject("MailProvider")
-    private mailProvider: IMailProvider,
-
     @inject("DateProvider")
     private dateProvider: IDateProvider,
 

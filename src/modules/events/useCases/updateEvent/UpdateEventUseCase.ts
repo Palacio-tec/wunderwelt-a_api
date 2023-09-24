@@ -14,6 +14,8 @@ import { AppError } from "@shared/errors/AppError";
 import { createCalendarEvent } from "@utils/createCalendarEvent";
 import { SendMailWithLog } from "@utils/sendMailWithLog";
 import { INotificationsRepository } from '@modules/notifications/repositories/INotificationsRepository'
+import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
+import { ISchedulesRepository } from "@modules/schedules/repositories/ISchedulesRepository";
 
 interface ChangeTeacherProps {
   newTeacher: User,
@@ -44,6 +46,12 @@ class UpdateEventUseCase {
 
     @inject("NotificationsRepository")
     private notificationsRepository: INotificationsRepository,
+
+    @inject("ParametersRepository")
+    private parametersRepository: IParametersRepository,
+
+    @inject("SchedulesRepository")
+    private schedulesRepository: ISchedulesRepository,
   ) {}
 
   private async __newTeacher(teacher: User, event: Event) {
@@ -105,6 +113,43 @@ class UpdateEventUseCase {
         userId: teacher.id
       },
     })
+
+    const reminderEventEmail = await this.parametersRepository.findByReference('PreviewEventEmail');
+    const reminderEventEmailValue = Number(reminderEventEmail.value)
+
+    if (this.dateProvider.differenceInHours(new Date(), event.start_date) <= reminderEventEmailValue) {
+      const templatePath = resolve(
+        __dirname,
+        "..",
+        "..",
+        "views",
+        "emails",
+        "eventPreview.hbs"
+      );
+  
+      const sendMailWithLog = container.resolve(SendMailWithLog);
+
+      const schedules = await this.schedulesRepository.findByEventId(event.id);
+
+      const subject = `Prévia da Lista de alunos inscritos na aula - ${event.title} ${dateTimeFormatted}`
+
+      const variables = {
+        name: teacher.name,
+        title: event.title,
+        datetime: dateTimeFormatted,
+        schedules,
+      };
+
+      sendMailWithLog.execute({
+        to: teacher.email,
+        subject,
+        variables,
+        path: templatePath,
+        mailLog: {
+          userId: teacher.id
+        },
+      })
+    }
   }
   private async __oldTeacher(teacherId: string, event: Event) {
     const teacher = await this.usersRepository.findById(teacherId)
