@@ -90,11 +90,14 @@ class CancelEventWithoutStudentUseCase {
 
     const studentlessPeriodValue = Number(studentlessPeriod.value);
 
-    const startDate = this.dateProvider.addHoursInDate(date, studentlessPeriodValue);
-    const startDateFormated = this.dateProvider.parseISO(startDate).toISOString();
+    const startDate = this.dateProvider.parseISO(new Date()).toISOString();
+
+    const endDate = this.dateProvider.addHoursInDate(date, studentlessPeriodValue);
+    const endDateFormatted = this.dateProvider.parseISO(endDate).toISOString();
 
     const events = await this.eventsRepository.findEventWithoutStudentByDate(
-      startDateFormated
+      startDate,
+      endDateFormatted
     ); 
 
     const templatePath = resolve(
@@ -120,7 +123,7 @@ class CancelEventWithoutStudentUseCase {
 
       const schedulesExists = await this.schedulesRepository.findByEventId(event.event_id);
 
-      const dateFormated = this.dateProvider.parseFormat(start_date, 'DD-MM-YYYY [às] HH:mm')
+      const dateFormatted = this.dateProvider.parseFormat(start_date, 'DD-MM-YYYY [às] HH:mm')
 
       if (schedulesExists.length > 0) {
         const day = this.dateProvider.formatInDate(start_date);
@@ -140,7 +143,7 @@ class CancelEventWithoutStudentUseCase {
           const { name, email, receive_email } = schedule.user;
 
           if (receive_email) {
-            const mailMessage = `Infelizmente a aula "${title}" programada para o dia ${dateFormated} foi cancelada por não atingir a quantidade mínima de alunos. Não se preocupe que os seus créditos foram reembolsados.`
+            const mailMessage = `Infelizmente a aula "${title}" programada para o dia ${dateFormatted} foi cancelada por não atingir a quantidade mínima de alunos. Não se preocupe que os seus créditos foram reembolsados.`
 
             const variables = {
               name,
@@ -212,7 +215,7 @@ class CancelEventWithoutStudentUseCase {
         method: 'CANCEL',
       }
 
-      const mailMessage = `A aula "${title}" que teria início em ${dateFormated} foi cancelada por não haver alunos suficientes.`
+      const mailMessage = `A aula "${title}" que teria início em ${dateFormatted} foi cancelada por não haver alunos suficientes.`
 
       const variables = {
         name: teacher_name,
