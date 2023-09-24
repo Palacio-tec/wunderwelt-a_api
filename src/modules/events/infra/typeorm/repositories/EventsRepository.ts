@@ -356,7 +356,7 @@ class EventsRepository implements IEventsRepository {
     return events;
   }
 
-  async findEventWithoutStudentByDate(refDate: string): Promise<IFindEventWithoutStudentByDateDTO[]> {
+  async findEventWithoutStudentByDate(startDate: string, endDate: string): Promise<IFindEventWithoutStudentByDateDTO[]> {
     const events = await this.repository.query(
       `SELECT * FROM (
         SELECT
@@ -376,7 +376,7 @@ class EventsRepository implements IEventsRepository {
         ON
           s.event_id = e.id
         WHERE
-          e.start_date <= '${refDate}' AND
+          e.start_date BETWEEN '${startDate}' AND '${endDate}' AND
           e.is_canceled = false
         GROUP BY
           e.id, e.title, e.start_date, e.minimum_number_of_students,
