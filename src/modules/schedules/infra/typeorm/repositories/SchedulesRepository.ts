@@ -89,6 +89,7 @@ class SchedulesRepository implements ISchedulesRepository {
     const participations = await this.repository.query(
       `SELECT
         base_gift.*,
+        company.company_name,
         COALESCE(SUM(s.amount), 0) as gift_credits,
         MAX(s.created_at) as last_gift
       FROM (
@@ -118,13 +119,28 @@ class SchedulesRepository implements ISchedulesRepository {
       ON
         s.user_id = base_gift.user_id
         AND s.is_gift
+      LEFT JOIN
+        (
+          SELECT
+            u2."name" as company_name,
+            cm.user_id as company_member
+          FROM
+            company_members cm
+          INNER JOIN
+            users u2
+          ON
+            u2.id = cm.company_id
+        ) company
+      ON
+        company.company_member = base_gift.user_id
       GROUP BY
         base_gift.user_id,
         base_gift.name,
         base_gift.email,
         base_gift.participation,
         base_gift.total_spent,
-        base_gift.created_at
+        base_gift.created_at,
+        company.company_name
       ORDER BY
         base_gift.total_spent DESC,
         base_gift.participation DESC`
