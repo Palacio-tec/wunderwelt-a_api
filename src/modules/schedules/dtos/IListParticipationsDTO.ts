@@ -6,6 +6,7 @@ interface IListParticipationDTO {
     participation: string;
     total_spent: string;
     gift_credits: string;
+    company_name: string;
   }
   
   export { IListParticipationDTO };
