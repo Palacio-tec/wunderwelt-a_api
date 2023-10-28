@@ -1,6 +1,7 @@
-import { Request, Response } from "express";
-import { container } from "tsyringe";
-import { UserFieldsUseCase } from "./UserFieldsUseCase";
+import { Request, Response } from 'express';
+import { container } from 'tsyringe';
+
+import { UserFieldsUseCase } from './UserFieldsUseCase';
 
 class UserFieldsController {
   async handle(request: Request, response: Response): Promise<Response> {
