@@ -1,6 +1,7 @@
-import { Request, Response } from "express";
-import { container } from "tsyringe";
-import { CanDeleteUserUseCase } from "./CanDeleteUserUseCase";
+import { Request, Response } from 'express';
+import { container } from 'tsyringe';
+
+import { CanDeleteUserUseCase } from './CanDeleteUserUseCase';
 
 class CanDeleteUserController {
   async handle(request: Request, response: Response): Promise<Response> {

@@ -1,6 +1,7 @@
-import { Request, Response } from "express";
-import { container } from "tsyringe";
-import { ProfileFieldsUseCase } from "./ProfileFieldsUseCase";
+import { Request, Response } from 'express';
+import { container } from 'tsyringe';
+
+import { ProfileFieldsUseCase } from './ProfileFieldsUseCase';
 
 class ProfileFieldsController {
   async handle(request: Request, response: Response): Promise<Response> {

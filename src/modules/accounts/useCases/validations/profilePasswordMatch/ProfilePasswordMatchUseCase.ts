@@ -1,7 +1,7 @@
-import { inject, injectable } from "tsyringe";
-import { compare } from "bcryptjs";
+import { compare } from 'bcryptjs';
+import { inject, injectable } from 'tsyringe';
 
-import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
+import { IUsersRepository } from '@modules/accounts/repositories/IUsersRepository';
 
 interface IRequest {
   user_id: string;

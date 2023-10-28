@@ -1,6 +1,7 @@
-import { Request, Response } from "express";
-import { container } from "tsyringe";
-import { ProfilePasswordMatchUseCase } from "./ProfilePasswordMatchUseCase";
+import { Request, Response } from 'express';
+import { container } from 'tsyringe';
+
+import { ProfilePasswordMatchUseCase } from './ProfilePasswordMatchUseCase';
 
 class ProfilePasswordMatchController {
   async handle(request: Request, response: Response): Promise<Response> {

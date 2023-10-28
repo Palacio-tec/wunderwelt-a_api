@@ -1,10 +1,10 @@
-import { inject, injectable } from "tsyringe";
+import { inject, injectable } from 'tsyringe';
 
-import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
-import { IEventsRepository } from "@modules/events/repositories/IEventsRepository";
-import { IStatementsRepository } from "@modules/statements/repositories/IStatementsRepository";
-import { ISchedulesRepository } from "@modules/schedules/repositories/ISchedulesRepository";
-import { IQueuesRepository } from "@modules/queues/repositories/IQueuesRepository";
+import { IUsersRepository } from '@modules/accounts/repositories/IUsersRepository';
+import { IEventsRepository } from '@modules/events/repositories/IEventsRepository';
+import { IQueuesRepository } from '@modules/queues/repositories/IQueuesRepository';
+import { ISchedulesRepository } from '@modules/schedules/repositories/ISchedulesRepository';
+import { IStatementsRepository } from '@modules/statements/repositories/IStatementsRepository';
 
 type IReturn = {
   ok: boolean;

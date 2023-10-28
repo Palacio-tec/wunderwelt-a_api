@@ -16,6 +16,7 @@ import { SendGiftController } from "@modules/accounts/useCases/sendGift/SendGift
 import { ImpersonateUserController } from "@modules/accounts/useCases/impersonateUser/ImpersonateUserController";
 import { ListCompanyUsersController } from "@modules/accounts/useCases/listCompanyUsers/ListCompanyUsersController";
 import { ListCompanyUsersAvailableController } from "@modules/accounts/useCases/listCompanyUsersAvailable/ListCompanyUsersAvailableController";
+import { RemoveCreditController } from "@modules/accounts/useCases/removeCredit/RemoveCreditController";
 
 const usersRoutes = Router();
 
@@ -32,6 +33,7 @@ const sendGiftController = new SendGiftController();
 const impersonateUserController = new ImpersonateUserController();
 const listCompanyUsersController = new ListCompanyUsersController();
 const listCompanyUsersAvailableController = new ListCompanyUsersAvailableController();
+const removeCreditController = new RemoveCreditController();
 
 usersRoutes.post(
   "/",
@@ -126,5 +128,12 @@ usersRoutes.get(
   ensureAdmin,
   listCompanyUsersAvailableController.handle
 );
+
+usersRoutes.post(
+  "/remove-credit",
+  ensureAuthenticated,
+  ensureAdmin,
+  removeCreditController.handle
+)
 
 export { usersRoutes };
