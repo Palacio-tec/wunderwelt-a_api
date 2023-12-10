@@ -24,6 +24,7 @@ jobs:
       - name: Run build
         run: yarn build
 
+
       # Copiar código para dentro da Digital Ocean
       - name: Copy code to Digital Ocean
         uses: appleboy/scp-action@v0.1.3
