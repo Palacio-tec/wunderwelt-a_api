@@ -13,7 +13,7 @@ import { spliceIntoChunks } from "@utils/spliceIntoChunks";
 import { sleep } from "@utils/sleep";
 import { SendMailWithLog } from "@utils/sendMailWithLog";
 
-const NUMBER_OF_DAYS_FOR_NEXT_SHIPMENT = 14
+const NUMBER_OF_DAYS_FOR_NEXT_SHIPMENT = 7
 
 type ValuesFormatted = {
   id: string;
