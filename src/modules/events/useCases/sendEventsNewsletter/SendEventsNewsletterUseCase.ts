@@ -155,7 +155,7 @@ class SendEventsNewsletterUseCase {
 
           sendMailWithLog.execute({
             to: user.email,
-            subject: 'Confira as aulas incríveis que estão por vir',
+            subject: 'Programação de aulas da PrAktikA',
             variables,
             path: templatePath,
             mailLog: {
