@@ -6,6 +6,7 @@ import { ProfileFieldsController } from "@modules/accounts/useCases/validations/
 import { ProfilePasswordMatchController } from "@modules/accounts/useCases/validations/profilePasswordMatch/ProfilePasswordMatchController";
 import { UpdateProfileController } from "@modules/accounts/useCases/updateProfile/UpdateProfileController";
 import { UnsubscribeNewsletterController } from "@modules/accounts/useCases/unsubscribeNewsletter/UnsubscribeNewsletterController";
+import { UnsubscribeUserController } from "@modules/accounts/useCases/unsubscribeUser/UnsubscribeUserController";
 
 const profileRoutes = Router();
 
@@ -14,6 +15,7 @@ const profileFieldsController = new ProfileFieldsController();
 const profilePasswordMatchController = new ProfilePasswordMatchController();
 const updateProfileController = new UpdateProfileController();
 const unsubscribeNewsletterController = new UnsubscribeNewsletterController();
+const unsubscribeUserController = new UnsubscribeUserController();
 
 profileRoutes.get(
   "/",
@@ -47,6 +49,12 @@ profileRoutes.post(
 profileRoutes.post(
   "/unsubscribe/all",
   unsubscribeNewsletterController.handle
+)
+
+profileRoutes.delete(
+  "/",
+  ensureAuthenticated,
+  unsubscribeUserController.handle
 )
 
 export { profileRoutes };
