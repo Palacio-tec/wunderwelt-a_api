@@ -38,7 +38,7 @@ class DeleteUserUseCase {
     }
 
     if (!userExists.is_admin) {
-      throw new AppError("Only administrators could be delete a level");
+      throw new AppError("Only administrators could be delete a user");
     }
 
     const userWillBeDeleted = await this.usersRepository.findById(id);
