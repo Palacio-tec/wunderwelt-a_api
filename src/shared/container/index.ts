@@ -53,6 +53,8 @@ import { IMailLogsRepository } from "@modules/mailLogs/repositories/IMailLogsRep
 import { MailLogsRepository } from "@modules/mailLogs/infra/typeorm/repositories/MailLogsRepository";
 import { ICompanyMembersRepository } from "@modules/companyMembers/repositories/ICompanyMembersRepository";
 import { CompanyMembersRepository } from "@modules/companyMembers/infra/typeorm/repositories/CompanyMemberRepository";
+import { IClassSubjectsRepository } from "@modules/classSubjects/repositories/IClassSubjectsRepository";
+import { ClassSubjectsRepository } from "@modules/classSubjects/infra/typeorm/repositories/ClassSubjectsRepository";
 
 container.registerSingleton<IUsersRepository>(
   "UsersRepository",
@@ -147,4 +149,9 @@ container.registerSingleton<INotificationsRepository>(
 container.registerSingleton<ICompanyMembersRepository>(
   "CompanyMembersRepository",
   CompanyMembersRepository
+)
+
+container.registerSingleton<IClassSubjectsRepository>(
+  "ClassSubjectsRepository",
+  ClassSubjectsRepository
 )

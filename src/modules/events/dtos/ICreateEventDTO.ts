@@ -22,6 +22,7 @@ interface ICreateEventDTO {
   for_teachers?: boolean;
   modality: OperationEnumModalityEvent;
   description_formatted: string;
+  class_subject_id?: string;
 }
 
 export { ICreateEventDTO, OperationEnumModalityEvent };

@@ -21,6 +21,8 @@ interface IListEventsDTO {
   registered_students?: number;
   modality: OperationEnumModalityEvent;
   description_formatted: string;
+  class_subject_id?: string;
+  subject?: string;
 }
 
 export { IListEventsDTO }

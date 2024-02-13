@@ -22,6 +22,7 @@ class UpdateEventControllet {
       for_teachers,
       modality,
       description_formatted,
+      class_subject_id
     } = request.body;
     const { id } = request.params;
     const { id: user_id } = request.user;
@@ -47,6 +48,7 @@ class UpdateEventControllet {
         for_teachers,
         modality,
         description_formatted,
+        class_subject_id,
       },
       user_id
     );

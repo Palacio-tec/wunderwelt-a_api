@@ -38,6 +38,7 @@ class EventsRepository implements IEventsRepository {
     for_teachers,
     modality,
     description_formatted,
+    class_subject_id
   }: ICreateEventDTO): Promise<Event> {
     const event = this.repository.create({
       title,
@@ -57,6 +58,7 @@ class EventsRepository implements IEventsRepository {
       for_teachers,
       modality,
       description_formatted,
+      class_subject_id
     });
 
     await this.repository.save(event);
@@ -69,8 +71,9 @@ class EventsRepository implements IEventsRepository {
       `SELECT
         e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit,
         e.instruction, e.is_canceled, e.credit, e.teacher_id, e.minimum_number_of_students,
-        e.has_highlight, e.for_teachers, e.modality, e.description_formatted,
+        e.has_highlight, e.for_teachers, e.modality, e.description_formatted, e.class_subject_id,
         u.name,
+        cs.subject,
         string_agg(l.name, ', ') levels
       FROM
         events e
@@ -86,11 +89,16 @@ class EventsRepository implements IEventsRepository {
         levels l
       ON
         l.id = el.level_id
+      LEFT JOIN
+        class_subjects cs
+      ON
+        cs.id = e.class_subject_id
       GROUP BY
         e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit,
         e.instruction, e.is_canceled, e.credit, e.teacher_id, e.minimum_number_of_students,
-        e.has_highlight, e.for_teachers, e.modality, e.description_formatted,
-        u.name
+        e.has_highlight, e.for_teachers, e.modality, e.description_formatted, e.class_subject_id,
+        u.name,
+        cs.subject
       ORDER BY
         e.created_at DESC`
     );
@@ -109,7 +117,7 @@ class EventsRepository implements IEventsRepository {
         SELECT 
           e.id, e.title, e.description, e.link, e.start_date, e.end_date,
           e.student_limit, e.credit, e.request_subject, e.has_highlight,
-          e.for_teachers, e.modality, e.description_formatted,
+          e.for_teachers, e.modality, e.description_formatted, e.class_subject_id,
           COUNT(s.event_id) AS registered_students
         FROM
           events e
@@ -128,7 +136,7 @@ class EventsRepository implements IEventsRepository {
         GROUP BY
           e.id, e.title, e.description, e.link, e.start_date, e.end_date,
           e.student_limit, e.credit, e.request_subject, e.has_highlight,
-          e.for_teachers, e.modality, e.description_formatted
+          e.for_teachers, e.modality, e.description_formatted, e.class_subject_id
       ) ea
       LEFT JOIN
         schedules suser
@@ -157,7 +165,9 @@ class EventsRepository implements IEventsRepository {
         e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit,
         e.instruction, e.is_canceled, e.credit, e.teacher_id, e.request_subject,
         e.minimum_number_of_students, e.has_highlight, e.for_teachers, e.modality, e.description_formatted,
+        e.class_subject_id,
         u.name,
+        cs.subject,
         COUNT(s.event_id) AS registered_students,
         string_agg(l.name, ', ') levels
       FROM
@@ -178,13 +188,19 @@ class EventsRepository implements IEventsRepository {
         schedules s
       ON
         s.event_id = e.id
+      LEFT JOIN
+        class_subjects cs
+      ON
+        cs.id = e.class_subject_id
       WHERE
         e.id = '${id}'
       GROUP BY
         e.id, e.title, e.description, e.link, e.start_date, e.end_date, e.student_limit,
         e.instruction, e.is_canceled, e.credit, e.teacher_id, e.request_subject,
         e.minimum_number_of_students, e.has_highlight, e.for_teachers, e.modality, e.description_formatted,
-        u.name`
+        e.class_subject_id,
+        u.name,
+        cs.subject`
     );
 
     return event[0];
@@ -202,6 +218,7 @@ class EventsRepository implements IEventsRepository {
         e.id, e.title, e.description, e.link, e.start_date, e.end_date,
         e.student_limit, e.instruction, e.is_canceled, e.credit, e.teacher_id,
         e.minimum_number_of_students, e.has_highlight, e.for_teachers, e.modality, e.description_formatted,
+        e.class_subject_id,
         u.name,
         string_agg(l.name, ', ') levels
       FROM
@@ -224,6 +241,7 @@ class EventsRepository implements IEventsRepository {
         e.id, e.title, e.description, e.link, e.start_date, e.end_date,
         e.student_limit, e.instruction, e.is_canceled, e.credit, e.teacher_id,
         e.minimum_number_of_students, e.has_highlight, e.for_teachers, e.modality, e.description_formatted,
+        e.class_subject_id,
         u.name
       ORDER BY
         e.created_at DESC`
@@ -277,7 +295,7 @@ class EventsRepository implements IEventsRepository {
     return events;
   }
 
-  async findWaitingListByuser({ user_id }: IFindWaitingListByUserDTO): Promise<IFindRegisteredDTO[]> {
+  async findWaitingListByUser({ user_id }: IFindWaitingListByUserDTO): Promise<IFindRegisteredDTO[]> {
     const events = await this.repository.query(
       `SELECT 
         e.id, e.title, e.description, e.link, e.start_date, e.end_date
@@ -452,6 +470,12 @@ class EventsRepository implements IEventsRepository {
       },
       relations: ['user'],
     })
+
+    return events;
+  }
+
+  async findByClassSubject(class_subject_id: string): Promise<Event[]> {
+    const events = await this.repository.find({ class_subject_id });
 
     return events;
   }

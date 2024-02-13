@@ -23,7 +23,7 @@ interface IEventsRepository {
   findAllInMonth({ year, month }: IFindAllInMonthDTO): Promise<Event[]>;
   findByDate(year: number, month: number, day: number): Promise<Event[]>;
   findRegisteredByUser({ user_id, willStart }: IFindRegisteredByUserDTO): Promise<IFindRegisteredDTO[]>;
-  findWaitingListByuser({ user_id }: IFindWaitingListByUserDTO): Promise<IFindRegisteredDTO[]>;
+  findWaitingListByUser({ user_id }: IFindWaitingListByUserDTO): Promise<IFindRegisteredDTO[]>;
   findEventByTeacher(teacher_id: string): Promise<Event[]>;
   findByIdToCreate(id: string): Promise<Event>;
   findEventByTeacherAndPeriod({teacher_id, start_date, end_date}: IFindEventByTeacherAndPeriodDTO): Promise<Event[]>;
@@ -32,6 +32,7 @@ interface IEventsRepository {
   findByHighlightAndWillStart(year: number, month: number, day: number): Promise<Event[]>;
   findByUserIdAndDate(user_id: string, eventDate: string): Promise<IFindEventWillStartDTO[]>;
   findEventByPeriod(start_date: string, end_date: string): Promise<Event[]>;
+  findByClassSubject(class_subject_id: string): Promise<Event[]>;
 }
 
 export { IEventsRepository };

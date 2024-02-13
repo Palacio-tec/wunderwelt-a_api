@@ -42,6 +42,8 @@ class FindEventUseCase {
       registered_students,
       modality,
       description_formatted,
+      class_subject_id,
+      subject
     } = event;
 
     let levelsInfo = [];
@@ -82,6 +84,8 @@ class FindEventUseCase {
       registered_students,
       modality,
       description_formatted,
+      class_subject_id,
+      subject
     };
   }
 }

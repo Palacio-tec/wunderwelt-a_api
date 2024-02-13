@@ -22,6 +22,7 @@ class CreateEventController {
       for_teachers,
       modality,
       description_formatted,
+      class_subject_id
     } = request.body;
     const { id: user_id } = request.user;
 
@@ -45,6 +46,7 @@ class CreateEventController {
         for_teachers,
         modality,
         description_formatted,
+        class_subject_id
       },
       user_id
     );
