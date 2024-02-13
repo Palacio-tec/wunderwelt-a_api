@@ -13,6 +13,7 @@ import { User } from "@modules/accounts/infra/typeorm/entities/User";
 import { Exclude } from "class-transformer";
 import { EventLevels } from "./EventsLevels";
 import { OperationEnumModalityEvent } from "@modules/events/dtos/ICreateEventDTO";
+import { ClassSubject } from '@modules/classSubjects/infra/typeorm/entities/ClassSubjects';
 
 @Entity("events")
 class Event {
@@ -79,6 +80,13 @@ class Event {
 
   @Column()
   description_formatted: string;
+
+  @Column()
+  class_subject_id: string
+
+  @ManyToOne(() => ClassSubject, classSubject => classSubject.id)
+  @JoinColumn({ name: 'class_subject_id' })
+  class_subject: ClassSubject
 
   constructor() {
     if (!this.id) {

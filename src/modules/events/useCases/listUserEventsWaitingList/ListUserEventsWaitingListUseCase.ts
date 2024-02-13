@@ -24,7 +24,7 @@ class ListUserEventsWaitingListUseCase {
   ) {}
 
   async execute({ user_id }: IRequest): Promise<ListUserEventsWaitingListUseCaseProps[]> {
-    const events = await this.eventsRepository.findWaitingListByuser({ user_id });
+    const events = await this.eventsRepository.findWaitingListByUser({ user_id });
 
     const eventsWithLevels = await Promise.all(events.map(async event => {
       const levels = await this.eventsLevelsRepository.findByEvent(event.id)

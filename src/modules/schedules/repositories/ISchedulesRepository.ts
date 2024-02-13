@@ -13,6 +13,7 @@ interface ISchedulesRepository {
   findByEventIdAndUserId(eventId: string, user_id: string): Promise<Schedule>;
   listParticipations(): Promise<IListParticipationDTO[]>;
   listUserHistoric(user_id: string): Promise<{id: string, name: string, title: string, start_date: string}[]>;
+  listQuantityByClassSubject(classSubjectId: string, user_id: string, dateNow: string): Promise<number>
 }
 
 export { ISchedulesRepository };

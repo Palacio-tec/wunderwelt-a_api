@@ -101,7 +101,7 @@ class CreateScheduleUseCase {
   private async __checkHasVacancies(event_id: string, student_limit: number) {
     const schedules = await this.schedulesRepository.findByEventId(event_id);
     
-    if (schedules.length >= student_limit) {
+    if (student_limit > 0 && schedules.length >= student_limit) {
       throw new AppError("There are no vacancies available for this event", 400, 'SC0001')
     }
   }

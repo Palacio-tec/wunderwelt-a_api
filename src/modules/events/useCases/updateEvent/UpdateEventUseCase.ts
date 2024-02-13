@@ -237,6 +237,7 @@ class UpdateEventUseCase {
       for_teachers,
       modality,
       description_formatted,
+      class_subject_id,
     }: ICreateEventDTO,
     user_id: string
   ): Promise<Event> {
@@ -346,6 +347,7 @@ class UpdateEventUseCase {
       for_teachers,
       modality,
       description_formatted,
+      class_subject_id,
     });
 
     if (hasTeacherChanged) {

@@ -20,6 +20,7 @@ import { fqasRoutes } from "./fqas.routes";
 import { mailLogsRoutes } from "./mailLogs.routes";
 import { notificationsRoutes } from "./notifications.routes";
 import { companyMembersRoutes } from "./companyMembers.routes"
+import { classSubjectsRoutes } from "./classSubject.routes";
 
 const router = Router();
 
@@ -44,5 +45,6 @@ router.use("/fqas", fqasRoutes)
 router.use("/mail-logs", mailLogsRoutes)
 router.use("/notifications", notificationsRoutes)
 router.use("/company-members", companyMembersRoutes)
+router.use("/class-subjects", classSubjectsRoutes)
 
 export { router };

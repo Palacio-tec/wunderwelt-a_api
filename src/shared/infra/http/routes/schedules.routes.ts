@@ -10,6 +10,7 @@ import { FindByEventIdController } from "@modules/schedules/useCases/findByEvent
 import { RemoveScheduleController } from "@modules/schedules/useCases/removeSchedule/RemoveScheduleController";
 
 import { ensureAdmin } from "../middlewares/ensureAdmin";
+import { CanScheduleController } from "@modules/schedules/useCases/canSchedule/CanScheduleController";
 
 const schedulesRoutes = Router();
 
@@ -20,6 +21,7 @@ const listSchedulesController = new ListSchedulesController();
 const listParticipationsController = new ListParticipationsController();
 const findByEventIdController = new FindByEventIdController();
 const removeScheduleController = new RemoveScheduleController();
+const canScheduleController = new CanScheduleController();
 
 schedulesRoutes.post(
   "/",
@@ -65,6 +67,12 @@ schedulesRoutes.post(
   ensureAuthenticated,
   ensureAdmin,
   removeScheduleController.handle
+)
+
+schedulesRoutes.get(
+  "/can-schedule",
+  ensureAuthenticated,
+  canScheduleController.handle
 )
 
 export { schedulesRoutes };
