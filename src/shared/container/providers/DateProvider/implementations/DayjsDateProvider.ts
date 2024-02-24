@@ -110,6 +110,12 @@ class DayjsDateProvider implements IDateProvider {
 
     return day
   }
+
+  subtractDay(date: Date, day: number): Date {
+    const newDate = dayjs(date).subtract(day, 'days').toDate()
+
+    return newDate
+  }
 }
 
 export { DayjsDateProvider };

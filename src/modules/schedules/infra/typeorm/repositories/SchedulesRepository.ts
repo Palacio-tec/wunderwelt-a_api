@@ -175,7 +175,7 @@ class SchedulesRepository implements ISchedulesRepository {
     return historic
   }
 
-  async listQuantityByClassSubject(classSubjectId: string, user_id: string, dateNow: string): Promise<number> {
+  async listQuantityByClassSubject(classSubjectId: string, user_id: string, startDate: string, lastDate: string): Promise<number> {
     const result = await this.repository.query(`
       select
         count(e.class_subject_id) as qtd
@@ -187,7 +187,7 @@ class SchedulesRepository implements ISchedulesRepository {
         e.id = s.event_id 
       where
         s.user_id = '${user_id}'
-        and e.start_date > '${dateNow}'
+        and e.start_date BETWEEN '${startDate}' AND '${lastDate}'
         and e.class_subject_id = '${classSubjectId}'
     `)
 

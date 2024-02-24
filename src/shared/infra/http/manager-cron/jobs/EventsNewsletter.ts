@@ -12,7 +12,7 @@ function EventsNewsletter() {
 }
 
 export default schedule(
-  process.env.EVENTS_NEWSLETTER || "0 0 10 * * *", // Every 10 o'clock
+  process.env.EVENTS_NEWSLETTER || "0 0 10 * * Fri", // Every 10 o'clock
   EventsNewsletter,
   { scheduled: false }
 );
