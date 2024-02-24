@@ -9,9 +9,10 @@ class CanScheduleController {
         CanScheduleUseCase
     );
     const classSubjectId = request.query.classSubjectId as string;
+    const event_date = request.query.eventDate as string;
     const { id: user_id } = request.user;
 
-    const canSchedule = await canScheduleUseCase.execute(classSubjectId, user_id);
+    const canSchedule = await canScheduleUseCase.execute(classSubjectId, user_id, event_date);
 
     return response.status(201).json(canSchedule);
   }

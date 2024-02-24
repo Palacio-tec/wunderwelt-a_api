@@ -1,33 +1,35 @@
 import { inject, injectable } from "tsyringe";
-import { format } from "date-fns";
 import { IClassSubjectsRepository } from "@modules/classSubjects/repositories/IClassSubjectsRepository";
-import { IEventsRepository } from "@modules/events/repositories/IEventsRepository";
 import { ISchedulesRepository } from "@modules/schedules/repositories/ISchedulesRepository";
-import { AppError } from "@shared/errors/AppError";
 
 @injectable()
 class CanScheduleUseCase {
   constructor(
-    @inject("EventsRepository")
-    private eventsRepository: IEventsRepository,
-
     @inject("ClassSubjectsRepository")
     private classSubjectsRepository: IClassSubjectsRepository,
 
     @inject("SchedulesRepository")
-    private schedulesRepository: ISchedulesRepository,
+    private schedulesRepository: ISchedulesRepository
   ) {}
 
-  async execute(class_subject_id: string, user_id: string): Promise<boolean> {
+  async execute(class_subject_id: string, user_id: string, event_date: string): Promise<boolean> {
     if (!class_subject_id) {
         return true
     }
 
+    const dateFormatted = new Date(event_date.substring(0, 10))
+
+    const dayOfWeek = dateFormatted.getDay()
+
+    const daysToPreviousTuesday = (dayOfWeek + 6) % 7
+    const daysToNextMonday = (8 - dayOfWeek) % 7
+
+    const startDate = new Date(dateFormatted.getTime() - daysToPreviousTuesday * 24 * 60 * 60 * 1000).toISOString()
+    const lastDate = new Date(dateFormatted.getTime() + (daysToNextMonday * 24 * 60 * 60 * 1000) - 1).toISOString()
+
     const classSubject = await this.classSubjectsRepository.findById(class_subject_id)
 
-    const dateNow = format(new Date(), 'yyyy-MM-dd HH:mm');
-
-    const quantity = await this.schedulesRepository.listQuantityByClassSubject(class_subject_id, user_id, dateNow);
+    const quantity = await this.schedulesRepository.listQuantityByClassSubject(class_subject_id, user_id, startDate, lastDate);
 
     return quantity < Number(classSubject.quantity)
   }

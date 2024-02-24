@@ -4,7 +4,6 @@ import { resolve } from "path";
 
 import { Event } from "@modules/events/infra/typeorm/entities/Event";
 import { IEventsRepository } from "@modules/events/repositories/IEventsRepository";
-import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
 import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
@@ -64,9 +63,6 @@ class SendEventsNewsletterUseCase {
     @inject("DateProvider")
     private dateProvider: IDateProvider,
 
-    @inject("ParametersRepository")
-    private parametersRepository: IParametersRepository,
-
     @inject("UsersRepository")
     private usersRepository: IUsersRepository,
 
@@ -75,27 +71,6 @@ class SendEventsNewsletterUseCase {
   ) {}
 
   async execute(date: Date, isTest = false, fakeData ?: any): Promise<void> {
-    const sendNewsletterParameter = await this.parametersRepository
-      .findByReference('SendNewsletter');
-
-    if (!sendNewsletterParameter) return
-
-    let dateToSendNewsletter = this.dateProvider.dateNow()
-    if (sendNewsletterParameter.value) {
-      dateToSendNewsletter = this.dateProvider.dateNow(sendNewsletterParameter.value)
-    }
-
-    if (date < dateToSendNewsletter && !isTest) return
-
-    const nextExecutionDate = this.dateProvider.addDaysInDate(
-      dateToSendNewsletter,
-      NUMBER_OF_DAYS_FOR_NEXT_SHIPMENT
-    )
-    const nextExecutionDateFormatted = this.dateProvider.parseFormat(
-      nextExecutionDate,
-      'YYYY-MM-DD'
-    )
-
     const initialEventDate = this.dateProvider.getNextDay(date, 2)
 
     const day = this.dateProvider.getDay(initialEventDate)
@@ -167,11 +142,6 @@ class SendEventsNewsletterUseCase {
         await sleep(10)
       }
     }
-
-    this.parametersRepository.create({
-      ...sendNewsletterParameter,
-      value: nextExecutionDateFormatted
-    })
   }
 }
 
