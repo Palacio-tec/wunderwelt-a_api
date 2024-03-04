@@ -244,7 +244,7 @@ class EventsRepository implements IEventsRepository {
         e.class_subject_id,
         u.name
       ORDER BY
-        e.created_at DESC`
+        e.start_date DESC`
     );
 
     return events;
