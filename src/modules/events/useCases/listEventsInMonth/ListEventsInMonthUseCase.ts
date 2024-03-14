@@ -30,15 +30,13 @@ class ListEventsInMonthUseCase {
     );
 
     const availability = eachDayArray.map(day => {
-      const compareDate = new Date(year, month - 1, day, 23, 59, 59);
-
       const eventInDay = events.filter(event => {
         return getDate(event.start_date) === day
       });
 
       return {
         day,
-        available: isAfter(compareDate, new Date()) && eventInDay.length > 0
+        available: eventInDay.length > 0
       }
     });
 
