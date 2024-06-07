@@ -8,7 +8,8 @@ interface IMailProviderProps {
   calendarEvent?: {
     content: ICalCalendar | null,
     method: string | undefined
-  }
+  },
+  bcc?: string | null
 }
 
 interface IMailProvider {
@@ -18,6 +19,7 @@ interface IMailProvider {
     variables,
     path,
     calendarEvent,
+    bcc
   }: IMailProviderProps): Promise<void>;
 }
 

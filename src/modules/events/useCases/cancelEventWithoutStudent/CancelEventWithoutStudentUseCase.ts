@@ -240,6 +240,7 @@ class CancelEventWithoutStudentUseCase {
         mailLog: {
           userId: teacher_id
         },
+        bcc: process.env.GENERAL_MAIL
       })
     })
   }

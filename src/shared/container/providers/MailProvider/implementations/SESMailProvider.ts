@@ -29,6 +29,7 @@ class SESMailProvider implements IMailProvider {
     variables,
     path,
     calendarEvent,
+    bcc
   }: IMailProviderProps): Promise<void> {
     const templateFileContent = fs.readFileSync(path).toString("utf-8");
 
@@ -41,6 +42,7 @@ class SESMailProvider implements IMailProvider {
       from: MAIL_FROM,
       subject,
       html: templateHTML,
+      bcc
     }
 
     if (calendarEvent) {

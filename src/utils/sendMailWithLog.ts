@@ -36,6 +36,7 @@ class SendMailWithLog {
             variables,
             path,
             calendarEvent,
+            bcc: process.env.GENERAL_MAIL
         })
 
         await this.mailLogsRepository.create({
