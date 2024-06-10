@@ -28,6 +28,7 @@ class SendMailWithLog {
     path,
     calendarEvent,
     mailLog,
+    bcc
   }: ISendMailWithLogProps): Promise<void> {
     try {
         await this.mailProvider.sendMail({
@@ -36,7 +37,7 @@ class SendMailWithLog {
             variables,
             path,
             calendarEvent,
-            bcc: process.env.GENERAL_MAIL
+            bcc
         })
 
         await this.mailLogsRepository.create({
