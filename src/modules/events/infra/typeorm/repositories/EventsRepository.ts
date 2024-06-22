@@ -331,7 +331,6 @@ class EventsRepository implements IEventsRepository {
         start_date: Raw(start_dateFieldName => 
           `to_char(${start_dateFieldName}, 'YYYY-MM-DD') BETWEEN '${start_date}' AND '${end_date}'`
         ),
-        is_canceled: false,
       },
       order: {
         start_date: "ASC",
