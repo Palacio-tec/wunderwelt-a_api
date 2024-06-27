@@ -350,7 +350,7 @@ class EventsRepository implements IEventsRepository {
   async findEventWillStart(startDate: string, endDate: string): Promise<IFindEventWillStartDTO[]> {
     const events = await this.repository.query(
       `SELECT
-        e.id as event_id, e.title, e.description, e.link, e.start_date, e.teacher_id, e.modality, e.description_formatted,
+        e.id as event_id, e.title, e.description, e.link, e.start_date, e.teacher_id, e.modality, e.description_formatted, e.instruction,
         u.name as teacher_name, u.email as teacher_email
       FROM
         events e
@@ -366,7 +366,7 @@ class EventsRepository implements IEventsRepository {
         e.start_date BETWEEN '${startDate}' and '${endDate}'
         and e.is_canceled = false
       GROUP BY
-        e.id, e.title, e.description, e.link, e.start_date, e.teacher_id, e.modality, e.description_formatted,
+        e.id, e.title, e.description, e.link, e.start_date, e.teacher_id, e.modality, e.description_formatted, e.instruction,
         u.name, u.email`
     );
 
@@ -461,7 +461,6 @@ class EventsRepository implements IEventsRepository {
         start_date: Raw(start_dateFieldName => 
           `to_char(${start_dateFieldName}, 'YYYY-MM-DD') BETWEEN '${start_date}' AND '${end_date}'`
         ),
-        is_canceled: false,
       },
       order: {
         start_date: "ASC",

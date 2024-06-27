@@ -33,13 +33,20 @@
 
       <br />
 
-      <text>Gostaríamos de lembrá-lo(a) que a aula "{{title}}" vai começar em aproximadamente {{time}}h.</text>
+      <text>Gostaríamos de lembrá-lo(a) que a aula "{{title}}" vai começar às {{time}}h.</text>
       <br />
       <text>Acesse a sala virtual utilizando as informações abaixo:</text>
       <br />
       {{{link}}}
 
       <br />
+
+      {{#if hasInstruction}}
+        <p><strong>Para se preparar para a aula é importante seguir a(s) instrução(ões) abaixo:</strong></p>
+        <span class="contentSpan">{{{instruction}}}</span>
+        <br />
+      {{else}}
+      {{/if}}
       
       <p>Bons Estudos!</p>
 

@@ -11,6 +11,7 @@ interface IFindEventWillStartDTO {
     teacher_email: string;
     modality: OperationEnumModalityEvent;
     description_formatted: string;
+    instruction: string;
 }
 
 export { IFindEventWillStartDTO }
