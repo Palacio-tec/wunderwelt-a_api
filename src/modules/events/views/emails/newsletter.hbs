@@ -25,6 +25,12 @@
         color: #1e2f50;
       }
 
+      .highlight {
+        padding: 10px;
+        background-color: #f7f7f7;
+        border-left: 5px solid #00aeff;
+      }
+
       .coupon {
         display: flex;
         justify-content: center;
@@ -94,9 +100,21 @@
         text-overflow: ellipsis;
         display: -webkit-box;
         line-height: 18px;     /* fallback */
-        max-height: 36px;      /* fallback */
         -webkit-line-clamp: 3; /* number of lines to show */
         -webkit-box-orient: vertical;
+      }
+
+      .content::after {
+        content: '...';
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background-color: white; /* Cor de fundo para esconder qualquer texto atrás dos três pontos */
+        padding-left: 5px;
+        display: block;
+        width: 1.5em;
+        height: 1em;
+        text-align: right;
       }
 
       footer {
@@ -146,7 +164,11 @@
       </strong>
       <p />
       {{#if hasPromotion}}
-        {{message}}
+        <div class="highlight">
+          <strong>
+            {{message}}
+          </strong>
+        </div>
         <p />
         {{#with coupon}}
           <text class="coupon">
@@ -180,7 +202,7 @@
 
       <br />
 
-      <strong>Acesse a Praktika!!!</strong>
+      <strong>Acesse a PrAktikA!!!</strong>
 
       <p>Equipe | <strong>PrAktikA - Wunderwelt-A</strong></p>
 

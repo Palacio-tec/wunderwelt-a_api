@@ -85,21 +85,14 @@ class CompanyMembersRepository implements ICompanyMembersRepository {
   }
 
   async listCompanies(): Promise<{ id: string; name: string; }[]> {
-    const companies = await this.repository.query(
-      `SELECT
-        cm.company_id as id,
+    const companies = await this.repository.query(`
+      select
+        u.id,
         u.name
-      FROM
-        company_members cm
-      INNER JOIN
+      from
         users u
-      ON
-        u.id = cm.company_id
-      GROUP BY
-        cm.company_id,
-        u.name
-      `
-    )
+      where 
+        u.is_company = true`)
 
     return companies
   }

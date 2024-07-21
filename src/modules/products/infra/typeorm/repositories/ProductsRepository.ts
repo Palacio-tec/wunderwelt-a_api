@@ -17,14 +17,20 @@ class ProductsRepository implements IProductsRepository {
     name,
     description,
     amount,
-    value
+    value,
+    is_active,
+    original_amount,
+    original_value,
   }: ICreateProductsDTO): Promise<Product> {
-    const product = await this.repository.create({
+    const product = this.repository.create({
       id,
       name,
       description,
       amount,
-      value
+      value,
+      is_active,
+      original_amount,
+      original_value,
     });
 
     await this.repository.save(product);
@@ -40,6 +46,16 @@ class ProductsRepository implements IProductsRepository {
 
   async list(): Promise<Product[]> {
     const products = await this.repository.find({ order: { value: "ASC" } });
+
+    return products;
+  }
+
+  async listOnlyActivated(): Promise<Product[]> {
+    const products = await this.repository.find({
+      where: {
+        is_active: true
+      }
+    });
 
     return products;
   }

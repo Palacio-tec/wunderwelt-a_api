@@ -5,6 +5,7 @@ interface IProductsRepository {
   create(data: ICreateProductsDTO): Promise<Product>;
   findById(id: string): Promise<Product>;
   list(): Promise<Product[]>;
+  listOnlyActivated(): Promise<Product[]>;
 }
 
 export { IProductsRepository };

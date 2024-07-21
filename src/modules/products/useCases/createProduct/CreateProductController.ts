@@ -9,7 +9,10 @@ class CreateProductController {
       name,
       description,
       amount,
-      value
+      value,
+      is_active,
+      original_amount,
+      original_value
     } = request.body;
     const user_id = request.user.id;
 
@@ -21,6 +24,9 @@ class CreateProductController {
         description,
         amount,
         value,
+        is_active,
+        original_amount,
+        original_value,
       },
       user_id
     );

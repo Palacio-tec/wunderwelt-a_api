@@ -98,7 +98,7 @@ class SendEventsNewsletterUseCase {
 
     const variables = {
       mailData,
-      hasPromotion: true,
+      hasPromotion: !!hasPromotion,
       message: hasPromotion?.message || null,
       coupon: hasPromotion?.coupon || null,
       user_id: null

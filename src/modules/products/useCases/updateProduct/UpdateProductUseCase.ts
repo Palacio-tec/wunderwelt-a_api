@@ -23,6 +23,9 @@ class UpdateProductUseCase {
       description,
       amount,
       value,
+      is_active,
+      original_amount,
+      original_value
     }: ICreateProductsDTO,
     user_id: string
   ): Promise<Product> {
@@ -48,6 +51,9 @@ class UpdateProductUseCase {
       description,
       amount,
       value,
+      is_active,
+      original_amount,
+      original_value
     });
 
     return product;

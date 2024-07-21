@@ -22,6 +22,9 @@ class CreateProductUseCase {
     description,
     amount,
     value,
+    is_active,
+    original_amount,
+    original_value,
   }: ICreateProductsDTO, user_id: string): Promise<Product> {
     const userExists = await this.usersRepository.findById(user_id);
 
@@ -33,12 +36,15 @@ class CreateProductUseCase {
       throw new AppError("Only administrators could be create an event");
     }
 
-    const product = this.productsRepository.create({
+    const product = await this.productsRepository.create({
       id,
       name,
       description,
       amount,
       value,
+      is_active,
+      original_amount,
+      original_value,
     });
 
     return product;

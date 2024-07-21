@@ -156,7 +156,7 @@ class RemoveScheduleUseCase {
     }
   }
 
-  private async __sendMail(user_id: string, name: string, email: string, title: string, event_id: string) {
+  private async __sendMail(user_id: string, name: string, email: string, title: string, event_id: string, mailDescription: string) {
     const templatePath = resolve(
       __dirname,
       "..",
@@ -173,6 +173,8 @@ class RemoveScheduleUseCase {
     const variables = {
       name,
       title,
+      hasMailDescription: !!mailDescription,
+      mailDescription
     };
 
     const calendarEvent = {
@@ -205,7 +207,7 @@ class RemoveScheduleUseCase {
     })
   }
 
-  async execute(eventId: string, student_id: string, admin_id: string): Promise<void> {
+  async execute(eventId: string, student_id: string, admin_id: string, mailDescription: string): Promise<void> {
     const scheduleExists = await this.schedulesRepository.findByEventIdAndUserId(eventId, student_id);
 
     if (!scheduleExists) {
@@ -236,7 +238,7 @@ class RemoveScheduleUseCase {
 
     await this.__queueAvailable(eventId)
 
-    this.__sendMail(student_id, studentExists.name, studentExists.email, title, eventId)
+    this.__sendMail(student_id, studentExists.name, studentExists.email, title, eventId, mailDescription)
   }
 }
 

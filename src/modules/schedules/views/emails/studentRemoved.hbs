@@ -30,9 +30,12 @@
   <body>
     <div class="container">
       <span class="contentSpan">Olá, {{name}}</span>
-      <br />
-      <span class="contentSpan">Gostaríamos de informar que os administradores identificaram que a aula "{{title}}" pode não ser adequada ao seu nível atual.</span>
-      <span class="contentSpan">Com o objetivo de garantir que você sempre desfrute da melhor experiência de aprendizado possível, tomamos a decisão de cancelar sua inscrição para esta aula específica.</span>
+      {{#if hasMailDescription}}
+        <span class="contentSpan">{{mailDescription}}</span>
+      {{else}}
+        <span class="contentSpan">Gostaríamos de informar que os administradores identificaram que a aula "{{title}}" pode não ser adequada ao seu nível atual.</span>
+        <span class="contentSpan">Com o objetivo de garantir que você sempre desfrute da melhor experiência de aprendizado possível, tomamos a decisão de cancelar sua inscrição para esta aula específica.</span>
+      {{/if}}
       <span class="contentSpan">No entanto, queremos assegurar que você não precise se preocupar. Seus créditos foram devidamente reembolsados, e nossa equipe está à disposição para esclarecer quaisquer dúvidas que possam surgir.</span>
       <span class="contentSpan">Agradecemos pela sua compreensão e permanecemos à disposição para auxiliá-lo em seu percurso educacional.</span>
       <br />

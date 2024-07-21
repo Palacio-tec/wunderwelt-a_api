@@ -11,6 +11,9 @@ class UpdateProductController {
       description,
       amount,
       value,
+      is_active,
+      original_amount,
+      original_value
     } = request.body;
     const user_id = request.user.id;
 
@@ -23,6 +26,9 @@ class UpdateProductController {
         description,
         amount,
         value,
+        is_active,
+        original_amount,
+        original_value,
       },
       user_id
     );

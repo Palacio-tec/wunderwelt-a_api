@@ -44,9 +44,7 @@ class PromotionsRepository implements IPromotionsRepository {
     async findByDate(date: string): Promise<Promotion> {
         const promotion = await this.repository.findOne({
             where: {
-              promotion_date: Raw(promotion_dateFieldName => 
-                `to_char(${promotion_dateFieldName}, 'YYYY-MM-DD') = '${date}'`
-              ),
+                promotion_date: Raw((alias) => `to_char(${alias}, 'YYYY-MM-DD') = :date`, { date }),
             },
             relations: ['coupon'],
         })

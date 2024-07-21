@@ -16,6 +16,9 @@ class FindProductUseCase {
       description,
       amount,
       value,
+      is_active,
+      original_amount,
+      original_value,
     } = await this.productsRepository.findById(id);
 
     return {
@@ -24,6 +27,9 @@ class FindProductUseCase {
       description,
       amount,
       value,
+      is_active,
+      original_amount,
+      original_value,
     };
   }
 }
