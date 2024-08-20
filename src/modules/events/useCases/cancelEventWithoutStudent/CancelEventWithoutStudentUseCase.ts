@@ -87,8 +87,11 @@ class CancelEventWithoutStudentUseCase {
 
   async execute(date: Date): Promise<void> {
     const studentlessPeriod = await this.parametersRepository.findByReference('StudentlessPeriod');
+    const parameterRefundTimeLimit =
+      await this.parametersRepository.findByReference("RefundTimeLimit");
 
     const studentlessPeriodValue = Number(studentlessPeriod.value);
+    const parameterRefundTimeLimitValue = Number(parameterRefundTimeLimit.value);
 
     const startDate = this.dateProvider.parseISO(new Date()).toISOString();
 
@@ -109,7 +112,18 @@ class CancelEventWithoutStudentUseCase {
       "cancelEvent.hbs"
     );
 
-    events.map(async (event) => {
+    const dateNow = this.dateProvider.dateNow();
+
+    events.forEach(async (event) => {
+      const untilEventStart = this.dateProvider.differenceInHours(
+        dateNow,
+        event.start_date
+      );
+
+      if (untilEventStart < parameterRefundTimeLimitValue) {
+        return
+      }
+
       const eventData = await this.eventsRepository.findByIdToCreate(event.event_id);
 
       eventData.is_canceled = true;

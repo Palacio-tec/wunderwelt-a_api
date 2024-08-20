@@ -401,7 +401,8 @@ class EventsRepository implements IEventsRepository {
           u.id, u.name, u.email
       ) eventWithoutStudent
       WHERE
-        eventWithoutStudent.student_qty = 0`
+        eventWithoutStudent.student_qty = 0 OR
+        eventWithoutStudent.minimum_number_of_students > eventWithoutStudent.student_qty`
     );
 
     return events;
