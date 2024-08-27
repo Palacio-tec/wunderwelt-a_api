@@ -120,7 +120,7 @@ class CancelEventWithoutStudentUseCase {
         event.start_date
       );
 
-      if (untilEventStart < parameterRefundTimeLimitValue) {
+      if (untilEventStart < parameterRefundTimeLimitValue && Number(event.student_qty) > 0) {
         return
       }
 

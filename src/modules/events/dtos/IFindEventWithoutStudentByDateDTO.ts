@@ -5,6 +5,7 @@ interface IFindEventWithoutStudentByDateDTO {
     teacher_name: string;
     teacher_email: string;
     teacher_id: string;
+    student_qty: string;
 }
 
 export { IFindEventWithoutStudentByDateDTO }
