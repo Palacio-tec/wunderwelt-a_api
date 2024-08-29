@@ -51,6 +51,16 @@ class PromotionsRepository implements IPromotionsRepository {
 
         return promotion;
     }
+
+    async findByCouponId(couponId: string): Promise<Promotion[]> {
+        const promotions = await this.repository.find({
+            where: {
+                coupon_id: couponId
+            }
+        })
+
+        return promotions
+    }
 }
 
 export { PromotionsRepository };

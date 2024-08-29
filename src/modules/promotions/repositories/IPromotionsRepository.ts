@@ -7,6 +7,7 @@ interface IPromotionsRepository {
   delete(id: string): Promise<void>;
   listAll(): Promise<Promotion[]>;
   findByDate(date: string): Promise<Promotion>;
+  findByCouponId(couponId: string): Promise<Promotion[]>;
 }
 
 export { IPromotionsRepository };

@@ -91,7 +91,7 @@ class CancelEventWithoutStudentUseCase {
       await this.parametersRepository.findByReference("RefundTimeLimit");
 
     const studentlessPeriodValue = Number(studentlessPeriod.value);
-    const parameterRefundTimeLimitValue = Number(parameterRefundTimeLimit.value);
+    const parameterRefundTimeLimitValue = Number(parameterRefundTimeLimit.value) - 2;
 
     const startDate = this.dateProvider.parseISO(new Date()).toISOString();
 
