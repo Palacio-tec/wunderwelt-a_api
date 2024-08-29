@@ -109,7 +109,6 @@ class SchedulesRepository implements ISchedulesRepository {
           e.id = s.event_id
         WHERE
           u.inactivation_date is null
-          AND is_admin = false
           AND is_company = false
         GROUP BY
           u.id, u.name, u.email, u.created_at
