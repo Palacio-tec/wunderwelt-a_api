@@ -18,6 +18,7 @@ interface ICreateUserDTO {
   receive_newsletter?: boolean;
   receive_email?: boolean;
   is_company?: boolean;
+  birth_date?: Date;
 }
 
 export { ICreateUserDTO };

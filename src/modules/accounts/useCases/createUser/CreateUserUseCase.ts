@@ -44,6 +44,7 @@ class CreateUserUseCase {
     receive_email,
     receive_newsletter,
     is_company,
+    birth_date,
   }: ICreateUserDTO): Promise<User> {
     username = username.toLocaleLowerCase().trim();
     email = email.toLocaleLowerCase().trim();
@@ -87,6 +88,7 @@ class CreateUserUseCase {
       receive_email,
       receive_newsletter,
       is_company,
+      birth_date,
     });
 
     const expiration_date = this.dateProvider.dateNow();

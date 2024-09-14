@@ -77,6 +77,9 @@ class User {
   @Column({ default: false })
   is_company: boolean;
 
+  @Column({ nullable: true })
+  birth_date: Date
+
   constructor() {
     if (!this.id) {
       this.id = uuidV4();
