@@ -38,6 +38,7 @@ class UpdateProfileUseCase {
     document,
     receive_email,
     receive_newsletter,
+    birth_date,
   }: IUpdateProfileDTO): Promise<void> {
     const userUsernameAlreadyExists = await this.usersRepository.findByFieldForOtherUser(
       'username',
@@ -85,6 +86,7 @@ class UpdateProfileUseCase {
     user.document = document;
     user.receive_email = receive_email;
     user.receive_newsletter = receive_newsletter;
+    user.birth_date = birth_date
 
     await this.usersRepository.create(user);
   }

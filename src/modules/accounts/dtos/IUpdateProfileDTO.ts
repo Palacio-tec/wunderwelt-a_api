@@ -14,6 +14,7 @@ interface IUpdateProfileDTO {
     document?: string;
     receive_newsletter?: boolean;
     receive_email?: boolean;
+    birth_date?: Date;
   }
   
   export { IUpdateProfileDTO };

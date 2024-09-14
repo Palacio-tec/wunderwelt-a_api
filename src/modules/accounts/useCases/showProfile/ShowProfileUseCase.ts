@@ -20,7 +20,8 @@ type Profile = {
   credit: number;
   receive_email: boolean;
   receive_newsletter: boolean;
-  isCompany: boolean
+  isCompany: boolean;
+  birth_date: Date | null
 };
 
 @injectable()
@@ -48,6 +49,7 @@ class ShowProfileUseCase {
       receive_email,
       receive_newsletter,
       is_company: isCompany,
+      birth_date,
     } = await this.usersRepository.findById(id);
 
     return {
@@ -68,6 +70,7 @@ class ShowProfileUseCase {
       receive_email,
       receive_newsletter,
       isCompany,
+      birth_date,
     };
   }
 }

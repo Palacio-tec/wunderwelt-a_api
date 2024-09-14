@@ -33,6 +33,7 @@ interface IResponse {
     credit: number;
     receive_email: boolean;
     receive_newsletter: boolean;
+    birth_date: Date | null;
   };
   token: string;
   refresh_token: string;
@@ -114,6 +115,7 @@ class AuthenticateUserUseCase {
         credit: user.credit,
         receive_email: user.receive_email,
         receive_newsletter: user.receive_newsletter,
+        birth_date: user.birth_date,
       },
       token,
       refresh_token,
