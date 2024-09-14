@@ -104,6 +104,10 @@
         -webkit-box-orient: vertical;
       }
 
+      .content p {
+        margin: 1rem 0 0 0
+      }
+
       .content::after {
         content: '...';
         position: absolute;
@@ -191,10 +195,9 @@
               <br />
               <span class="event-time">{{date}} (horário de Brasília)</span>
               {{!-- </header> --}}
-              <p />
-              <span class="content">
-                  {{description}}
-              </span>
+              <div class="content">
+                  {{{description}}}
+              </div>
           </div>
         {{/each}}
       </div>

@@ -25,7 +25,7 @@ type ValuesFormatted = {
 async function formatValues(events: Event[]): Promise<ValuesFormatted[]> {
   const result = await Promise.all(
     events.map(async (event): Promise<ValuesFormatted> => {
-      const { id, title, start_date, description, credit, event_levels } = event;
+      const { id, title, start_date, description, credit, description_formatted } = event;
 
       let startDateFormatted = new Intl
         .DateTimeFormat('pt-BR', {
@@ -41,7 +41,7 @@ async function formatValues(events: Event[]): Promise<ValuesFormatted[]> {
       return {
         id,
         title,
-        description,
+        description: description_formatted || description,
         credit,
         date: startDateFormatted,
       }

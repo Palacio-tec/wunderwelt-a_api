@@ -413,7 +413,7 @@ class EventsRepository implements IEventsRepository {
     const parsedDay = String(day).padStart(2, '0');
 
     const events = await this.repository.find({
-      select: ['id', 'title', 'description', 'start_date', 'credit', 'event_levels'],
+      select: ['id', 'title', 'description', 'start_date', 'credit', 'event_levels', 'description_formatted'],
       where: {
         start_date: Raw(start_dateFieldName => 
           `to_char(${start_dateFieldName}, 'YYYY-MM-DD') >= '${year}-${parsedMonth}-${parsedDay}'`
