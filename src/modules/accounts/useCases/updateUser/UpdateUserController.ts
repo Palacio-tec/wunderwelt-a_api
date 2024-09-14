@@ -20,6 +20,7 @@ class UpdateUserController {
       receive_email,
       receive_newsletter,
       is_company,
+      birth_date,
     } = request.body;
     const id = String(request.params.id);
 
@@ -42,6 +43,7 @@ class UpdateUserController {
       receive_email,
       receive_newsletter,
       is_company,
+      birth_date,
     });
 
     return response.status(201).send();
