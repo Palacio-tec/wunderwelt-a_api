@@ -109,7 +109,7 @@ class CancelEventWithoutStudentUseCase {
       "..",
       "views",
       "emails",
-      "cancelEvent.hbs"
+      "cancelEventTeacher.hbs"
     );
 
     const dateNow = this.dateProvider.dateNow();
@@ -157,7 +157,7 @@ class CancelEventWithoutStudentUseCase {
           const { name, email, receive_email } = schedule.user;
 
           if (receive_email) {
-            const mailMessage = `Infelizmente a aula "${title}" programada para o dia ${dateFormatted} foi cancelada por não atingir a quantidade mínima de alunos. Não se preocupe que os seus créditos foram reembolsados.`
+            const mailMessage = `A aula "${title}" que teria início em ${dateFormatted} foi cancelada por não haver alunos suficientes. Os créditos foram devolvidos na sua conta!`
 
             const variables = {
               name,
