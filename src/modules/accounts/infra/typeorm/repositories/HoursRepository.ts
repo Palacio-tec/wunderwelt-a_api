@@ -95,6 +95,8 @@ class HoursRepository implements IHoursRepository {
         h.user_id,
         u."name",
         u.email
+      HAVING
+	      SUM(h.balance) > 0
     `)
 
     return hours
