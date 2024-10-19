@@ -179,55 +179,56 @@ class CompanyMembersRepository implements ICompanyMembersRepository {
     return members
   }
 
-  async listMembersReportByCompanyId(company_id: string): Promise<any> {
+  async listMembersReportByCompanyNameOrUser(name: string): Promise<any> {
     const report = await this.repository.query(
       `select
-      cu."name" as "company_name",
-      su."name" as "student_name",
-      su.email as "student_email",
-      su.credit as "current_balance",
-      s.gift_credit,
-      h.credits_expired
-    from
-      company_members cm
-    inner join
-      users cu
-    on
-      cu.id = cm.company_id
-    inner join
-      users su
-    on
-      su.id = cm.user_id
-    left join
-      (
-        select
-          s.user_id,
-          sum(amount) as "gift_credit"
-        from
-          statements s
-        where
-          s.is_gift = true
-        group by
-          s.user_id
-      ) s
-    on
-      s.user_id = su.id
-    left join
-      (
-        select
-          h.user_id,
-          sum(h.balance) as "credits_expired"
-        from
-          hours h
-        where
-          h.expiration_date < now()
-        group by
-          h.user_id
-      ) h
-    on
-      h.user_id = su.id
-    where
-      cm.company_id = '${company_id}'`
+        cu."name" as "company_name",
+        su."name" as "student_name",
+        su.email as "student_email",
+        su.credit as "current_balance",
+        s.gift_credit,
+        h.credits_expired
+      from
+        company_members cm
+      inner join
+        users cu
+      on
+        cu.id = cm.company_id
+      inner join
+        users su
+      on
+        su.id = cm.user_id
+      left join
+        (
+          select
+            s.user_id,
+            sum(amount) as "gift_credit"
+          from
+            statements s
+          where
+            s.is_gift = true
+          group by
+            s.user_id
+        ) s
+      on
+        s.user_id = su.id
+      left join
+        (
+          select
+            h.user_id,
+            sum(h.balance) as "credits_expired"
+          from
+            hours h
+          where
+            h.expiration_date < now()
+          group by
+            h.user_id
+        ) h
+      on
+        h.user_id = su.id
+      where
+        lower(cu."name") like '%${name}%'
+        or lower(su."name") like '%${name}%'`
     )
 
     return report

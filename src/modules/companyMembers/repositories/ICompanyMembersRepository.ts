@@ -1,7 +1,7 @@
 import { ICreateCompanyMembersDTO } from "../dtos/ICreateCompanyMembersDTO";
 import { CompanyMember } from "../infra/typeorm/entities/CompanyMember";
 
-export interface ListMembersReportByCompanyIdResponse {
+export interface listMembersReportByCompanyNameOrUserResponse {
   company_name: string
   student_name: string
   student_email: string
@@ -24,7 +24,7 @@ interface ICompanyMembersRepository {
   findByCompanyIdAndAvailable(company_id: string): Promise<{id: string, name: string, email: string, created_at: Date, is_member: boolean}[]>
   deleteByCompanyId(company_id: string): Promise<void>
   listByCompanyId(company_id: string): Promise<{id: string, name: string}[]>
-  listMembersReportByCompanyId(company_id: string): Promise<ListMembersReportByCompanyIdResponse[]>
+  listMembersReportByCompanyNameOrUser(name: string): Promise<listMembersReportByCompanyNameOrUserResponse[]>
 }
 
 export { ICompanyMembersRepository };

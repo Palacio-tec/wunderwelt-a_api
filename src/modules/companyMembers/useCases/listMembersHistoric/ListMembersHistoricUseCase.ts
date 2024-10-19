@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
-import { ICompanyMembersRepository, ListMembersReportByCompanyIdResponse } from "@modules/companyMembers/repositories/ICompanyMembersRepository";
+import { ICompanyMembersRepository, listMembersReportByCompanyNameOrUserResponse } from "@modules/companyMembers/repositories/ICompanyMembersRepository";
 import { IfUserExistsAndIsAdmin } from "@utils/validations/ifUserExistsAndIsAdmin";
 
 interface IResponse {
@@ -12,7 +12,7 @@ interface IResponse {
 }
 
 interface ListMembersHistoricUseCaseProps {
-  companyId: string;
+  name: string;
   userId: string;
 }
 
@@ -26,12 +26,12 @@ class ListMembersHistoricUseCase {
     private companyMembersRepository: ICompanyMembersRepository,
   ) {}
 
-  async execute({ companyId, userId }: ListMembersHistoricUseCaseProps): Promise<ListMembersReportByCompanyIdResponse[]> {
+  async execute({ name, userId }: ListMembersHistoricUseCaseProps): Promise<listMembersReportByCompanyNameOrUserResponse[]> {
     const userExists = await this.usersRepository.findById(userId);
 
     IfUserExistsAndIsAdmin(userExists)
 
-    const report = await this.companyMembersRepository.listMembersReportByCompanyId(companyId)
+    const report = await this.companyMembersRepository.listMembersReportByCompanyNameOrUser(name.toLocaleLowerCase())
 
     return report
   }

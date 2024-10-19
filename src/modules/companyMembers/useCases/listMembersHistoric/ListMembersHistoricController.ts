@@ -5,12 +5,12 @@ import { ListMembersHistoricUseCase } from "./ListMembersHistoricUseCase";
 
 export class ListMembersHistoricController {
   async handle(request: Request, response: Response): Promise<Response> {
-    const { company_id: companyId } = request.query as { company_id: string };
+    const { name } = request.query as { name: string };
     const { id: userId } = request.user;
 
     const listMembersHistoricUseCase = container.resolve(ListMembersHistoricUseCase);
 
-    const balance = await listMembersHistoricUseCase.execute({ companyId, userId });
+    const balance = await listMembersHistoricUseCase.execute({ name, userId });
 
     return response.status(200).json(balance);
   }
