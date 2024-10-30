@@ -54,7 +54,8 @@ class ProductsRepository implements IProductsRepository {
     const products = await this.repository.find({
       where: {
         is_active: true
-      }
+      },
+      order: { value: "ASC" }
     });
 
     return products;
