@@ -70,9 +70,12 @@ class UsersRepository implements IUsersRepository {
   }
 
   async findByUsername(username: string): Promise<User> {
-    username = username.toLocaleLowerCase();
+    username = username.toUpperCase();
 
-    const user = await this.repository.findOne({ username });
+    const user = await this.repository
+      .createQueryBuilder('user')
+      .where('UPPER(user.username) = :username', {username})
+      .getOne()
 
     return user;
   }
