@@ -74,7 +74,7 @@ class ShowProfileUseCase {
       receive_newsletter,
       isCompany,
       birth_date,
-      level: level.name,
+      level: level?.name || null,
       level_id: level.id,
     };
   }

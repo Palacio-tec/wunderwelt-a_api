@@ -119,7 +119,7 @@ class AuthenticateUserUseCase {
         receive_newsletter: user.receive_newsletter,
         birth_date: user.birth_date,
         level_id: user.level_id,
-        level: user.level.name,
+        level: user.level?.name || null,
       },
       token,
       refresh_token,
