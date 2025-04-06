@@ -75,7 +75,7 @@ class ShowProfileUseCase {
       isCompany,
       birth_date,
       level: level?.name || null,
-      level_id: level.id,
+      level_id: level?.id || null,
     };
   }
 }
