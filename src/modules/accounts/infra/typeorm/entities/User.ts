@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryColumn,
 } from "typeorm";
@@ -10,6 +11,7 @@ import { randomUUID as uuidV4 } from 'crypto'
 import { Exclude } from "class-transformer";
 
 import { Hours } from "./Hours";
+import { Level } from "@modules/levels/infra/typeorm/entities/Level";
 @Entity("users")
 class User {
   @PrimaryColumn()
@@ -79,6 +81,13 @@ class User {
 
   @Column({ nullable: true })
   birth_date: Date
+
+  @Column({ nullable: true })
+  level_id: string
+
+  @ManyToOne(() => Level)
+  @JoinColumn({ name: "level_id" })
+  level: Level;
 
   constructor() {
     if (!this.id) {

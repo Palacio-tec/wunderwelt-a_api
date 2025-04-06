@@ -32,6 +32,7 @@ class UsersRepository implements IUsersRepository {
     receive_newsletter,
     is_company,
     birth_date,
+    level_id,
   }: ICreateUserDTO): Promise<User> {
     const user = this.repository.create({
       name,
@@ -54,6 +55,7 @@ class UsersRepository implements IUsersRepository {
       receive_newsletter,
       is_company,
       birth_date,
+      level_id,
     });
 
     await this.repository.save(user);
@@ -64,7 +66,7 @@ class UsersRepository implements IUsersRepository {
   async findByEmail(email: string): Promise<User> {
     email = email.toLocaleLowerCase();
 
-    const user = await this.repository.findOne({ email });
+    const user = await this.repository.findOne({ email }, {relations: ['level']});
 
     return user;
   }
@@ -74,6 +76,7 @@ class UsersRepository implements IUsersRepository {
 
     const user = await this.repository
       .createQueryBuilder('user')
+      .leftJoinAndSelect('user.level', 'level')
       .where('UPPER(user.username) = :username', {username})
       .getOne()
 
@@ -81,7 +84,7 @@ class UsersRepository implements IUsersRepository {
   }
 
   async findById(id: string): Promise<User> {
-    const user = await this.repository.findOne(id);
+    const user = await this.repository.findOne(id, {relations: ['level']});
 
     return user;
   }
@@ -99,7 +102,7 @@ class UsersRepository implements IUsersRepository {
   }
 
   async list(): Promise<User[]> {
-    const users = await this.repository.find({ order: { created_at: "DESC" }, relations: ['hours'] });
+    const users = await this.repository.find({ order: { created_at: "DESC" }, relations: ['hours', 'level'] });
 
     return users;
   }

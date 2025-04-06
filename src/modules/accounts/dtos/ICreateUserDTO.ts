@@ -19,6 +19,7 @@ interface ICreateUserDTO {
   receive_email?: boolean;
   is_company?: boolean;
   birth_date?: Date;
+  level_id?: string;
 }
 
 export { ICreateUserDTO };

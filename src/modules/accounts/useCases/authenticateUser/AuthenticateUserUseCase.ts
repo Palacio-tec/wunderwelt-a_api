@@ -34,6 +34,8 @@ interface IResponse {
     receive_email: boolean;
     receive_newsletter: boolean;
     birth_date: Date | null;
+    level_id: string | null;
+    level: string | null;
   };
   token: string;
   refresh_token: string;
@@ -116,6 +118,8 @@ class AuthenticateUserUseCase {
         receive_email: user.receive_email,
         receive_newsletter: user.receive_newsletter,
         birth_date: user.birth_date,
+        level_id: user.level_id,
+        level: user.level.name,
       },
       token,
       refresh_token,

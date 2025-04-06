@@ -21,7 +21,9 @@ type Profile = {
   receive_email: boolean;
   receive_newsletter: boolean;
   isCompany: boolean;
-  birth_date: Date | null
+  birth_date: Date | null;
+  level: string | null;
+  level_id: string | null;
 };
 
 @injectable()
@@ -50,6 +52,7 @@ class ShowProfileUseCase {
       receive_newsletter,
       is_company: isCompany,
       birth_date,
+      level,
     } = await this.usersRepository.findById(id);
 
     return {
@@ -71,6 +74,8 @@ class ShowProfileUseCase {
       receive_newsletter,
       isCompany,
       birth_date,
+      level: level.name,
+      level_id: level.id,
     };
   }
 }

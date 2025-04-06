@@ -22,6 +22,7 @@ class CreateUserController {
       receive_newsletter,
       is_company,
       birth_date,
+      level_id,
     } = request.body;
     const createUserUseCase = container.resolve(CreateUserUseCase);
 
@@ -43,6 +44,7 @@ class CreateUserController {
       receive_newsletter,
       is_company,
       birth_date,
+      level_id,
     });
 
     return response.status(201).json(user);

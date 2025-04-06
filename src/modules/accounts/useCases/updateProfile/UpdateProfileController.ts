@@ -19,7 +19,8 @@ class UpdateProfileController {
       document,
       receive_email,
       receive_newsletter,
-      birth_date
+      birth_date,
+      level_id,
     } = request.body;
     const { id } = request.user;
 
@@ -44,6 +45,7 @@ class UpdateProfileController {
       receive_email,
       receive_newsletter,
       birth_date,
+      level_id,
     });
 
     return response.status(201).send();

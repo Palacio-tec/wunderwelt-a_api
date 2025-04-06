@@ -91,10 +91,11 @@ class SchedulesRepository implements ISchedulesRepository {
         base_gift.*,
         company.company_name,
         COALESCE(SUM(s.amount), 0) as gift_credits,
-        MAX(s.created_at) as last_gift
+        MAX(s.created_at) as last_gift,
+        l.name as level
       FROM (
         SELECT
-          u.id as user_id, u.name, u.email, u.created_at,
+          u.id as user_id, u.name, u.email, u.created_at, u.level_id,
           COUNT(e.id) as participation,
           SUM(CASE WHEN e.credit is null THEN 0 ELSE e.credit END) as total_spent
         FROM
@@ -111,8 +112,12 @@ class SchedulesRepository implements ISchedulesRepository {
           u.inactivation_date is null
           AND is_company = false
         GROUP BY
-          u.id, u.name, u.email, u.created_at
+          u.id, u.name, u.email, u.created_at, u.level_id
       ) base_gift
+      LEFT JOIN
+        levels l
+      ON
+        l.id = base_gift.level_id
       LEFT JOIN
         statements s
       ON
@@ -139,7 +144,9 @@ class SchedulesRepository implements ISchedulesRepository {
         base_gift.participation,
         base_gift.total_spent,
         base_gift.created_at,
-        company.company_name
+        base_gift.level_id,
+        company.company_name,
+        l.name
       ORDER BY
         base_gift.total_spent DESC,
         base_gift.participation DESC`

@@ -15,6 +15,7 @@ interface IUpdateProfileDTO {
     receive_newsletter?: boolean;
     receive_email?: boolean;
     birth_date?: Date;
+    level_id?: string;
   }
   
   export { IUpdateProfileDTO };

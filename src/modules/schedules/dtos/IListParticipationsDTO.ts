@@ -7,6 +7,7 @@ interface IListParticipationDTO {
     total_spent: string;
     gift_credits: string;
     company_name: string;
+    level: string | null;
   }
   
   export { IListParticipationDTO };

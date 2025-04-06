@@ -20,6 +20,8 @@ type Profile = {
   receive_newsletter: boolean;
   is_company: boolean;
   birth_date: Date;
+  level_id: string | null;
+  level: string | null;
 };
 
 @injectable()
@@ -48,6 +50,7 @@ class FindUserUseCase {
       receive_newsletter,
       is_company,
       birth_date,
+      level,
     } = await this.usersRepository.findById(id);
 
     return {
@@ -68,6 +71,8 @@ class FindUserUseCase {
       receive_newsletter,
       is_company,
       birth_date,
+      level_id: level?.id || null,
+      level: level?.name || null,
     };
   }
 }
