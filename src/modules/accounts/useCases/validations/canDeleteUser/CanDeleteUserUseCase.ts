@@ -4,7 +4,6 @@ import { IUsersRepository } from '@modules/accounts/repositories/IUsersRepositor
 import { IEventsRepository } from '@modules/events/repositories/IEventsRepository';
 import { IQueuesRepository } from '@modules/queues/repositories/IQueuesRepository';
 import { ISchedulesRepository } from '@modules/schedules/repositories/ISchedulesRepository';
-import { IStatementsRepository } from '@modules/statements/repositories/IStatementsRepository';
 
 type IReturn = {
   ok: boolean;
@@ -19,9 +18,6 @@ class CanDeleteUserUseCase {
 
     @inject("EventsRepository")
     private eventsRepository: IEventsRepository,
-
-    @inject("StatementsRepository")
-    private statementsRepository: IStatementsRepository,
 
     @inject("SchedulesRepository")
     private schedulesRepository: ISchedulesRepository,
@@ -53,15 +49,6 @@ class CanDeleteUserUseCase {
   
         return messageReturn
       }
-    }
-
-    const statements = await this.statementsRepository.findByUserId(user_id);
-
-    if (statements.length > 0) {
-      messageReturn.ok = false;
-      messageReturn.message = 'Usuário possui movimentação de horas'
-
-      return messageReturn
     }
 
     const schedules = await this.schedulesRepository.findByUserId(user_id)
