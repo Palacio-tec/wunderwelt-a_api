@@ -95,7 +95,7 @@ class SchedulesRepository implements ISchedulesRepository {
         l.name as level
       FROM (
         SELECT
-          u.id as user_id, u.name, u.email, u.created_at, u.level_id,
+          u.id as user_id, u.name, u.email, u.created_at, u.level_id, u.our_student,
           COUNT(e.id) as participation,
           SUM(CASE WHEN e.credit is null THEN 0 ELSE e.credit END) as total_spent
         FROM
@@ -112,7 +112,7 @@ class SchedulesRepository implements ISchedulesRepository {
           u.inactivation_date is null
           AND is_company = false
         GROUP BY
-          u.id, u.name, u.email, u.created_at, u.level_id
+          u.id, u.name, u.email, u.created_at, u.level_id, u.our_student
       ) base_gift
       LEFT JOIN
         levels l
@@ -145,6 +145,7 @@ class SchedulesRepository implements ISchedulesRepository {
         base_gift.total_spent,
         base_gift.created_at,
         base_gift.level_id,
+        base_gift.our_student,
         company.company_name,
         l.name
       ORDER BY

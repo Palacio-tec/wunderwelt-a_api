@@ -22,6 +22,7 @@ class UpdateUserController {
       is_company,
       birth_date,
       level_id,
+      our_student,
     } = request.body;
     const id = String(request.params.id);
 
@@ -46,6 +47,7 @@ class UpdateUserController {
       is_company,
       birth_date,
       level_id,
+      our_student,
     });
 
     return response.status(201).send();

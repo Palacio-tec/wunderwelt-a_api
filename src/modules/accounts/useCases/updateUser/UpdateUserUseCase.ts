@@ -33,6 +33,7 @@ class UpdateUserUseCase {
     is_company,
     birth_date,
     level_id,
+    our_student,
   }: IUpdateUserDTO): Promise<User> {
     const userUsernameAlreadyExists = await this.usersRepository.findByFieldForOtherUser(
       'username',
@@ -72,6 +73,7 @@ class UpdateUserUseCase {
       user.inactivation_date = inactivation_date;
     }
     user.level_id = level_id;
+    user.our_student = our_student;
 
     await this.usersRepository.create(user);
 

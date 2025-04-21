@@ -20,6 +20,7 @@ interface ICreateUserDTO {
   is_company?: boolean;
   birth_date?: Date;
   level_id?: string;
+  our_student?: boolean;
 }
 
 export { ICreateUserDTO };

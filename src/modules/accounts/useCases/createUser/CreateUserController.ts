@@ -23,6 +23,7 @@ class CreateUserController {
       is_company,
       birth_date,
       level_id,
+      our_student,
     } = request.body;
     const createUserUseCase = container.resolve(CreateUserUseCase);
 
@@ -45,6 +46,7 @@ class CreateUserController {
       is_company,
       birth_date,
       level_id,
+      our_student,
     });
 
     return response.status(201).json(user);

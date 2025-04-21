@@ -8,6 +8,7 @@ interface IListParticipationDTO {
     gift_credits: string;
     company_name: string;
     level: string | null;
+    our_student: boolean;
   }
   
   export { IListParticipationDTO };

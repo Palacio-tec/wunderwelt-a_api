@@ -22,6 +22,7 @@ type Profile = {
   birth_date: Date;
   level_id: string | null;
   level: string | null;
+  our_student?: boolean;
 };
 
 @injectable()
@@ -51,6 +52,7 @@ class FindUserUseCase {
       is_company,
       birth_date,
       level,
+      our_student,
     } = await this.usersRepository.findById(id);
 
     return {
@@ -73,6 +75,7 @@ class FindUserUseCase {
       birth_date,
       level_id: level?.id || null,
       level: level?.name || null,
+      our_student,
     };
   }
 }

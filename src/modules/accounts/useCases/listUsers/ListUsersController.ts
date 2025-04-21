@@ -35,6 +35,7 @@ class ListUsersController {
         level_id: user.level_id,
         hours: user.hours,
         level: user.level?.name || null,
+        our_student: user.our_student,
       }
     ))
 

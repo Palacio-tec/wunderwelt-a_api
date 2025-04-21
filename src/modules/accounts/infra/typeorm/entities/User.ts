@@ -89,6 +89,9 @@ class User {
   @JoinColumn({ name: "level_id" })
   level: Level;
 
+  @Column({ nullable: true })
+  our_student: boolean;
+
   constructor() {
     if (!this.id) {
       this.id = uuidV4();
