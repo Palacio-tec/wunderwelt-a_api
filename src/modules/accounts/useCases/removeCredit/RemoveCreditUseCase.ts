@@ -26,17 +26,43 @@ class RemoveCreditUseCase {
 
     @inject("MailProvider")
     private mailProvider: IMailProvider,
+
+    @inject("HoursRepository")
+    private hoursRepository: IHoursRepository,
   ) {}
 
   private async _removeCredit({ amount, user_id }: IRemoveCreditProps): Promise<void> {
     const user = await this.usersRepository.findById(user_id)
-
     const newBalance = (Number(user.credit) - Number(amount))
-  
+
     await this.usersRepository.create({
       ...user,
       credit: newBalance < 0 ? 0 : newBalance
     })
+
+
+    const creditsList = await this.hoursRepository.listAvailableByUser(user_id)
+
+    let remainingAmount = amount
+
+    for (const credit of creditsList) {
+      let newBalance = (Number(credit.balance) - remainingAmount)
+
+      if (remainingAmount >= Number(credit.balance)) {
+        newBalance = 0
+      }
+
+      this.hoursRepository.update({
+        ...credit,
+        balance: newBalance
+      })
+
+      remainingAmount -= Number(credit.balance)
+
+      if (remainingAmount <= 0) {
+        break
+      }
+    }
 
     return
   }
