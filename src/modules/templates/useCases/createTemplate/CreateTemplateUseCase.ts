@@ -2,7 +2,6 @@ import { inject, injectable } from "tsyringe";
 
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
 import { ICreateTemplateInputDTO } from "@modules/templates/dtos/ICreateTemplateDTO";
-import { Template } from "@modules/templates/infra/typeorm/entities/Template";
 import { ITemplatesRepository } from "@modules/templates/repositories/ITemplatesRepository";
 import { AppError } from "@shared/errors/AppError";
 
@@ -21,7 +20,9 @@ class CreateTemplateUseCase {
     body,
     template,
     user_id,
-  }: ICreateTemplateInputDTO): Promise<Template> {
+  }: ICreateTemplateInputDTO): Promise<{
+    id: string;
+  }> {
     const userExists = await this.usersRepository.findById(user_id);
 
     if (!userExists) {
@@ -37,6 +38,8 @@ class CreateTemplateUseCase {
     );
     const version = latestTemplate ? latestTemplate.version + 1 : 1;
 
+    await this.templatesRepository.disableLatestVersionByTemplate(template);
+
     const templateEntity = await this.templatesRepository.create({
       title,
       body,
@@ -45,9 +48,7 @@ class CreateTemplateUseCase {
       created_by: userExists,
     });
 
-    await this.templatesRepository.disableLatestVersionByTemplate(template);
-
-    return templateEntity;
+    return { id: templateEntity.id };
   }
 }
 

@@ -44,6 +44,9 @@ class Template {
     if (!this.id) {
       this.id = uuidV4();
     }
+    if (!this.is_active) {
+      this.is_active = true;
+    }
   }
 }
 

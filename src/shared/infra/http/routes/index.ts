@@ -19,8 +19,9 @@ import { configurationsRoutes } from "./configurations.routes";
 import { fqasRoutes } from "./fqas.routes";
 import { mailLogsRoutes } from "./mailLogs.routes";
 import { notificationsRoutes } from "./notifications.routes";
-import { companyMembersRoutes } from "./companyMembers.routes"
+import { companyMembersRoutes } from "./companyMembers.routes";
 import { classSubjectsRoutes } from "./classSubject.routes";
+import { templatesRoutes } from "./templates.routes";
 
 const router = Router();
 
@@ -41,10 +42,11 @@ router.use("/purchase-orders", purchasesRoutes);
 router.use("/credits", creditsRoutes);
 router.use("/promotions", promotionsRoutes);
 router.use("/configurations", configurationsRoutes);
-router.use("/fqas", fqasRoutes)
-router.use("/mail-logs", mailLogsRoutes)
-router.use("/notifications", notificationsRoutes)
-router.use("/company-members", companyMembersRoutes)
-router.use("/class-subjects", classSubjectsRoutes)
+router.use("/fqas", fqasRoutes);
+router.use("/mail-logs", mailLogsRoutes);
+router.use("/notifications", notificationsRoutes);
+router.use("/company-members", companyMembersRoutes);
+router.use("/class-subjects", classSubjectsRoutes);
+router.use("/templates", templatesRoutes);
 
 export { router };
