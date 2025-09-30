@@ -1,13 +1,11 @@
-
 import { container, inject, injectable } from "tsyringe";
-import { resolve } from "path";
 
 import { IHoursRepository } from "@modules/accounts/repositories/IHoursRepository";
-import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { spliceIntoChunks } from "@utils/spliceIntoChunks";
 import { sleep } from "@utils/sleep";
 import { SendMailWithLog } from "@utils/sendMailWithLog";
+import { ITemplatesRepository } from "@modules/templates/repositories/ITemplatesRepository";
 
 @injectable()
 class ListWillExpiredHoursUseCase {
@@ -15,64 +13,65 @@ class ListWillExpiredHoursUseCase {
     @inject("HoursRepository")
     private hoursRepository: IHoursRepository,
 
-    @inject("MailProvider")
-    private mailProvider: IMailProvider,
-
     @inject("DateProvider")
     private dateProvider: IDateProvider,
+
+    @inject("TemplatesRepository")
+    private templatesRepository: ITemplatesRepository
   ) {}
 
   async execute(date: Date, addDays: number): Promise<void> {
     const startDate = this.dateProvider.addDaysInDate(date, addDays);
-    const startDateFormatted = this.dateProvider.parseFormat(startDate, 'YYYY-MM-DD');
+    const startDateFormatted = this.dateProvider.parseFormat(
+      startDate,
+      "YYYY-MM-DD"
+    );
 
     const endDate = this.dateProvider.addDaysInDate(startDate, 1);
-    const endDateFormatted = this.dateProvider.parseFormat(endDate, 'YYYY-MM-DD');
+    const endDateFormatted = this.dateProvider.parseFormat(
+      endDate,
+      "YYYY-MM-DD"
+    );
 
     const credits = await this.hoursRepository.findWillExpired(
       startDateFormatted,
       endDateFormatted
-    ); 
-
-    const templatePath = resolve(
-      __dirname,
-      "..",
-      "..",
-      "views",
-      "emails",
-      "creditWillExpired.hbs"
     );
 
     if (!credits) {
-      return
+      return;
     }
+
+    const template = await this.templatesRepository.findLatestByTemplate(
+      "credit_will_expired"
+    );
 
     const sendMailWithLog = container.resolve(SendMailWithLog);
 
-    const creditsChunk = spliceIntoChunks(credits, 20)
+    const creditsChunk = spliceIntoChunks(credits, 20);
 
     for (let index = 0; index < creditsChunk.length; index++) {
       const credits = creditsChunk[index];
 
       credits.map(async (credit) => {
         const variables = {
-            name: credit.name,
-            amount: credit.amount,
-            days: addDays,
+          name: credit.name,
+          amount: credit.amount,
+          days: addDays,
         };
 
         sendMailWithLog.execute({
           to: credit.email,
           subject: "Existem créditos próximo do vencimento",
           variables,
-          path: templatePath,
+          template: template.body,
           mailLog: {
-            userId: credit.userId
+            userId: credit.userId,
           },
-        })
-      })
+        });
+      });
 
-      await sleep(10)
+      await sleep(10);
     }
   }
 }

@@ -4,12 +4,11 @@ import { resolve } from "path";
 import { ISendGiftDTO } from "@modules/accounts/dtos/ISendGiftDTO";
 import { IHoursRepository } from "@modules/accounts/repositories/IHoursRepository";
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
-import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
 import { OperationEnumTypeStatement } from "@modules/statements/dtos/ICreateStatementDTO";
 import { IStatementsRepository } from "@modules/statements/repositories/IStatementsRepository";
-import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 import { AppError } from "@shared/errors/AppError";
+import { ITemplatesRepository } from "@modules/templates/repositories/ITemplatesRepository";
 
 interface IRemoveCreditProps {
   amount: number;
@@ -29,49 +28,50 @@ class RemoveCreditUseCase {
 
     @inject("HoursRepository")
     private hoursRepository: IHoursRepository,
+
+    @inject("TemplatesRepository")
+    private templatesRepository: ITemplatesRepository
   ) {}
 
-  private async _removeCredit({ amount, user_id }: IRemoveCreditProps): Promise<void> {
-    const user = await this.usersRepository.findById(user_id)
-    const newBalance = (Number(user.credit) - Number(amount))
+  private async _removeCredit({
+    amount,
+    user_id,
+  }: IRemoveCreditProps): Promise<void> {
+    const user = await this.usersRepository.findById(user_id);
+    const newBalance = Number(user.credit) - Number(amount);
 
     await this.usersRepository.create({
       ...user,
-      credit: newBalance < 0 ? 0 : newBalance
-    })
+      credit: newBalance < 0 ? 0 : newBalance,
+    });
 
+    const creditsList = await this.hoursRepository.listAvailableByUser(user_id);
 
-    const creditsList = await this.hoursRepository.listAvailableByUser(user_id)
-
-    let remainingAmount = amount
+    let remainingAmount = amount;
 
     for (const credit of creditsList) {
-      let newBalance = (Number(credit.balance) - remainingAmount)
+      let newBalance = Number(credit.balance) - remainingAmount;
 
       if (remainingAmount >= Number(credit.balance)) {
-        newBalance = 0
+        newBalance = 0;
       }
 
       this.hoursRepository.update({
         ...credit,
-        balance: newBalance
-      })
+        balance: newBalance,
+      });
 
-      remainingAmount -= Number(credit.balance)
+      remainingAmount -= Number(credit.balance);
 
       if (remainingAmount <= 0) {
-        break
+        break;
       }
     }
 
-    return
+    return;
   }
 
-  async execute({
-    credit,
-    users,
-    admin_id,
-  }: ISendGiftDTO): Promise<void> {
+  async execute({ credit, users, admin_id }: ISendGiftDTO): Promise<void> {
     credit = Number(credit);
     const user = await this.usersRepository.findById(admin_id);
 
@@ -85,7 +85,7 @@ class RemoveCreditUseCase {
 
     users.map(async (user) => {
       const { user_id } = user;
-    
+
       const student = await this.usersRepository.findById(user_id);
 
       if (!student) {
@@ -94,42 +94,39 @@ class RemoveCreditUseCase {
 
       this.statementsRepository.create({
         amount: credit,
-        description: `Você teve ${credit} crédito${credit > 1 ? 's' : ''} removidos`,
+        description: `Você teve ${credit} crédito${
+          credit > 1 ? "s" : ""
+        } removidos`,
         type: OperationEnumTypeStatement.WITHDRAW,
         user_id,
       });
 
       this._removeCredit({
         amount: Number(credit),
-        user_id
-      })
+        user_id,
+      });
 
       if (!student.receive_email) {
-        return false
+        return false;
       }
 
-      const templatePath = resolve(
-        __dirname,
-        "..",
-        "..",
-        "views",
-        "emails",
-        "removeCredit.hbs"
+      const template = await this.templatesRepository.findLatestByTemplate(
+        "remove_credit"
       );
-  
+
       const { name, email } = student;
-  
+
       const variables = {
         name,
         credit,
-        plural: credit > 1
+        plural: credit > 1,
       };
-  
+
       this.mailProvider.sendMail({
         to: email,
         subject: "Os seus créditos foram reajustados",
         variables,
-        path: templatePath
+        template: template.body,
       });
     });
   }

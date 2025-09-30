@@ -1,12 +1,12 @@
 import { inject, injectable } from "tsyringe";
-import { randomUUID as uuidV4 } from 'crypto'
-import { resolve } from "path";
+import { randomUUID as uuidV4 } from "crypto";
 
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
 import { IUsersTokensRepository } from "@modules/accounts/repositories/IUsersTokensRepository";
 import { AppError } from "@shared/errors/AppError";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
+import { ITemplatesRepository } from "@modules/templates/repositories/ITemplatesRepository";
 
 @injectable()
 class SendForgotPasswordMailUseCase {
@@ -21,20 +21,14 @@ class SendForgotPasswordMailUseCase {
     private dateProvider: IDateProvider,
 
     @inject("MailProvider")
-    private mailProvider: IMailProvider
+    private mailProvider: IMailProvider,
+
+    @inject("TemplatesRepository")
+    private templatesRepository: ITemplatesRepository
   ) {}
 
   async execute(email: string): Promise<void> {
     const user = await this.usersRepository.findByEmail(email);
-
-    const templatePath = resolve(
-      __dirname,
-      "..",
-      "..",
-      "views",
-      "emails",
-      "forgotPassword.hbs"
-    );
 
     if (!user) {
       throw new AppError("User does not exist");
@@ -50,6 +44,10 @@ class SendForgotPasswordMailUseCase {
       expires_date,
     });
 
+    const template = await this.templatesRepository.findLatestByTemplate(
+      "forgot_password"
+    );
+
     const variables = {
       name: user.name,
       link: `${process.env.FORGOT_MAIL_URL}${token}`,
@@ -59,7 +57,7 @@ class SendForgotPasswordMailUseCase {
       to: email,
       subject: "Cadastre a sua nova senha",
       variables,
-      path: templatePath
+      template: template.body,
     });
   }
 }
