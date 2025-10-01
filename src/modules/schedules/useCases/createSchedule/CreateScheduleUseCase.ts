@@ -16,11 +16,12 @@ import { IDateProvider } from "@shared/container/providers/DateProvider/IDatePro
 import { AppError } from "@shared/errors/AppError";
 import { createCalendarEvent } from "@utils/createCalendarEvent";
 import { SendMailWithLog } from "@utils/sendMailWithLog";
+import { ITemplatesRepository } from "@modules/templates/repositories/ITemplatesRepository";
 
 type ICreditUsedProps = {
   id: string;
   amount: number;
-}
+};
 
 @injectable()
 class CreateScheduleUseCase {
@@ -48,61 +49,75 @@ class CreateScheduleUseCase {
 
     @inject("SchedulesCreditsRepository")
     private schedulesCreditsRepository: ISchedulesCreditsRepository,
+
+    @inject("TemplatesRepository")
+    private templatesRepository: ITemplatesRepository
   ) {}
 
-  async createCreditUsedHistoric(creditList: ICreditUsedProps[], schedule_id: string) {
-    creditList.map(credit => {
+  async createCreditUsedHistoric(
+    creditList: ICreditUsedProps[],
+    schedule_id: string
+  ) {
+    creditList.map((credit) => {
       this.schedulesCreditsRepository.create({
         schedule_id,
         credit_id: credit.id,
-        amount_credit: credit.amount
-      })
-    })
+        amount_credit: credit.amount,
+      });
+    });
   }
 
-  private async __debitCredit(user_id: string, total_amount: number, schedule_id: string) {
+  private async __debitCredit(
+    user_id: string,
+    total_amount: number,
+    schedule_id: string
+  ) {
     if (total_amount <= 0) {
-      return
+      return;
     }
 
-    const creditsList = await this.hoursRepository.listAvailableByUser(user_id)
-    const creditIds: ICreditUsedProps[] = []
+    const creditsList = await this.hoursRepository.listAvailableByUser(user_id);
+    const creditIds: ICreditUsedProps[] = [];
 
-    let remainingAmount = total_amount
+    let remainingAmount = total_amount;
 
     for (let index = 0; index < creditsList.length; index++) {
       const credit = creditsList[index];
 
-      let newBalance = (Number(credit.balance) - remainingAmount)
-      let amountUsed = remainingAmount
+      let newBalance = Number(credit.balance) - remainingAmount;
+      let amountUsed = remainingAmount;
 
       if (remainingAmount >= Number(credit.balance)) {
-        newBalance = 0
-        amountUsed = Number(credit.balance)
+        newBalance = 0;
+        amountUsed = Number(credit.balance);
       }
 
       this.hoursRepository.update({
         ...credit,
-        balance: newBalance
-      })
+        balance: newBalance,
+      });
 
-      creditIds.push({id: credit.id, amount: amountUsed})
+      creditIds.push({ id: credit.id, amount: amountUsed });
 
-      remainingAmount -= Number(credit.balance)
+      remainingAmount -= Number(credit.balance);
 
       if (remainingAmount <= 0) {
-        break
+        break;
       }
     }
 
-    this.createCreditUsedHistoric(creditIds, schedule_id)
+    this.createCreditUsedHistoric(creditIds, schedule_id);
   }
 
   private async __checkHasVacancies(event_id: string, student_limit: number) {
     const schedules = await this.schedulesRepository.findByEventId(event_id);
-    
+
     if (student_limit > 0 && schedules.length >= student_limit) {
-      throw new AppError("There are no vacancies available for this event", 400, 'SC0001')
+      throw new AppError(
+        "There are no vacancies available for this event",
+        400,
+        "SC0001"
+      );
     }
   }
 
@@ -123,26 +138,42 @@ class CreateScheduleUseCase {
       throw new AppError("Event does not exists");
     }
 
-    const { start_date, end_date, title, instruction, credit, student_limit, is_canceled } = eventExists;
+    const {
+      start_date,
+      end_date,
+      title,
+      instruction,
+      credit,
+      student_limit,
+      is_canceled,
+    } = eventExists;
 
     if (is_canceled) {
-      throw new AppError("Event is cancel", 400, "SC0003")
+      throw new AppError("Event is cancel", 400, "SC0003");
     }
 
     if (Number(userExists.credit) < Number(credit)) {
-      throw new AppError("User does not have enough credits", 400, "enough.hours");
+      throw new AppError(
+        "User does not have enough credits",
+        400,
+        "enough.hours"
+      );
     }
 
-    const parsedStartDate = format(start_date, 'yyyy-MM-dd HH:mm');
+    const parsedStartDate = format(start_date, "yyyy-MM-dd HH:mm");
 
     const scheduleDateAvailable =
       await this.schedulesRepository.findByEventDate(parsedStartDate, user_id);
 
     if (scheduleDateAvailable.length > 0) {
-      throw new AppError("User already have an event on this date", 400, "SC0002");
+      throw new AppError(
+        "User already have an event on this date",
+        400,
+        "SC0002"
+      );
     }
 
-    await this.__checkHasVacancies(event_id, Number(student_limit))
+    await this.__checkHasVacancies(event_id, Number(student_limit));
 
     const schedule = await this.schedulesRepository.create({
       event_id,
@@ -150,7 +181,7 @@ class CreateScheduleUseCase {
       subject,
     });
 
-    this.__debitCredit(user_id, Number(credit), schedule.id)
+    this.__debitCredit(user_id, Number(credit), schedule.id);
 
     const day = this.dateProvider.formatInDate(start_date);
     const start_hour = this.dateProvider.formatInHour(start_date);
@@ -164,8 +195,8 @@ class CreateScheduleUseCase {
 
     this.usersRepository.create({
       ...userExists,
-      credit: Number(userExists.credit) - Number(credit)
-    })
+      credit: Number(userExists.credit) - Number(credit),
+    });
 
     const queueExists = await this.queuesRepository.findByEventAndUser(
       event_id,
@@ -176,28 +207,23 @@ class CreateScheduleUseCase {
       await this.queuesRepository.delete(queueExists.id);
     }
 
-    const templatePath = resolve(
-      __dirname,
-      "..",
-      "..",
-      "views",
-      "emails",
-      "createSchedule.hbs"
+    const template = await this.templatesRepository.findLatestByTemplate(
+      "queue_available_event"
     );
 
     const sendMailWithLog = container.resolve(SendMailWithLog);
 
     const { name, email } = userExists;
 
-    const instructionInfo = instruction.split(/\r?\n/)
+    const instructionInfo = instruction.split(/\r?\n/);
 
-    let instructionHTML = ''
+    let instructionHTML = "";
 
-    instructionInfo.forEach(info => {
-      if (info.includes('http')) {
-        instructionHTML += `<br /><a href='${info}'>${info}</a>`
+    instructionInfo.forEach((info) => {
+      if (info.includes("http")) {
+        instructionHTML += `<br /><a href='${info}'>${info}</a>`;
       } else {
-        instructionHTML += `<br /><text>${info}</text>`
+        instructionHTML += `<br /><text>${info}</text>`;
       }
     });
 
@@ -217,27 +243,27 @@ class CreateScheduleUseCase {
         end: end_date,
         summary: title,
         description: instruction,
-        location: 'Sala virtual',
+        location: "Sala virtual",
         status: "CONFIRMED",
-        method: 'REQUEST',
+        method: "REQUEST",
         attendee: {
           name,
-          email
+          email,
         },
       }),
-      method: 'REQUEST',
-    }
+      method: "REQUEST",
+    };
 
     sendMailWithLog.execute({
       to: email,
       subject: "Inscrição na aula realizada com sucesso!",
       variables,
-      path: templatePath,
+      template: template.body,
       calendarEvent,
       mailLog: {
-        userId: user_id
+        userId: user_id,
       },
-    })
+    });
 
     return schedule;
   }
