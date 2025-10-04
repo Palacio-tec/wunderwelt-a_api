@@ -1,4 +1,4 @@
-import { getRepository, Repository } from "typeorm";
+import { getRepository, Repository, In } from "typeorm";
 
 import { ICreateTemplateDTO } from "@modules/templates/dtos/ICreateTemplateDTO";
 
@@ -31,6 +31,7 @@ class TemplatesRepository implements ITemplatesRepository {
   async listAllActive(): Promise<Template[]> {
     const templates = await this.repository.find({
       where: { is_active: true },
+      order: { title: "ASC" },
     });
 
     return templates;
@@ -53,6 +54,24 @@ class TemplatesRepository implements ITemplatesRepository {
       latestTemplate.is_active = false;
       await this.repository.update({ id: latestTemplate.id }, latestTemplate);
     }
+  }
+
+  async findTemplateAndBase(template: string, base?: string): Promise<Map<string, Template>> {
+    const baseTemplate = base || "base";
+    const latestTemplates = await this.repository.find({
+      where: {
+        template: In([template, baseTemplate]),
+        is_active: true,
+      },
+    });
+
+    const templatesMap = new Map<string, Template>();
+  
+    latestTemplates.forEach((template) => {
+      templatesMap.set(template.template, template);
+    });
+
+    return templatesMap;
   }
 }
 

@@ -29,13 +29,17 @@ class SESMailProvider implements IMailProvider {
     variables,
     path,
     template,
+    base,
     calendarEvent,
     bcc,
   }: IMailProviderProps): Promise<void> {
     let templateContent: string;
 
-    if (template) {
-      templateContent = template;
+    if (template && base) {
+      templateContent = base.replace(
+        '{{{body}}}',
+        template
+      );
     } else if (path) {
       templateContent = fs.readFileSync(path).toString("utf-8");
     } else {

@@ -108,7 +108,7 @@ class CreateUserUseCase {
     });
 
     if (sendPasswordEmail) {
-      const template = await this.templatesRepository.findLatestByTemplate(
+      const templates = await this.templatesRepository.findTemplateAndBase(
         "create_user"
       );
 
@@ -122,7 +122,8 @@ class CreateUserUseCase {
         to: email,
         subject: "Login para acessar a plataforma PrAktikA",
         variables,
-        template: template.body,
+        template: templates.get("create_user").body,
+        base: templates.get("base").body,
       });
     }
 

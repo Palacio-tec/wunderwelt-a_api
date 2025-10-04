@@ -156,7 +156,7 @@ class DeleteScheduleUseCase {
     const queues = await this.queuesRepository.findByEvent(event.id);
 
     if (queues) {
-      const template = await this.templatesRepository.findLatestByTemplate(
+      const templates = await this.templatesRepository.findTemplateAndBase(
         "queue_available_event"
       );
 
@@ -184,7 +184,8 @@ class DeleteScheduleUseCase {
           to: email,
           subject: "Abriu uma vaga para a aula que você queria! Aproveite!",
           variables,
-          template: template.body,
+          template: templates.get("queue_available_event").body,
+          base: templates.get("base").body,
         });
       });
     }

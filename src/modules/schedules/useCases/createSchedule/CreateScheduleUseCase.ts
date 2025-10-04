@@ -207,7 +207,7 @@ class CreateScheduleUseCase {
       await this.queuesRepository.delete(queueExists.id);
     }
 
-    const template = await this.templatesRepository.findLatestByTemplate(
+    const templates = await this.templatesRepository.findTemplateAndBase(
       "queue_available_event"
     );
 
@@ -258,7 +258,8 @@ class CreateScheduleUseCase {
       to: email,
       subject: "Inscrição na aula realizada com sucesso!",
       variables,
-      template: template.body,
+      template: templates.get("queue_available_event").body,
+      base: templates.get("base").body,
       calendarEvent,
       mailLog: {
         userId: user_id,

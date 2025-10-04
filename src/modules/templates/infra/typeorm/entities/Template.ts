@@ -27,6 +27,9 @@ class Template {
   @Column()
   template: string;
 
+  @Column({ nullable: true })
+  layout: string;
+
   @ManyToOne(() => User)
   @JoinColumn({ name: "user_id" })
   created_by: User;

@@ -44,7 +44,7 @@ class SendForgotPasswordMailUseCase {
       expires_date,
     });
 
-    const template = await this.templatesRepository.findLatestByTemplate(
+    const templates = await this.templatesRepository.findTemplateAndBase(
       "forgot_password"
     );
 
@@ -57,7 +57,8 @@ class SendForgotPasswordMailUseCase {
       to: email,
       subject: "Cadastre a sua nova senha",
       variables,
-      template: template.body,
+      template: templates.get("forgot_password").body,
+      base: templates.get("base").body,
     });
   }
 }

@@ -39,7 +39,7 @@ class CreateQueueUseCase {
     day: string,
     start_hour: string
   ) {
-    const template = await this.templatesRepository.findLatestByTemplate(
+    const templates = await this.templatesRepository.findTemplateAndBase(
       "mail_with_suggestion"
     );
 
@@ -55,7 +55,8 @@ class CreateQueueUseCase {
       to: process.env.GENERAL_MAIL,
       subject: "Sugestão de aluno para aula",
       variables,
-      template: template.body,
+      template: templates.get("mail_with_suggestion").body,
+      base: templates.get("base").body,
     });
   }
 

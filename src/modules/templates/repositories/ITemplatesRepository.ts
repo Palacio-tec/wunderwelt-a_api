@@ -7,6 +7,7 @@ interface ITemplatesRepository {
   listAllActive(): Promise<Template[]>;
   findLatestByTemplate(template: string): Promise<Template>;
   disableLatestVersionByTemplate(template: string): Promise<void>;
+  findTemplateAndBase(template: string, base?: string): Promise<Map<string, Template>>;
 }
 
 export { ITemplatesRepository };

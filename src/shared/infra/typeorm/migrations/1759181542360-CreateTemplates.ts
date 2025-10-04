@@ -32,6 +32,11 @@ export class CreateTemplates1759181542360 implements MigrationInterface {
             isNullable: false,
           },
           {
+            name: "layout",
+            type: "varchar",
+            isNullable: true,
+          },
+          {
             name: "user_id",
             type: "uuid",
             isNullable: false,

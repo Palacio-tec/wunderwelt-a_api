@@ -39,11 +39,11 @@ class SendTestEmailUseCase {
     );
 
     const eventReminderTemplate =
-      await this.templatesRepository.findLatestByTemplate("event_reminder");
+      await this.templatesRepository.findTemplateAndBase("event_reminder");
     const testeNoLinkTemplate =
-      await this.templatesRepository.findLatestByTemplate("teste_no_link");
+      await this.templatesRepository.findTemplateAndBase("teste_no_link");
     const testeOnlyTextTemplate =
-      await this.templatesRepository.findLatestByTemplate("teste_only_text");
+      await this.templatesRepository.findTemplateAndBase("teste_only_text");
 
     events.map(async (event) => {
       const schedules = await this.schedulesRepository.findByEventId(
@@ -78,14 +78,16 @@ class SendTestEmailUseCase {
           to: user.email,
           subject: "[TESTE] A sua aula vai começar daqui a pouco!",
           variables,
-          template: eventReminderTemplate.body,
+          template: eventReminderTemplate.get("event_reminder").body,
+          base: eventReminderTemplate.get("base").body,
         });
 
         this.mailProvider.sendMail({
           to: user.email,
           subject: "[TESTE][SEM-LINK] A sua aula vai começar daqui a pouco!",
           variables,
-          template: testeNoLinkTemplate.body,
+          template: testeNoLinkTemplate.get("teste_no_link").body,
+          base: testeNoLinkTemplate.get("base").body,
         });
 
         this.mailProvider.sendMail({
@@ -93,7 +95,8 @@ class SendTestEmailUseCase {
           subject:
             "[TESTE][SOMENTE-TEXTO] A sua aula vai começar daqui a pouco!",
           variables,
-          template: testeOnlyTextTemplate.body,
+          template: testeOnlyTextTemplate.get("teste_only_text").body,
+          base: testeOnlyTextTemplate.get("base").body,
         });
       });
     });

@@ -110,7 +110,7 @@ class RemoveCreditUseCase {
         return false;
       }
 
-      const template = await this.templatesRepository.findLatestByTemplate(
+      const templates = await this.templatesRepository.findTemplateAndBase(
         "remove_credit"
       );
 
@@ -126,7 +126,8 @@ class RemoveCreditUseCase {
         to: email,
         subject: "Os seus créditos foram reajustados",
         variables,
-        template: template.body,
+        template: templates.get("remove_credit").body,
+        base: templates.get("base").body,
       });
     });
   }

@@ -102,8 +102,9 @@ class SendEventsNewsletterUseCase {
       day
     );
 
-    const template = await this.templatesRepository.findLatestByTemplate(
-      "newsletter"
+    const templates = await this.templatesRepository.findTemplateAndBase(
+      "newsletter",
+      "base-newsletter"
     );
 
     const sendMailWithLog = container.resolve(SendMailWithLog);
@@ -125,7 +126,8 @@ class SendEventsNewsletterUseCase {
         to: fakeData.to,
         subject: "[TESTE] - Confira as aulas incríveis que estão por vir",
         variables,
-        template: template.body,
+        template: templates.get("newsletter").body,
+        base: templates.get("base-newsletter").body
       });
 
       return;
@@ -146,7 +148,8 @@ class SendEventsNewsletterUseCase {
             to: user.email,
             subject: "Programação de aulas da PrAktikA",
             variables,
-            template: template.body,
+            template: templates.get("newsletter").body,
+            base: templates.get("base-newsletter").body,
             mailLog: {
               userId: user.id,
             },

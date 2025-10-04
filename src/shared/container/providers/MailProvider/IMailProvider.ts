@@ -6,6 +6,7 @@ interface IMailProviderProps {
   variables: any;
   path?: string;
   template?: string;
+  base?: string;
   calendarEvent?: {
     content: ICalCalendar | null;
     method: string | undefined;
@@ -20,6 +21,7 @@ interface IMailProvider {
     variables,
     path,
     template,
+    base,
     calendarEvent,
     bcc,
   }: IMailProviderProps): Promise<void>;

@@ -37,7 +37,7 @@ class SendSupportMailUseCase {
       throw new AppError("Description is required");
     }
 
-    const template = await this.templatesRepository.findLatestByTemplate(
+    const templates = await this.templatesRepository.findTemplateAndBase(
       "support"
     );
 
@@ -58,7 +58,8 @@ class SendSupportMailUseCase {
       to: process.env.SUPPORT_MAIL,
       subject,
       variables,
-      template: template.body,
+      template: templates.get("support").body,
+      base: templates.get("base").body,
     });
 
     return;

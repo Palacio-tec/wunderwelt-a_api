@@ -127,7 +127,7 @@ class RemoveScheduleUseCase {
     const queues = await this.queuesRepository.findByEvent(event_id);
 
     if (queues) {
-      const queueTemplate = await this.templatesRepository.findLatestByTemplate(
+      const queueTemplates = await this.templatesRepository.findTemplateAndBase(
         "queue_available_event"
       );
 
@@ -155,7 +155,8 @@ class RemoveScheduleUseCase {
           to: email,
           subject: "Abriu uma vaga para a aula que você queria! Aproveite!",
           variables,
-          template: queueTemplate.body,
+          template: queueTemplates.get("queue_available_event").body,
+          base: queueTemplates.get("base").body,
         });
       });
     }
@@ -169,7 +170,7 @@ class RemoveScheduleUseCase {
     event_id: string,
     mailDescription: string
   ) {
-    const template = await this.templatesRepository.findLatestByTemplate(
+    const templates = await this.templatesRepository.findTemplateAndBase(
       "student_removed"
     );
 
@@ -206,7 +207,8 @@ class RemoveScheduleUseCase {
       to: email,
       subject: "Inscrição na aula realizada com sucesso!",
       variables,
-      template: template.body,
+      template: templates.get("student_removed").body,
+      base: templates.get("base").body,
       calendarEvent,
       mailLog: {
         userId: user_id,

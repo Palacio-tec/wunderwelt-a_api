@@ -42,7 +42,7 @@ class ListWillExpiredHoursUseCase {
       return;
     }
 
-    const template = await this.templatesRepository.findLatestByTemplate(
+    const templates = await this.templatesRepository.findTemplateAndBase(
       "credit_will_expired"
     );
 
@@ -64,7 +64,8 @@ class ListWillExpiredHoursUseCase {
           to: credit.email,
           subject: "Existem créditos próximo do vencimento",
           variables,
-          template: template.body,
+          template: templates.get("credit_will_expired").body,
+          base: templates.get("base").body,
           mailLog: {
             userId: credit.userId,
           },

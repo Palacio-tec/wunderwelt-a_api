@@ -24,33 +24,58 @@ async function create() {
 
     const userId = adminUser[0].id;
 
-    // Lista de todos os templates .hbs encontrados
+    // Lista de todos os templates
     const templates = [
+      // Base templates
+      {
+        file: "src/modules/templates/views/emails/base.hbs",
+        name: "Template base",
+        key: "base",
+        layout: null,
+      },
+      {
+        file: "src/modules/templates/views/emails/baseNewsletter.hbs",
+        name: "Template newsletter base",
+        key: "base-newsletter",
+        layout: null,
+      },
+
       // Accounts module
       {
         file: "src/modules/accounts/views/emails/sendGift.hbs",
         name: "Envio de Presente",
         key: "send_gift",
+        layout: "base",
+      },
+      {
+        file: "src/modules/accounts/views/emails/createUser.hbs",
+        name: "Criação de usuário",
+        key: "create_user",
+        layout: "base",
+      },
+      {
+        file: "src/modules/events/views/emails/newsletter.hbs",
+        name: "Newsletter",
+        key: "newsletter",
+        layout: "base-newsletter"
       },
       {
         file: "src/modules/accounts/views/emails/removeCredit.hbs",
         name: "Remoção de Crédito",
         key: "remove_credit",
+        layout: "base"
       },
       {
         file: "src/modules/accounts/views/emails/forgotPassword.hbs",
         name: "Esqueci Minha Senha",
         key: "forgot_password",
+        layout: "base"
       },
       {
         file: "src/modules/accounts/views/emails/creditWillExpired.hbs",
         name: "Crédito Vai Expirar",
         key: "credit_will_expired",
-      },
-      {
-        file: "src/modules/accounts/views/emails/createUser.hbs",
-        name: "Criar Usuário",
-        key: "create_user",
+        layout: "base"
       },
 
       // Events module
@@ -58,61 +83,67 @@ async function create() {
         file: "src/modules/events/views/emails/cancelEvent.hbs",
         name: "Cancelar Evento",
         key: "cancel_event",
+        layout: "base"
       },
       {
         file: "src/modules/events/views/emails/cancelEventTeacher.hbs",
         name: "Cancelar Evento - Professor",
         key: "cancel_event_teacher",
+        layout: "base"
       },
       {
         file: "src/modules/events/views/emails/testeOnlyText.hbs",
         name: "Teste Apenas Texto",
         key: "teste_only_text",
+        layout: "base"
       },
       {
         file: "src/modules/events/views/emails/testeNoLink.hbs",
         name: "Teste Sem Link",
         key: "teste_no_link",
+        layout: "base"
       },
       {
         file: "src/modules/events/views/emails/teacherEventCreated.hbs",
         name: "Evento Criado - Professor",
         key: "teacher_event_created",
+        layout: "base"
       },
       {
         file: "src/modules/events/views/emails/teacherEventChange.hbs",
         name: "Alteração de Evento - Professor",
         key: "teacher_event_change",
+        layout: "base"
       },
       {
         file: "src/modules/events/views/emails/refoundReminder.hbs",
         name: "Lembrete de Reembolso",
         key: "refound_reminder",
-      },
-      {
-        file: "src/modules/events/views/emails/newsletter.hbs",
-        name: "Newsletter",
-        key: "newsletter",
+        layout: "base"
       },
       {
         file: "src/modules/events/views/emails/eventWillStart.hbs",
         name: "Evento Vai Começar",
         key: "event_will_start",
+        layout: "base"
       },
       {
         file: "src/modules/events/views/emails/eventReminder.hbs",
         name: "Lembrete de Evento",
         key: "event_reminder",
+        layout: "base"
       },
       {
         file: "src/modules/events/views/emails/eventPreview.hbs",
         name: "Prévia do Evento",
         key: "event_preview",
+        layout: "base"
       },
       {
         file: "src/modules/events/views/emails/deleteEvent.hbs",
         name: "Deletar Evento",
         key: "delete_event",
+        layout: "base"
       },
 
       // Schedules module
@@ -120,11 +151,13 @@ async function create() {
         file: "src/modules/schedules/views/emails/studentRemoved.hbs",
         name: "Estudante Removido",
         key: "student_removed",
+        layout: "base"
       },
       {
         file: "src/modules/schedules/views/emails/createSchedule.hbs",
         name: "Criar Agendamento",
         key: "create_schedule",
+        layout: "base"
       },
 
       // Other modules
@@ -132,16 +165,19 @@ async function create() {
         file: "src/modules/fqas/views/emails/support.hbs",
         name: "Suporte FAQ",
         key: "support",
+        layout: "base"
       },
       {
         file: "src/modules/queues/views/emails/mailWithSuggestion.hbs",
         name: "E-mail com Sugestão",
         key: "mail_with_suggestion",
+        layout: "base"
       },
       {
         file: "src/modules/queues/views/emails/queueAvailableEvent.hbs",
         name: "Evento Disponível na Fila",
         key: "queue_available_event",
+        layout: "base"
       },
     ];
 
@@ -160,13 +196,14 @@ async function create() {
       }
 
       await connection.query(
-        `INSERT INTO templates(id, title, body, version, template, user_id, is_active, created_at, updated_at)
+        `INSERT INTO templates(id, title, body, version, template, layout, user_id, is_active, created_at, updated_at)
           values(
             '${uuidV4()}',
             '${template.name}',
             '${content}',
             1,
             '${template.key}',
+            ${template.layout ? `'${template.layout}'` : null},
             '${userId}',
             true,
             now(),

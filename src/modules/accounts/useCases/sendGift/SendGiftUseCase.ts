@@ -106,7 +106,7 @@ class SendGiftUseCase {
         return false;
       }
 
-      const template = await this.templatesRepository.findLatestByTemplate(
+      const templates = await this.templatesRepository.findTemplateAndBase(
         "send_gift"
       );
 
@@ -122,7 +122,8 @@ class SendGiftUseCase {
         to: email,
         subject: "Você ganhou um presente!",
         variables,
-        template: template.body,
+        template: templates.get("send_gift").body,
+        base: templates.get("base").body,
       });
     });
   }

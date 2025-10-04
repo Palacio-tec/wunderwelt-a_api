@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .container {
+        width: 100vw;
+        max-width: 1000px;
+        font-size: 18px;
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: white;
+        color: #1e2f50;
+      }
+      
+      a {
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      .contentSpan {
+        margin: 10px 0;
+        display: block;
+      }
+
+      .noReply {
+        font-size: 14px;
+        color: #687173;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <span class="contentSpan">Olá, {{name}}</span>
+      {{#if hasMailDescription}}
+        <span class="contentSpan">{{mailDescription}}</span>
+      {{else}}
+        <span class="contentSpan">Gostaríamos de informar que os administradores identificaram que a aula "{{title}}" pode não ser adequada ao seu nível atual.</span>
+        <span class="contentSpan">Com o objetivo de garantir que você sempre desfrute da melhor experiência de aprendizado possível, tomamos a decisão de cancelar sua inscrição para esta aula específica.</span>
+      {{/if}}
+      <span class="contentSpan">No entanto, queremos assegurar que você não precise se preocupar. Seus créditos foram devidamente reembolsados, e nossa equipe está à disposição para esclarecer quaisquer dúvidas que possam surgir.</span>
+      <span class="contentSpan">Agradecemos pela sua compreensão e permanecemos à disposição para auxiliá-lo em seu percurso educacional.</span>
+      <br />
+      <strong>Atenciosamente!</strong>
+      <p>Equipe | <strong>PrAktikA - Wunderwelt-A</strong></p>
+      <p class="noReply">
+        Não responda a esta mensagem. Este e-mail foi enviado por um sistema automático que não processa respostas.
+      </p>
+    </div>
+  </body>
+</html>
