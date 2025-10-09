@@ -208,7 +208,7 @@ class CreateScheduleUseCase {
     }
 
     const templates = await this.templatesRepository.findTemplateAndBase(
-      "queue_available_event"
+      "create_schedule"
     );
 
     const sendMailWithLog = container.resolve(SendMailWithLog);
@@ -258,7 +258,7 @@ class CreateScheduleUseCase {
       to: email,
       subject: "Inscrição na aula realizada com sucesso!",
       variables,
-      template: templates.get("queue_available_event").body,
+      template: templates.get("create_schedule").body,
       base: templates.get("base").body,
       calendarEvent,
       mailLog: {

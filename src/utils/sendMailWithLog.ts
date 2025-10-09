@@ -29,6 +29,7 @@ class SendMailWithLog {
     variables,
     path,
     template,
+    base,
     calendarEvent,
     mailLog,
     bcc,
@@ -40,6 +41,7 @@ class SendMailWithLog {
         variables,
         path,
         template,
+        base,
         calendarEvent,
         bcc,
       });

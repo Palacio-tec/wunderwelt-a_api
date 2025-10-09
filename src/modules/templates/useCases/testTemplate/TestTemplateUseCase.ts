@@ -23,7 +23,7 @@ class TestTemplateUseCase {
     base,
     variables,
     user_id
-  }: { templateName: string, base: string, variables: {string: any}, user_id: string }): Promise<void> {
+  }: { templateName: string, base: string, variables: Record<string, any>, user_id: string }): Promise<void> {
     const userExists = await this.usersRepository.findById(user_id);
 
     if (!userExists) {
