@@ -16,7 +16,7 @@ async function create() {
     `
   );
 
-  connections.map((conn) => conn.close());
+  await Promise.all(connections.map((conn) => conn.close()));
 }
 
 create().then(() => console.log("User admin created"));

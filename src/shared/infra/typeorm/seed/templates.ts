@@ -218,7 +218,6 @@ async function create() {
     console.error("❌ Erro ao criar templates:", error);
     throw error;
   } finally {
-    // Fechar todas as conexões
     await Promise.all(connections.map((conn) => conn.close()));
   }
 }
