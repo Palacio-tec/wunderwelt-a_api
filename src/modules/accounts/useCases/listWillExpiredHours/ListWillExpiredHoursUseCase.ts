@@ -42,8 +42,10 @@ class ListWillExpiredHoursUseCase {
       return;
     }
 
+    const templateName = "credit_will_expired"
+
     const templates = await this.templatesRepository.findTemplateAndBase(
-      "credit_will_expired"
+      templateName
     );
 
     const sendMailWithLog = container.resolve(SendMailWithLog);
@@ -64,7 +66,7 @@ class ListWillExpiredHoursUseCase {
           to: credit.email,
           subject: "Existem créditos próximo do vencimento",
           variables,
-          template: templates.get("credit_will_expired").body,
+          template: templates.get(templateName).body,
           base: templates.get("base").body,
           mailLog: {
             userId: credit.userId,

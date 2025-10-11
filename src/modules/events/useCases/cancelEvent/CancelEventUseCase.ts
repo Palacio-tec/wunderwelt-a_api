@@ -15,6 +15,7 @@ import { ISchedulesCreditsRepository } from "@modules/schedules/repositories/ISc
 import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
 import { SendMailWithLog } from "@utils/sendMailWithLog";
 import { INotificationsRepository } from '@modules/notifications/repositories/INotificationsRepository'
+import { ITemplatesRepository } from "@modules/templates/repositories/ITemplatesRepository";
 
 @injectable()
 class CancelEventUseCase {
@@ -34,9 +35,6 @@ class CancelEventUseCase {
     @inject("DateProvider")
     private dateProvider: IDateProvider,
 
-    @inject("MailProvider")
-    private mailProvider: IMailProvider,
-
     @inject("HoursRepository")
     private hoursRepository: IHoursRepository,
 
@@ -48,6 +46,9 @@ class CancelEventUseCase {
 
     @inject("NotificationsRepository")
     private notificationsRepository: INotificationsRepository,
+
+    @inject("TemplatesRepository")
+    private templatesRepository: ITemplatesRepository,
   ) {}
 
   private async _deleteSchedule(schedule_id: string, user_id: string){
@@ -129,6 +130,12 @@ class CancelEventUseCase {
         "cancelEvent.hbs"
       );
 
+      const templateName = "cancel_event"
+
+      const templates = await this.templatesRepository.findTemplateAndBase(
+        templateName
+      );
+
       schedulesExists.map(async (schedule) => {
         this._deleteSchedule(schedule.id, schedule.user.id)
 
@@ -183,6 +190,8 @@ class CancelEventUseCase {
             mailLog: {
               userId: schedule.user.id
             },
+            template: templates.get(templateName).body,
+            base: templates.get("base").body,
           })
         }
       });
@@ -215,6 +224,12 @@ class CancelEventUseCase {
       "views",
       "emails",
       "cancelEvent.hbs"
+    );
+
+    const templateName = "cancel_event_teacher"
+
+    const templates = await this.templatesRepository.findTemplateAndBase(
+      templateName
     );
 
     const eventTeacher = await this.usersRepository.findById(teacher_id);
@@ -261,6 +276,8 @@ class CancelEventUseCase {
         mailLog: {
           userId: teacher_id
         },
+        template: templates.get(templateName).body,
+        base: templates.get("base").body
       })
     }
 

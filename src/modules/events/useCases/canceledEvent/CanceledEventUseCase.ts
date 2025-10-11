@@ -8,6 +8,7 @@ import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepositor
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { createCalendarEvent } from "@utils/createCalendarEvent";
 import { SendMailWithLog } from "@utils/sendMailWithLog";
+import { ITemplatesRepository } from "@modules/templates/repositories/ITemplatesRepository";
 
 @injectable()
 class CanceledEventUseCase {
@@ -20,6 +21,9 @@ class CanceledEventUseCase {
 
     @inject("DateProvider")
     private dateProvider: IDateProvider,
+    
+    @inject("TemplatesRepository")
+    private templatesRepository: ITemplatesRepository,
   ) {}
 
   private async __sendMail(event: Event) {
@@ -40,7 +44,7 @@ class CanceledEventUseCase {
       "..",
       "views",
       "emails",
-      "teacherEventCreated.hbs"
+      "cancelEventTeacher.hbs"
     );
 
     const { name, email } = teacher;
@@ -72,15 +76,23 @@ class CanceledEventUseCase {
 
     const sendMailWithLog = container.resolve(SendMailWithLog);
 
+    const templateName = "cancel_event_teacher"
+
+    const templates = await this.templatesRepository.findTemplateAndBase(
+      templateName
+    );
+
     sendMailWithLog.execute({
       to: email,
-      subject: `Nova aula - ${dateTimeFormatted} - ${title}`,
+      subject: `Aula cancelada - ${dateTimeFormatted} - ${title}`,
       variables,
       path: templatePath,
       calendarEvent,
       mailLog: {
         userId: teacher_id
       },
+      template: templates.get(templateName).body,
+      base: templates.get("base").body
     })
 
     return
