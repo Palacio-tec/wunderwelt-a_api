@@ -125,15 +125,6 @@ class DeleteEventUseCase {
 
       const day = this.dateProvider.formatInDate(start_date);
 
-      const templatePath = resolve(
-        __dirname,
-        "..",
-        "..",
-        "views",
-        "emails",
-        "deleteEvent.hbs"
-      );
-
       const templateName = "delete_event"
 
       const templates = await this.templatesRepository.findTemplateAndBase(
@@ -172,7 +163,6 @@ class DeleteEventUseCase {
           to: email,
           subject: "Aula Removida",
           variables,
-          path: templatePath,
           calendarEvent,
           mailLog: {
             userId: schedule.user.id
@@ -202,15 +192,6 @@ class DeleteEventUseCase {
         await this.hoursRepository.update(hours);
       });
     }
-
-    const templatePath = resolve(
-      __dirname,
-      "..",
-      "..",
-      "views",
-      "emails",
-      "cancelEvent.hbs"
-    );
 
     const templateName = "cancel_event_teacher"
 
@@ -251,7 +232,6 @@ class DeleteEventUseCase {
       to: eventTeacher.email,
       subject,
       variables,
-      path: templatePath,
       calendarEvent,
       mailLog: {
         userId: teacher_id

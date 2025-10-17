@@ -190,7 +190,6 @@ class CreateEventUseCase {
       to: email,
       subject,
       variables,
-      path: templatePath,
       calendarEvent,
       mailLog: {
         userId: teacher_id

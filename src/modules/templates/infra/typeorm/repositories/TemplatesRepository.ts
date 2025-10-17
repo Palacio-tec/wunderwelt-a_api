@@ -58,18 +58,21 @@ class TemplatesRepository implements ITemplatesRepository {
 
   async findTemplateAndBase(template: string, base?: string): Promise<Map<string, Template>> {
     const baseTemplate = base || "base";
-    const latestTemplates = await this.repository.find({
+    const latestTemplate = await this.repository.findOne({
       where: {
-        template: In([template, baseTemplate]),
+        template: template,
         is_active: true,
+      },
+    });
+    const latestBaseTemplate = await this.repository.findOne({
+      where: {
+        template: baseTemplate,
       },
     });
 
     const templatesMap = new Map<string, Template>();
-  
-    latestTemplates.forEach((template) => {
-      templatesMap.set(template.template, template);
-    });
+    templatesMap.set(latestTemplate.template, latestTemplate);
+    templatesMap.set(latestBaseTemplate.template, latestBaseTemplate);
 
     return templatesMap;
   }

@@ -38,15 +38,6 @@ class CanceledEventUseCase {
       return
     }
 
-    const templatePath = resolve(
-      __dirname,
-      "..",
-      "..",
-      "views",
-      "emails",
-      "cancelEventTeacher.hbs"
-    );
-
     const { name, email } = teacher;
 
     const variables = {
@@ -86,7 +77,6 @@ class CanceledEventUseCase {
       to: email,
       subject: `Aula cancelada - ${dateTimeFormatted} - ${title}`,
       variables,
-      path: templatePath,
       calendarEvent,
       mailLog: {
         userId: teacher_id
