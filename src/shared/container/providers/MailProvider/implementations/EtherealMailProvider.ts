@@ -1,12 +1,12 @@
-import { inject, injectable } from "tsyringe";
+import { injectable } from "tsyringe";
 import nodemailer, { Transporter } from "nodemailer";
 import handlebars from "handlebars";
 import fs from "fs";
 
 import { IMailProvider, IMailProviderProps } from "../IMailProvider";
 
-const CALENDAR_FILE_NAME = 'invitation.ics'
-const MAIL_FROM = `PrAktikA <${process.env.GENERAL_MAIL}>`
+const CALENDAR_FILE_NAME = "invitation.ics";
+const MAIL_FROM = `PrAktikA <${process.env.GENERAL_MAIL}>`;
 
 @injectable()
 class EtherealMailProvider implements IMailProvider {
@@ -36,12 +36,25 @@ class EtherealMailProvider implements IMailProvider {
     subject,
     variables,
     path,
+    template,
+    base,
     calendarEvent,
-    bcc
+    bcc,
   }: IMailProviderProps): Promise<void> {
-    const templateFileContent = fs.readFileSync(path).toString("utf-8");
+    let templateContent: string;
 
-    const templateParse = handlebars.compile(templateFileContent);
+    if (template && base) {
+      templateContent = base.replace(
+        '{{{body}}}',
+        template
+      );
+    } else if (path) {
+      templateContent = fs.readFileSync(path).toString("utf-8");
+    } else {
+      throw new Error("Either template or path must be provided");
+    }
+
+    const templateParse = handlebars.compile(templateContent);
 
     const templateHTML = templateParse(variables);
 
@@ -50,18 +63,18 @@ class EtherealMailProvider implements IMailProvider {
       from: MAIL_FROM,
       subject,
       html: templateHTML,
-      bcc
-    }
+      bcc,
+    };
 
     if (calendarEvent) {
       const { content: calendarContent, method } = calendarEvent;
       const content = Buffer.from(calendarContent.toString());
 
-      mailOptions['icalEvent'] = {
+      mailOptions["icalEvent"] = {
         filename: CALENDAR_FILE_NAME,
         method,
         content,
-      }
+      };
     }
 
     const message = await this.client.sendMail(mailOptions);

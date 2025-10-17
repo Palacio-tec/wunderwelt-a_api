@@ -12,6 +12,7 @@ import { ILevelsRepository } from "@modules/levels/repositories/ILevelsRepositor
 import { createCalendarEvent } from "@utils/createCalendarEvent";
 import { SendMailWithLog } from "@utils/sendMailWithLog";
 import { INotificationsRepository } from '@modules/notifications/repositories/INotificationsRepository'
+import { ITemplatesRepository } from "@modules/templates/repositories/ITemplatesRepository";
 
 @injectable()
 class CreateEventUseCase {
@@ -33,6 +34,9 @@ class CreateEventUseCase {
 
     @inject("NotificationsRepository")
     private notificationsRepository: INotificationsRepository,
+
+    @inject("TemplatesRepository")
+    private templatesRepository: ITemplatesRepository,
   ) {}
 
   async execute(
@@ -176,15 +180,22 @@ class CreateEventUseCase {
 
     const sendMailWithLog = container.resolve(SendMailWithLog);
 
+    const templateName = "teacher_event_created"
+
+    const templates = await this.templatesRepository.findTemplateAndBase(
+      templateName
+    );
+
     sendMailWithLog.execute({
       to: email,
       subject,
       variables,
-      path: templatePath,
       calendarEvent,
       mailLog: {
         userId: teacher_id
       },
+      template: templates.get(templateName).body,
+      base: templates.get("base").body
     })
 
     return event;

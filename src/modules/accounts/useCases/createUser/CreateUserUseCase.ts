@@ -1,7 +1,6 @@
 import { inject, injectable } from "tsyringe";
 import { hash } from "bcryptjs";
-import { randomBytes } from "crypto"
-import { resolve } from "path";
+import { randomBytes } from "crypto";
 
 import { ICreateUserDTO } from "@modules/accounts/dtos/ICreateUserDTO";
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
@@ -10,6 +9,7 @@ import { User } from "@modules/accounts/infra/typeorm/entities/User";
 import { IHoursRepository } from "@modules/accounts/repositories/IHoursRepository";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
+import { ITemplatesRepository } from "@modules/templates/repositories/ITemplatesRepository";
 
 @injectable()
 class CreateUserUseCase {
@@ -25,6 +25,9 @@ class CreateUserUseCase {
 
     @inject("MailProvider")
     private mailProvider: IMailProvider,
+
+    @inject("TemplatesRepository")
+    private templatesRepository: ITemplatesRepository
   ) {}
 
   async execute({
@@ -66,9 +69,9 @@ class CreateUserUseCase {
     let sendPasswordEmail = false;
 
     if (!password) {
-      password = randomBytes(8).toString('hex')
+      password = randomBytes(8).toString("hex");
 
-      sendPasswordEmail = true
+      sendPasswordEmail = true;
     }
 
     const passwordHash = await hash(password, 8);
@@ -101,19 +104,14 @@ class CreateUserUseCase {
       amount: 0,
       expiration_date,
       user_id: user.id,
-      balance: 0
+      balance: 0,
     });
 
     if (sendPasswordEmail) {
-      const templatePath = resolve(
-        __dirname,
-        "..",
-        "..",
-        "views",
-        "emails",
-        "createUser.hbs"
+      const templates = await this.templatesRepository.findTemplateAndBase(
+        "create_user"
       );
-  
+
       const variables = {
         name,
         username,
@@ -124,7 +122,8 @@ class CreateUserUseCase {
         to: email,
         subject: "Login para acessar a plataforma PrAktikA",
         variables,
-        path: templatePath
+        template: templates.get("create_user").body,
+        base: templates.get("base").body,
       });
     }
 

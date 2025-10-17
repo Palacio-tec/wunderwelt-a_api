@@ -55,6 +55,8 @@ import { ICompanyMembersRepository } from "@modules/companyMembers/repositories/
 import { CompanyMembersRepository } from "@modules/companyMembers/infra/typeorm/repositories/CompanyMemberRepository";
 import { IClassSubjectsRepository } from "@modules/classSubjects/repositories/IClassSubjectsRepository";
 import { ClassSubjectsRepository } from "@modules/classSubjects/infra/typeorm/repositories/ClassSubjectsRepository";
+import { ITemplatesRepository } from "@modules/templates/repositories/ITemplatesRepository";
+import { TemplatesRepository } from "@modules/templates/infra/typeorm/repositories/TemplatesRepository";
 
 container.registerSingleton<IUsersRepository>(
   "UsersRepository",
@@ -131,27 +133,29 @@ container.registerSingleton<IPromotionsRepository>(
   PromotionsRepository
 );
 
-container.registerSingleton<IFQAsRepository>(
-  "FQAsRepository",
-  FQAsRepository
-);
+container.registerSingleton<IFQAsRepository>("FQAsRepository", FQAsRepository);
 
 container.registerSingleton<IMailLogsRepository>(
   "MailLogsRepository",
   MailLogsRepository
-)
+);
 
 container.registerSingleton<INotificationsRepository>(
   "NotificationsRepository",
   NotificationsRepository
-)
+);
 
 container.registerSingleton<ICompanyMembersRepository>(
   "CompanyMembersRepository",
   CompanyMembersRepository
-)
+);
 
 container.registerSingleton<IClassSubjectsRepository>(
   "ClassSubjectsRepository",
   ClassSubjectsRepository
-)
+);
+
+container.registerSingleton<ITemplatesRepository>(
+  "TemplatesRepository",
+  TemplatesRepository
+);

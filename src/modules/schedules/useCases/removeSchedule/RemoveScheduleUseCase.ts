@@ -1,5 +1,4 @@
 import { container, inject, injectable } from "tsyringe";
-import { resolve } from "path";
 
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
 import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
@@ -15,6 +14,7 @@ import { ISchedulesCreditsRepository } from "@modules/schedules/repositories/ISc
 import { SendMailWithLog } from "@utils/sendMailWithLog";
 import { createCalendarEvent } from "@utils/createCalendarEvent";
 import { IEventsRepository } from "@modules/events/repositories/IEventsRepository";
+import { ITemplatesRepository } from "@modules/templates/repositories/ITemplatesRepository";
 
 @injectable()
 class RemoveScheduleUseCase {
@@ -48,49 +48,61 @@ class RemoveScheduleUseCase {
 
     @inject("EventsRepository")
     private eventsRepository: IEventsRepository,
+
+    @inject("TemplatesRepository")
+    private templatesRepository: ITemplatesRepository
   ) {}
 
   private async __deleteSchedule(schedule_id: string, user_id: string) {
-    const scheduleCredits = await this.schedulesCreditsRepository.findByScheduleId(schedule_id)
-    const expirationTimeParameter = await this.parametersRepository.findByReference('CreditExtensionDays');
-    const extensionDays = Number(expirationTimeParameter.value)
+    const scheduleCredits =
+      await this.schedulesCreditsRepository.findByScheduleId(schedule_id);
+    const expirationTimeParameter =
+      await this.parametersRepository.findByReference("CreditExtensionDays");
+    const extensionDays = Number(expirationTimeParameter.value);
 
-    let depositCredit = 0
+    let depositCredit = 0;
 
     for (let index = 0; index < scheduleCredits.length; index++) {
       const { id, credit_id, amount_credit } = scheduleCredits[index];
-     
-      const credit = await this.hoursRepository.findById(credit_id)
 
-      let newExpirationDate = credit.expiration_date
+      const credit = await this.hoursRepository.findById(credit_id);
 
-      if (credit.balance <= 0 && 
-        this.dateProvider.parseFormat(newExpirationDate, 'YYYY-MM-DD') <= this.dateProvider.parseFormat(new Date(), 'YYYY-MM-DD')
+      let newExpirationDate = credit.expiration_date;
+
+      if (
+        credit.balance <= 0 &&
+        this.dateProvider.parseFormat(newExpirationDate, "YYYY-MM-DD") <=
+          this.dateProvider.parseFormat(new Date(), "YYYY-MM-DD")
       ) {
-        newExpirationDate = this.dateProvider.addDays(extensionDays)
+        newExpirationDate = this.dateProvider.addDays(extensionDays);
       }
 
       await this.hoursRepository.create({
         ...credit,
-        balance: (Number(credit.balance) + Number(amount_credit)),
+        balance: Number(credit.balance) + Number(amount_credit),
         expiration_date: newExpirationDate,
-      })
+      });
 
-      depositCredit += Number(amount_credit)
+      depositCredit += Number(amount_credit);
 
-      await this.schedulesCreditsRepository.delete(id)
+      await this.schedulesCreditsRepository.delete(id);
     }
 
     await this.schedulesRepository.deleteById(schedule_id);
 
     if (depositCredit <= 0) {
-      return
+      return;
     }
 
-    await this.usersRepository.updateAddCreditById(user_id, depositCredit)
+    await this.usersRepository.updateAddCreditById(user_id, depositCredit);
   }
 
-  private async __refundCredits(user_id: string, title: string, credit: number, start_date: Date) {
+  private async __refundCredits(
+    user_id: string,
+    title: string,
+    credit: number,
+    start_date: Date
+  ) {
     const parameterRefundTimeLimit =
       await this.parametersRepository.findByReference("RefundTimeLimit");
 
@@ -115,22 +127,15 @@ class RemoveScheduleUseCase {
     const queues = await this.queuesRepository.findByEvent(event_id);
 
     if (queues) {
-      queues.map((queue) => {
-        const templatePath = resolve(
-          __dirname,
-          "..",
-          "..",
-          "..",
-          "queues",
-          "views",
-          "emails",
-          "queueAvailableEvent.hbs"
-        );
+      const queueTemplates = await this.templatesRepository.findTemplateAndBase(
+        "queue_available_event"
+      );
 
+      queues.map((queue) => {
         const { name, email, receive_email } = queue.user;
 
         if (!receive_email) {
-          return
+          return;
         }
 
         const { title, start_date, link } = queue.event;
@@ -148,22 +153,25 @@ class RemoveScheduleUseCase {
 
         this.mailProvider.sendMail({
           to: email,
-          subject: 'Abriu uma vaga para a aula que você queria! Aproveite!',
+          subject: "Abriu uma vaga para a aula que você queria! Aproveite!",
           variables,
-          path: templatePath
+          template: queueTemplates.get("queue_available_event").body,
+          base: queueTemplates.get("base").body,
         });
       });
     }
   }
 
-  private async __sendMail(user_id: string, name: string, email: string, title: string, event_id: string, mailDescription: string) {
-    const templatePath = resolve(
-      __dirname,
-      "..",
-      "..",
-      "views",
-      "emails",
-      "studentRemoved.hbs"
+  private async __sendMail(
+    user_id: string,
+    name: string,
+    email: string,
+    title: string,
+    event_id: string,
+    mailDescription: string
+  ) {
+    const templates = await this.templatesRepository.findTemplateAndBase(
+      "student_removed"
     );
 
     const event = await this.eventsRepository.findById(event_id);
@@ -174,7 +182,7 @@ class RemoveScheduleUseCase {
       name,
       title,
       hasMailDescription: !!mailDescription,
-      mailDescription
+      mailDescription,
     };
 
     const calendarEvent = {
@@ -184,31 +192,41 @@ class RemoveScheduleUseCase {
         end: event.end_date,
         summary: title,
         description: event.instruction,
-        location: 'Sala virtual',
+        location: "Sala virtual",
         status: "CANCELLED",
-        method: 'CANCEL',
+        method: "CANCEL",
         attendee: {
           name,
-          email
-        }
+          email,
+        },
       }),
-      method: 'CANCEL',
-    }
+      method: "CANCEL",
+    };
 
     sendMailWithLog.execute({
       to: email,
       subject: "Inscrição na aula realizada com sucesso!",
       variables,
-      path: templatePath,
+      template: templates.get("student_removed").body,
+      base: templates.get("base").body,
       calendarEvent,
       mailLog: {
-        userId: user_id
+        userId: user_id,
       },
-    })
+    });
   }
 
-  async execute(eventId: string, student_id: string, admin_id: string, mailDescription: string): Promise<void> {
-    const scheduleExists = await this.schedulesRepository.findByEventIdAndUserId(eventId, student_id);
+  async execute(
+    eventId: string,
+    student_id: string,
+    admin_id: string,
+    mailDescription: string
+  ): Promise<void> {
+    const scheduleExists =
+      await this.schedulesRepository.findByEventIdAndUserId(
+        eventId,
+        student_id
+      );
 
     if (!scheduleExists) {
       throw new AppError("Schedule does not exists");
@@ -230,15 +248,22 @@ class RemoveScheduleUseCase {
       throw new AppError("User is not an admin");
     }
 
-    await this.__deleteSchedule(scheduleExists.id, student_id)
+    await this.__deleteSchedule(scheduleExists.id, student_id);
 
     const { credit, start_date, title } = scheduleExists.event;
 
-    await this.__refundCredits(student_id, title, credit, start_date)
+    await this.__refundCredits(student_id, title, credit, start_date);
 
-    await this.__queueAvailable(eventId)
+    await this.__queueAvailable(eventId);
 
-    this.__sendMail(student_id, studentExists.name, studentExists.email, title, eventId, mailDescription)
+    this.__sendMail(
+      student_id,
+      studentExists.name,
+      studentExists.email,
+      title,
+      eventId,
+      mailDescription
+    );
   }
 }
 

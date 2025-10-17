@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
-import { resolve } from "path";
 
+import { ICreateQueueDTO } from "@modules/queues/dtos/ICreateQueueDTO";
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
 import { IEventsRepository } from "@modules/events/repositories/IEventsRepository";
 import { Queue } from "@modules/queues/infra/typeorm/entities/Queue";
@@ -8,6 +8,7 @@ import { IQueuesRepository } from "@modules/queues/repositories/IQueuesRepositor
 import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 import { AppError } from "@shared/errors/AppError";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
+import { ITemplatesRepository } from "@modules/templates/repositories/ITemplatesRepository";
 
 @injectable()
 class CreateQueueUseCase {
@@ -26,22 +27,20 @@ class CreateQueueUseCase {
 
     @inject("DateProvider")
     private dateProvider: IDateProvider,
+
+    @inject("TemplatesRepository")
+    private templatesRepository: ITemplatesRepository
   ) {}
 
   private async __sendMailWithSuggestion(
-    student:string,
+    student: string,
     title: string,
     suggestion: string,
     day: string,
-    start_hour: string,
+    start_hour: string
   ) {
-    const templatePath = resolve(
-      __dirname,
-      "..",
-      "..",
-      "views",
-      "emails",
-      "mailWithSuggestion.hbs"
+    const templates = await this.templatesRepository.findTemplateAndBase(
+      "mail_with_suggestion"
     );
 
     const variables = {
@@ -49,14 +48,15 @@ class CreateQueueUseCase {
       title,
       suggestion,
       day,
-      start_hour
+      start_hour,
     };
 
     this.mailProvider.sendMail({
       to: process.env.GENERAL_MAIL,
       subject: "Sugestão de aluno para aula",
       variables,
-      path: templatePath
+      template: templates.get("mail_with_suggestion").body,
+      base: templates.get("base").body,
     });
   }
 
@@ -84,11 +84,17 @@ class CreateQueueUseCase {
     });
 
     if (sugestion) {
-      const { start_date, title } = eventExists
+      const { start_date, title } = eventExists;
       const day = this.dateProvider.formatInDate(start_date);
       const start_hour = this.dateProvider.formatInHour(start_date);
 
-      await this.__sendMailWithSuggestion(userExists.name, title, sugestion, day, start_hour)
+      await this.__sendMailWithSuggestion(
+        userExists.name,
+        title,
+        sugestion,
+        day,
+        start_hour
+      );
     }
 
     return queue;

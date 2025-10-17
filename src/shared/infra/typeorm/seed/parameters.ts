@@ -1,5 +1,4 @@
-import { randomUUID as uuidV4 } from 'crypto'
-import { hash } from "bcryptjs";
+import { randomUUID as uuidV4 } from "crypto";
 
 import createConnection from "../index";
 
@@ -127,7 +126,7 @@ async function create() {
     `
   );
 
-  await connection.close();
+  await Promise.all(connections.map((conn) => conn.close()));
 }
 
 create().then(() => console.log("Parameters created"));

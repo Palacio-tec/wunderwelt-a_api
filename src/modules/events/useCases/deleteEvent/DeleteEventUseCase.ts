@@ -1,6 +1,5 @@
 import { container, inject, injectable } from "tsyringe";
 import { resolve } from "path";
-import { parseISO } from "date-fns";
 
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
 import { IEventsRepository } from "@modules/events/repositories/IEventsRepository";
@@ -10,12 +9,12 @@ import { IStatementsRepository } from "@modules/statements/repositories/IStateme
 import { OperationEnumTypeStatement } from "@modules/statements/dtos/ICreateStatementDTO";
 import { AppError } from "@shared/errors/AppError";
 import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
-import { IMailProvider } from "@shared/container/providers/MailProvider/IMailProvider";
 import { IHoursRepository } from "@modules/accounts/repositories/IHoursRepository";
 import { IParametersRepository } from "@modules/parameters/repositories/IParametersRepository";
 import { createCalendarEvent } from "@utils/createCalendarEvent";
 import { ISchedulesCreditsRepository } from "@modules/schedules/repositories/ISchedulesCreditsRepository";
 import { SendMailWithLog } from "@utils/sendMailWithLog";
+import { ITemplatesRepository } from "@modules/templates/repositories/ITemplatesRepository";
 
 @injectable()
 class DeleteEventUseCase {
@@ -38,9 +37,6 @@ class DeleteEventUseCase {
     @inject("DateProvider")
     private dateProvider: IDateProvider,
 
-    @inject("MailProvider")
-    private mailProvider: IMailProvider,
-
     @inject("HoursRepository")
     private hoursRepository: IHoursRepository,
 
@@ -49,6 +45,9 @@ class DeleteEventUseCase {
 
     @inject("SchedulesCreditsRepository")
     private schedulesCreditsRepository: ISchedulesCreditsRepository,
+
+    @inject("TemplatesRepository")
+    private templatesRepository: ITemplatesRepository,
   ) {}
 
   private async _deleteSchedule(schedule_id: string, user_id: string){
@@ -126,13 +125,10 @@ class DeleteEventUseCase {
 
       const day = this.dateProvider.formatInDate(start_date);
 
-      const templatePath = resolve(
-        __dirname,
-        "..",
-        "..",
-        "views",
-        "emails",
-        "deleteEvent.hbs"
+      const templateName = "delete_event"
+
+      const templates = await this.templatesRepository.findTemplateAndBase(
+        templateName
       );
 
       schedulesExists.map(async (schedule) => {
@@ -167,11 +163,12 @@ class DeleteEventUseCase {
           to: email,
           subject: "Aula Removida",
           variables,
-          path: templatePath,
           calendarEvent,
           mailLog: {
             userId: schedule.user.id
           },
+          template: templates.get(templateName).body,
+          base: templates.get("base").body
         })
 
         await this.statementsRepository.create({
@@ -196,13 +193,10 @@ class DeleteEventUseCase {
       });
     }
 
-    const templatePath = resolve(
-      __dirname,
-      "..",
-      "..",
-      "views",
-      "emails",
-      "cancelEvent.hbs"
+    const templateName = "cancel_event_teacher"
+
+    const templates = await this.templatesRepository.findTemplateAndBase(
+      templateName
     );
 
     const { teacher_id, title } = eventExists;
@@ -238,11 +232,12 @@ class DeleteEventUseCase {
       to: eventTeacher.email,
       subject,
       variables,
-      path: templatePath,
       calendarEvent,
       mailLog: {
         userId: teacher_id
       },
+      template: templates.get(templateName).body,
+      base: templates.get("base").body
     })
 
     await this.eventsLevelsRepository.deleteByEvent(id);

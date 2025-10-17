@@ -1,4 +1,4 @@
-import { randomUUID as uuidV4 } from 'crypto'
+import { randomUUID as uuidV4 } from "crypto";
 
 import createConnection from "../index";
 
@@ -45,7 +45,7 @@ async function create() {
     `
   );
 
-  await connection.close();
+  await Promise.all(connections.map((conn) => conn.close()));
 }
 
 create().then(() => console.log("Products created"));

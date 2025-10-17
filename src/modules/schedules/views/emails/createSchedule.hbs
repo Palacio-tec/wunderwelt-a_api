@@ -1,58 +1,17 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <style>
-      .container {
-        width: 100vw;
-        max-width: 1000px;
-        font-size: 18px;
-        font-family: Arial, Helvetica, sans-serif;
-        background-color: white;
-        color: #1e2f50;
-      }
-      
-      a {
-        text-decoration: none;
-        font-weight: bold;
-      }
+<div style="width: 100vw; max-width: 1000px; font-size: 18px; font-family: Arial, Helvetica, sans-serif; background-color: white; color: #1e2f50;">
+  <span style="margin: 10px 0; display: block;">Olá, {{name}}</span>
 
-      .contentSpan {
-        margin: 10px 0;
-        display: block;
-      }
+  <br />
 
-      .noReply {
-        font-size: 14px;
-        color: #687173;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <span class="contentSpan">Olá, {{name}}</span>
+  <span style="margin: 10px 0; display: block;">Você realizou a inscrição para a aula "{{title}}", que acontecerá no dia {{day}} às {{start_hour}} (horário de Brasília).</span>
 
-      <br />
+  {{#if hasInstruction}}
+    <p style="margin: 10px 0;"><strong>Para se preparar para a aula é importante seguir a(s) instrução(ões) abaixo:</strong></p>
+    <span style="margin: 10px 0; display: block;">{{{instruction}}}</span>
+    <br />
+  {{/if}}
 
-      <span class="contentSpan">Você realizou a inscrição para a aula "{{title}}", que acontecerá no dia {{day}} às {{start_hour}} (horário de Brasília).</span>
+  <span style="margin: 10px 0; display: block;">O link para a sala virtual será enviado por e-mail, 2h antes do inicio da aula.</span>
 
-      {{#if hasInstruction}}
-        <p><strong>Para se preparar para a aula é importante seguir a(s) instrução(ões) abaixo:</strong></p>
-        <span class="contentSpan">{{{instruction}}}</span>
-        <br />
-      {{else}}
-      {{/if}}
-
-      <span class="contentSpan">O link para a sala virtual será enviado por e-mail, 2h antes do inicio da aula.</span>
-
-      <br />
-
-      <strong>Obrigado!</strong>
-
-      <p>Equipe | <strong>PrAktikA - Wunderwelt-A</strong></p>
-
-      <p class="noReply">
-        Não responda a esta mensagem. Este e-mail foi enviado por um sistema automático que não processa respostas.
-      </p>
-    </div>
-  </body>
-</html>
+  <br />
+</div>

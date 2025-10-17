@@ -4,3 +4,5 @@ interface ICreateQueueDTO {
   user_id: string;
   sugestion?: string;
 }
+
+export { ICreateQueueDTO };

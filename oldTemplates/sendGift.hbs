@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .container {
+        width: 100vw;
+        max-width: 1000px;
+        font-size: 18px;
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: white;
+        color: #1e2f50;
+      }
+
+      .contentSpan {
+        margin: 10px 0;
+        display: block;
+      }
+
+      .noReply {
+        font-size: 14px;
+        color: #687173;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <span class="contentSpan">Olá, {{name}}</span>
+
+      <br />
+
+      <span class="contentSpan">
+        {{#if plural}}
+            Você acabou de ganhar {{credit}} créditos de presente!
+        {{else}}
+            Você acabou de ganhar {{credit}} crédito de presente!
+        {{/if}}
+      </span>
+
+      <br />
+
+      <strong>Bons Estudos!</strong>
+
+      <p>Equipe | <strong>PrAktikA - Wunderwelt-A</strong></p>
+
+      <p class="noReply">
+        Não responda a esta mensagem. Este e-mail foi enviado por um sistema automático que não processa respostas.
+      </p>
+    </div>
+  </body>
+</html>

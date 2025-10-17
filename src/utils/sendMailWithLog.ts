@@ -1,14 +1,16 @@
-
 import { inject, injectable } from "tsyringe";
 
-import { IMailProvider, IMailProviderProps } from "@shared/container/providers/MailProvider/IMailProvider";
+import {
+  IMailProvider,
+  IMailProviderProps,
+} from "@shared/container/providers/MailProvider/IMailProvider";
 import { IMailLogsRepository } from "@modules/mailLogs/repositories/IMailLogsRepository";
 
 interface ISendMailWithLogProps extends IMailProviderProps {
-    mailLog: {
-        userId: string;
-        content?: string;
-    }
+  mailLog: {
+    userId: string;
+    content?: string;
+  };
 }
 
 @injectable()
@@ -18,7 +20,7 @@ class SendMailWithLog {
     private mailProvider: IMailProvider,
 
     @inject("MailLogsRepository")
-    private mailLogsRepository: IMailLogsRepository,
+    private mailLogsRepository: IMailLogsRepository
   ) {}
 
   async execute({
@@ -26,31 +28,35 @@ class SendMailWithLog {
     subject,
     variables,
     path,
+    template,
+    base,
     calendarEvent,
     mailLog,
-    bcc
+    bcc,
   }: ISendMailWithLogProps): Promise<void> {
     try {
-        await this.mailProvider.sendMail({
-            to,
-            subject,
-            variables,
-            path,
-            calendarEvent,
-            bcc
-        })
+      await this.mailProvider.sendMail({
+        to,
+        subject,
+        variables,
+        path,
+        template,
+        base,
+        calendarEvent,
+        bcc,
+      });
 
-        await this.mailLogsRepository.create({
-            user_id: mailLog.userId,
-            content: mailLog.content ? mailLog.content : subject,
-        });
+      await this.mailLogsRepository.create({
+        user_id: mailLog.userId,
+        content: mailLog.content ? mailLog.content : subject,
+      });
     } catch (err) {
-        await this.mailLogsRepository.create({
-            error: true,
-            message: err,
-            user_id: mailLog.userId,
-            content: mailLog.content ? mailLog.content : subject,
-        });
+      await this.mailLogsRepository.create({
+        error: true,
+        message: err,
+        user_id: mailLog.userId,
+        content: mailLog.content ? mailLog.content : subject,
+      });
     }
   }
 }
