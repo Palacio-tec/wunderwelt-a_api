@@ -12,12 +12,24 @@ class TemplatesRepository implements ITemplatesRepository {
     this.repository = getRepository(Template);
   }
 
-  async create(data: ICreateTemplateDTO): Promise<Template> {
-    const template = this.repository.create(data);
+  async create({
+    version,
+    title,
+    body,
+    template,
+    user_id
+  }: ICreateTemplateDTO): Promise<Template> {
+    const templateData = this.repository.create({
+    version,
+    title,
+    body,
+    template,
+    user_id
+  });
 
-    await this.repository.save(template);
+    await this.repository.save(templateData);
 
-    return template;
+    return templateData;
   }
 
   async findById(id: string): Promise<Template> {

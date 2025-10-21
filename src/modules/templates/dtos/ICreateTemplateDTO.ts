@@ -5,12 +5,12 @@ interface ICreateTemplateDTO {
   title: string;
   body: string;
   template: string;
+  user_id: string;
   created_by: User;
 }
 
 interface ICreateTemplateInputDTO
-  extends Pick<ICreateTemplateDTO, "title" | "body" | "template"> {
-  user_id: string;
+  extends Pick<ICreateTemplateDTO, "title" | "body" | "template" | "user_id"> {
 }
 
 export { ICreateTemplateDTO, ICreateTemplateInputDTO };
