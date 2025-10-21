@@ -6,7 +6,6 @@ interface ICreateTemplateDTO {
   body: string;
   template: string;
   user_id: string;
-  created_by: User;
 }
 
 interface ICreateTemplateInputDTO
