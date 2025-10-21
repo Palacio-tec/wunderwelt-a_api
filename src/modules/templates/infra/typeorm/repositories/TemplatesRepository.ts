@@ -51,8 +51,7 @@ class TemplatesRepository implements ITemplatesRepository {
   async disableLatestVersionByTemplate(template: string): Promise<void> {
     const latestTemplate = await this.findLatestByTemplate(template);
     if (latestTemplate) {
-      latestTemplate.is_active = false;
-      await this.repository.update({ id: latestTemplate.id }, latestTemplate);
+      await this.repository.update({ id: latestTemplate.id }, { is_active: false });
     }
   }
 
