@@ -45,8 +45,7 @@ class CreateTemplateUseCase {
       body,
       template,
       version,
-      user_id,
-      created_by: userExists,
+      user_id
     });
 
     return { id: templateEntity.id };

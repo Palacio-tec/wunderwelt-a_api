@@ -34,9 +34,6 @@ class Template {
   @JoinColumn({ name: "user_id" })
   created_by: User;
 
-  @Column()
-  user_id: string;
-
   @Column({ default: true })
   is_active: boolean;
 
