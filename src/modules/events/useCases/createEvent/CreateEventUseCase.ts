@@ -188,7 +188,7 @@ class CreateEventUseCase {
 
     sendMailWithLog.execute({
       to: email,
-      subject,
+      subject: templates.get(templateName).subject,
       variables,
       calendarEvent,
       mailLog: {

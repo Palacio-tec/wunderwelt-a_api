@@ -64,7 +64,7 @@ class ListWillExpiredHoursUseCase {
 
         sendMailWithLog.execute({
           to: credit.email,
-          subject: "Existem créditos próximo do vencimento",
+          subject: templates.get(templateName).subject,
           variables,
           template: templates.get(templateName).body,
           base: templates.get("base").body,

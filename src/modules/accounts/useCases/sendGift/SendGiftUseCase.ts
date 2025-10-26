@@ -120,7 +120,7 @@ class SendGiftUseCase {
 
       this.mailProvider.sendMail({
         to: email,
-        subject: "Você ganhou um presente!",
+        subject: templates.get("send_gift").subject,
         variables,
         template: templates.get("send_gift").body,
         base: templates.get("base").body,

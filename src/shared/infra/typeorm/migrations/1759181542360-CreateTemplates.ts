@@ -17,6 +17,11 @@ export class CreateTemplates1759181542360 implements MigrationInterface {
             isNullable: false,
           },
           {
+            name: "subject",
+            type: "varchar",
+            isNullable: false,
+          },
+          {
             name: "body",
             type: "varchar",
             isNullable: false,

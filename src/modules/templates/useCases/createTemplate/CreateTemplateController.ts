@@ -5,13 +5,14 @@ import { CreateTemplateUseCase } from "./CreateTemplateUseCase";
 
 class CreateTemplateController {
   async handle(request: Request, response: Response): Promise<Response> {
-    const { title, body, template } = request.body;
+    const { title, subject, body, template } = request.body;
     const { id: user_id } = request.user;
 
     const createTemplateUseCase = container.resolve(CreateTemplateUseCase);
 
     const templateCreated = await createTemplateUseCase.execute({
       title,
+      subject,
       body,
       template,
       user_id,

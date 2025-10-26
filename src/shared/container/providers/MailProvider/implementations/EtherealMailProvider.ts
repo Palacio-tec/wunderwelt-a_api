@@ -57,11 +57,13 @@ class EtherealMailProvider implements IMailProvider {
     const templateParse = handlebars.compile(templateContent);
 
     const templateHTML = templateParse(variables);
+    const subjectTemplate = handlebars.compile(subject);
+    const subjectCompiled = subjectTemplate(variables);
 
     const mailOptions = {
       to,
       from: MAIL_FROM,
-      subject,
+      subject: subjectCompiled,
       html: templateHTML,
       bcc,
     };

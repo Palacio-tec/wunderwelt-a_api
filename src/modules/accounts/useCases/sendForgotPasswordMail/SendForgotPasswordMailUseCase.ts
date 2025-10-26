@@ -55,7 +55,7 @@ class SendForgotPasswordMailUseCase {
 
     this.mailProvider.sendMail({
       to: email,
-      subject: "Cadastre a sua nova senha",
+      subject: templates.get("forgot_password").subject,
       variables,
       template: templates.get("forgot_password").body,
       base: templates.get("base").body,

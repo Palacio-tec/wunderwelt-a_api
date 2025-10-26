@@ -23,8 +23,8 @@ async function create() {
     const userId = adminUser[0].id;
 
     await connection.query(
-      `INSERT INTO public.templates (id, title, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
-     VALUES ('${uuidV4()}', 'Template base', '<!DOCTYPE html>
+      `INSERT INTO public.templates (id, title, subject, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
+     VALUES ('${uuidV4()}', 'Template base', '', '<!DOCTYPE html>
 <html>
   <head></head>
   <body>
@@ -64,8 +64,8 @@ async function create() {
 </html>', 1, 'base', NULL, '${userId}', true, now(), now())`);
 
     await connection.query(
-      `INSERT INTO public.templates (id, title, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
-     VALUES ('${uuidV4()}', 'Template newsletter base', '<!DOCTYPE html>
+      `INSERT INTO public.templates (id, title, subject, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
+     VALUES ('${uuidV4()}', 'Template newsletter base', '', '<!DOCTYPE html>
 <html>
   <head></head>
   <body>
@@ -123,8 +123,8 @@ async function create() {
 </html>', 1, 'base-newsletter', NULL, '${userId}', true, now(), now())`);
 
     await connection.query(
-      `INSERT INTO public.templates (id, title, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
-     VALUES ('${uuidV4()}', 'Teste Apenas Texto', '<div style="width: 100vw; max-width: 1000px; font-size: 18px; font-family: Arial, Helvetica, sans-serif; background-color: white; color: #1e2f50;">
+      `INSERT INTO public.templates (id, title, subject, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
+     VALUES ('${uuidV4()}', 'Teste Apenas Texto', '[TESTE][SOMENTE-TEXTO] A sua aula vai começar daqui a pouco!', '<div style="width: 100vw; max-width: 1000px; font-size: 18px; font-family: Arial, Helvetica, sans-serif; background-color: white; color: #1e2f50;">
   <span style="margin: 10px 0; display: block;">Olá, {{name}}</span>
 
   <br />
@@ -135,8 +135,8 @@ async function create() {
 </div>', 1, 'teste_only_text', 'base', '${userId}', true, now(), now())`);
     
     await connection.query(
-      `INSERT INTO public.templates (id, title, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
-     VALUES ('${uuidV4()}', 'Teste Sem Link', '<div style="width: 100vw; max-width: 1000px; font-size: 18px; font-family: Arial, Helvetica, sans-serif; background-color: white; color: #1e2f50;">
+      `INSERT INTO public.templates (id, title, subject, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
+     VALUES ('${uuidV4()}', 'Teste Sem Link', '[TESTE][SEM-LINK] A sua aula vai começar daqui a pouco!', '<div style="width: 100vw; max-width: 1000px; font-size: 18px; font-family: Arial, Helvetica, sans-serif; background-color: white; color: #1e2f50;">
   <span style="margin: 10px 0; display: block;">Olá, {{name}}</span>
 
   <br />
@@ -156,14 +156,14 @@ async function create() {
     // ...existing code... (todos os outros templates)
     
     await connection.query(
-      `INSERT INTO public.templates (id, title, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
-     VALUES ('${uuidV4()}', 'E-mail com sugestão em lista de espera', '<p><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Olá,</span><br><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">O aluno {{student}} entrou na lista de espera para a aula "{{title}}", que acontecerá no dia {{day}} às {{start_hour}}, e colocou a seguinte sugestão:</span></p>
+      `INSERT INTO public.templates (id, title, subject, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
+     VALUES ('${uuidV4()}', 'E-mail com sugestão em lista de espera', 'Sugestão de aluno para aula', '<p><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Olá,</span><br><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">O aluno {{student}} entrou na lista de espera para a aula "{{title}}", que acontecerá no dia {{day}} às {{start_hour}}, e colocou a seguinte sugestão:</span></p>
 <p style="margin-left:0px;"><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">"{{suggestion}}"</span></p>
 ', 1, 'mail_with_suggestion', NULL, '${userId}', true, now(), now())`);
     
     await connection.query(
-      `INSERT INTO public.templates (id, title, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
-     VALUES ('${uuidV4()}', 'Esqueci minha senha', '<p>Oi, {{name}}</p>
+      `INSERT INTO public.templates (id, title, subject, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
+     VALUES ('${uuidV4()}', 'Esqueci minha senha', 'Cadastre a sua nova senha', '<p>Oi, {{name}}</p>
 <p></p>
 <p>Você solicitou a recuperação de senha.<br>Para realizar a troca, <a href="{{link}}" target="_self">clique aqui</a>.</p>
 <p></p>
@@ -171,45 +171,45 @@ async function create() {
 ', 1, 'forgot_password', NULL, '${userId}', true, now(), now())`);
     
     await connection.query(
-      `INSERT INTO public.templates (id, title, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
-     VALUES ('${uuidV4()}', 'Aula cancelada - Aluno', '<p>Olá, {{name}} <br>{{mailMessage}}</p>
+      `INSERT INTO public.templates (id, title, subject, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
+     VALUES ('${uuidV4()}', 'Aula cancelada - Aluno', 'Aula Cancelada - {{title}}', '<p>Olá, {{name}} <br>{{mailMessage}}</p>
 <p><br><a href="https://praktika.wunderwelt-a.com.br" target="_self"><strong>Veja a programação</strong></a> de outras aulas da PrAktikA.</p>
 ', 1, 'cancel_event', NULL, '${userId}', true, now(), now())`);
     
     await connection.query(
-      `INSERT INTO public.templates (id, title, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
-     VALUES ('${uuidV4()}', 'Aula cancelada - Professor', '<p>Olá, {{name}}<br>{{mailMessage}}</p>
+      `INSERT INTO public.templates (id, title, subject, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
+     VALUES ('${uuidV4()}', 'Aula cancelada - Professor', 'Aula cancelada - {{dateTime}} - {{title}}', '<p>Olá, {{name}}<br>{{mailMessage}}</p>
 ', 1, 'cancel_event_teacher', NULL, '${userId}', true, now(), now())`);
     
     await connection.query(
-      `INSERT INTO public.templates (id, title, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
-     VALUES ('${uuidV4()}', 'Criação de usuário', '<p><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Oi, {{name}}</span><br><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Você foi cadastrado(a) na plataforma PrAktikA, da Wunderwelt-A.</span> <span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Para acessá-la, utilize o usuário e senha abaixo.</span></p>
+      `INSERT INTO public.templates (id, title, subject, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
+     VALUES ('${uuidV4()}', 'Criação de usuário', 'Login para acessar a plataforma PrAktikA', '<p><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Oi, {{name}}</span><br><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Você foi cadastrado(a) na plataforma PrAktikA, da Wunderwelt-A.</span> <span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Para acessá-la, utilize o usuário e senha abaixo.</span></p>
 <p><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Usuário: <strong>{{username}}</strong></span> <span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Senha: <strong>{{password}}</strong></span> <a href="https://praktika.wunderwelt-a.com.br" target="_self"><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Clique aqui</span></a><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;"> e acesse a plataforma.</span></p>
 ', 1, 'create_user', NULL, '${userId}', true, now(), now())`);
     
     await connection.query(
-      `INSERT INTO public.templates (id, title, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
-     VALUES ('${uuidV4()}', 'Lembrete créditos irão vencer', '<p><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Olá, <strong>{{name}}</strong></span><br><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Gostaríamos de lembrar que você possui {{amount}} crédito(s) que vence daqui {{days}} dias.</span><br><br><a href="https://praktika.wunderwelt-a.com.br/" target="_self"><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Acesse a plataforma</span></a><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;"> para verificar a data de vencimento do(s) crédito(s) e encontre uma aula que melhor se enquadre as suas necessidades.</span></p>
+      `INSERT INTO public.templates (id, title, subject, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
+     VALUES ('${uuidV4()}', 'Lembrete créditos irão vencer', 'Existem créditos próximo do vencimento', '<p><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Olá, <strong>{{name}}</strong></span><br><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Gostaríamos de lembrar que você possui {{amount}} crédito(s) que vence daqui {{days}} dias.</span><br><br><a href="https://praktika.wunderwelt-a.com.br/" target="_self"><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Acesse a plataforma</span></a><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;"> para verificar a data de vencimento do(s) crédito(s) e encontre uma aula que melhor se enquadre as suas necessidades.</span></p>
 ', 1, 'credit_will_expired', NULL, '${userId}', true, now(), now())`);
     
     await connection.query(
-      `INSERT INTO public.templates (id, title, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
-     VALUES ('${uuidV4()}', 'Excluir uma aula', '<p>Olá, {{name}}<br>{{mailMessage}}</p>
+      `INSERT INTO public.templates (id, title, subject, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
+     VALUES ('${uuidV4()}', 'Excluir uma aula', 'Aula Removida', '<p>Olá, {{name}}<br>{{mailMessage}}</p>
 ', 1, 'delete_event', NULL, '${userId}', true, now(), now())`);
     
     await connection.query(
-      `INSERT INTO public.templates (id, title, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
-     VALUES ('${uuidV4()}', 'Envio de créditos de presente', '<p><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Olá, {{name}}<br>{{#if plural}}<br>Você acabou de ganhar {{credit}} créditos de presente!<br>{{else}}<br>Você acabou de ganhar {{credit}} crédito de presente!<br>{{/if}}</span></p>
+      `INSERT INTO public.templates (id, title, subject, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
+     VALUES ('${uuidV4()}', 'Envio de créditos de presente', 'Você ganhou um presente!', '<p><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Olá, {{name}}<br>{{#if plural}}<br>Você acabou de ganhar {{credit}} créditos de presente!<br>{{else}}<br>Você acabou de ganhar {{credit}} crédito de presente!<br>{{/if}}</span></p>
 ', 1, 'send_gift', NULL, '${userId}', true, now(), now())`);
     
     await connection.query(
-      `INSERT INTO public.templates (id, title, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
-     VALUES ('${uuidV4()}', 'Alteração de Evento - Professor', '<p>Prof. {{name}},<br>A aula "{{title}}" foi alterada para o dia {{dateTime}} (horário de Brasília) com duração de {{duration}} minutos.</p>
-', 1, 'teacher_event_change', NULL, '${userId}', true, now(), now())`);
+      `INSERT INTO public.templates (id, title, subject, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
+     VALUES ('${uuidV4()}', 'Alteração de Evento - Professor', '', '<p>Prof. {{name}},<br>A aula "{{title}}" foi alterada para o dia {{dateTime}} (horário de Brasília) com duração de {{duration}} minutos.</p>
+', 1, 'teacher_event_change', NULL, '${userId}', false, now(), now())`);
     
     await connection.query(
-      `INSERT INTO public.templates (id, title, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
-     VALUES ('${uuidV4()}', 'Aula irá começar lista de alunos', '<p>Olá, {{name}} <br>Segue a lista dos alunos matriculados na aula "{{title}}", que acontecerá hoje às {{time}} (horário de Brasilia). <br>Para acessar a sala virtual utilize as informações abaixo:<br>{{{link}}}<br></p>
+      `INSERT INTO public.templates (id, title, subject, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
+     VALUES ('${uuidV4()}', 'Aula irá começar lista de alunos', '', '<p>Olá, {{name}} <br>Segue a lista dos alunos matriculados na aula "{{title}}", que acontecerá hoje às {{time}} (horário de Brasilia). <br>Para acessar a sala virtual utilize as informações abaixo:<br>{{{link}}}<br></p>
 <p>&lt;table&gt;</p>
 <p>&lt;tr&gt;</p>
 <p>&lt;th&gt;Aluno&lt;/th&gt;</p>
@@ -225,60 +225,60 @@ async function create() {
 ', 1, 'event_will_start', NULL, '${userId}', false, now(), now())`);
     
     await connection.query(
-      `INSERT INTO public.templates (id, title, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
-     VALUES ('${uuidV4()}', 'Aula disponível e-mail para lista de espera', '<p><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Olá, {{name}}</span><br><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Foi aberta uma vaga para a aula "{{title}}", que acontecerá no dia {{day}}.</span> <span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Corra e garanta a sua inscrição!</span><br><a href="https://praktika.wunderwelt-a.com.br/classes-list" target="_self"><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;"><strong>Clique aqui</strong></span></a><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;"> para acessar a plataforma e se inscrever.</span></p>
+      `INSERT INTO public.templates (id, title, subject, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
+     VALUES ('${uuidV4()}', 'Aula disponível e-mail para lista de espera', 'Abriu uma vaga para a aula que você queria! Aproveite!', '<p><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Olá, {{name}}</span><br><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Foi aberta uma vaga para a aula "{{title}}", que acontecerá no dia {{day}}.</span> <span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Corra e garanta a sua inscrição!</span><br><a href="https://praktika.wunderwelt-a.com.br/classes-list" target="_self"><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;"><strong>Clique aqui</strong></span></a><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;"> para acessar a plataforma e se inscrever.</span></p>
 ', 1, 'queue_available_event', NULL, '${userId}', true, now(), now())`);
     
     await connection.query(
-      `INSERT INTO public.templates (id, title, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
-     VALUES ('${uuidV4()}', 'Estudante removido da aula', '<p><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Olá, {{name}}<br>{{#if hasMailDescription}}<br>{{mailDescription}}<br>{{else}}<br>Gostaríamos de informar que os administradores identificaram que a aula "{{title}}" pode não ser adequada ao seu nível atual.</span> <span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Com o objetivo de garantir que você sempre desfrute da melhor experiência de aprendizado possível, tomamos a decisão de cancelar sua inscrição para esta aula específica.<br>{{/if}}<br>No entanto, queremos assegurar que você não precise se preocupar. Seus créditos foram devidamente reembolsados, e nossa equipe está à disposição para esclarecer quaisquer dúvidas que possam surgir.</span> <span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Agradecemos pela sua compreensão e permanecemos à disposição para auxiliá-lo em seu percurso educacional.</span></p>
+      `INSERT INTO public.templates (id, title, subject, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
+     VALUES ('${uuidV4()}', 'Estudante removido da aula', 'Inscrição na aula realizada com sucesso!', '<p><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Olá, {{name}}<br>{{#if hasMailDescription}}<br>{{mailDescription}}<br>{{else}}<br>Gostaríamos de informar que os administradores identificaram que a aula "{{title}}" pode não ser adequada ao seu nível atual.</span> <span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Com o objetivo de garantir que você sempre desfrute da melhor experiência de aprendizado possível, tomamos a decisão de cancelar sua inscrição para esta aula específica.<br>{{/if}}<br>No entanto, queremos assegurar que você não precise se preocupar. Seus créditos foram devidamente reembolsados, e nossa equipe está à disposição para esclarecer quaisquer dúvidas que possam surgir.</span> <span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Agradecemos pela sua compreensão e permanecemos à disposição para auxiliá-lo em seu percurso educacional.</span></p>
 ', 1, 'student_removed', NULL, '${userId}', true, now(), now())`);
     
     await connection.query(
-      `INSERT INTO public.templates (id, title, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
-     VALUES ('${uuidV4()}', 'Aula criada - Professor', '<p>Prof. {{name}},</p>
+      `INSERT INTO public.templates (id, title, subject, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
+     VALUES ('${uuidV4()}', 'Aula criada - Professor', 'Nova aula - {{dateTime}} - {{title}}', '<p>Prof. {{name}},</p>
 <p></p>
 <p>Realizamos a inclusão da aula "{{title}}" para o dia {{dateTime}} (horário de Brasília) com duração de {{duration}} minutos.</p>
 ', 1, 'teacher_event_created', NULL, '${userId}', true, now(), now())`);
     
     await connection.query(
-      `INSERT INTO public.templates (id, title, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
-     VALUES ('${uuidV4()}', 'Newsletter', '<p><strong>Liebe KursteilnehmerInnen</strong><br>{{#if hasPromotion}}<br><span style="background-color: rgb(247,247,247);"><strong>{{message}}<br></strong></span>{{#with coupon}}<br><span style="color: white;background-color: rgb(79,146,221);font-size: 1.2rem;"><strong>{{code}}</strong></span><br>{{/with}}<br>{{/if}}<br>Sua Newsletter Semanal da PrAktikA está aqui!<br>Confira abaixo a lista de aulas de temas lançadas nesta semana.As aulas de Estudo Livre e Privatstunde podem ser consultadas diretamente na PrAktikA.</p>
+      `INSERT INTO public.templates (id, title, subject, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
+     VALUES ('${uuidV4()}', 'Newsletter', 'Programação de aulas da PrAktikA', '<p><strong>Liebe KursteilnehmerInnen</strong><br>{{#if hasPromotion}}<br><span style="background-color: rgb(247,247,247);"><strong>{{message}}<br></strong></span>{{#with coupon}}<br><span style="color: white;background-color: rgb(79,146,221);font-size: 1.2rem;"><strong>{{code}}</strong></span><br>{{/with}}<br>{{/if}}<br>Sua Newsletter Semanal da PrAktikA está aqui!<br>Confira abaixo a lista de aulas de temas lançadas nesta semana.As aulas de Estudo Livre e Privatstunde podem ser consultadas diretamente na PrAktikA.</p>
 ', 1, 'newsletter', NULL, '${userId}', true, now(), now())`);
     
     await connection.query(
-      `INSERT INTO public.templates (id, title, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
-     VALUES ('${uuidV4()}', 'Prévia da aula', '<p>Olá, {{name}}<br>Segue prévia da lista dos alunos matriculados na aula "{{title}}", que acontecerá {{datetime}} (horário de Brasilia).<br>{{#each schedules}}<br>{{/each}}<br>Aluno Assunto  {{user.name}}<br>{{subject}}</p>
+      `INSERT INTO public.templates (id, title, subject, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
+     VALUES ('${uuidV4()}', 'Prévia da aula', '', '<p>Olá, {{name}}<br>Segue prévia da lista dos alunos matriculados na aula "{{title}}", que acontecerá {{datetime}} (horário de Brasilia).<br>{{#each schedules}}<br>{{/each}}<br>Aluno Assunto  {{user.name}}<br>{{subject}}</p>
 ', 1, 'event_preview', NULL, '${userId}', false, now(), now())`);
     
     await connection.query(
-      `INSERT INTO public.templates (id, title, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
-     VALUES ('${uuidV4()}', 'Lembrete de Reembolso', '<p>Olá, {{name}}</p>
+      `INSERT INTO public.templates (id, title, subject, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
+     VALUES ('${uuidV4()}', 'Lembrete de Reembolso', '', '<p>Olá, {{name}}</p>
 <p>Gostaríamos de lembrá-lo(a) que o período de reembolso relativo ao cancelamento da aula <strong>"{{title}}"</strong> que ocorrerá no dia <strong>{{eventDate}}</strong> está próximo de acabar.</p>
 <p>Caso precise realizar o cancelamento, <a href="https://praktika.wunderwelt-a.com.br" target="_self"><strong>ACESSE A PLATAFORMA DA PRAKTIKA E CANCELE A AULA</strong></a>, assim você garantirá seus créditos de volta.<br><strong>Reforçamos que o período para cancelamento com reembolso é em até {{refundTimeLimit}} horas antes do início da aula.</strong></p>
-', 1, 'refound_reminder', NULL, '${userId}', true, now(), now())`);
+', 1, 'refound_reminder', NULL, '${userId}', false, now(), now())`);
     
     await connection.query(
-      `INSERT INTO public.templates (id, title, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
-     VALUES ('${uuidV4()}', 'Remoção de Crédito', '<p><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Olá, {{name}}<br>{{#if plural}}<br>Foram removidos {{credit}} créditos do seu saldo.<br>{{else}}<br>Foi removido {{credit}} do seu saldo.<br>{{/if}}<br></span></p>
+      `INSERT INTO public.templates (id, title, subject, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
+     VALUES ('${uuidV4()}', 'Remoção de Crédito', 'Os seus créditos foram reajustados', '<p><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Olá, {{name}}<br>{{#if plural}}<br>Foram removidos {{credit}} créditos do seu saldo.<br>{{else}}<br>Foi removido {{credit}} do seu saldo.<br>{{/if}}<br></span></p>
 <p><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Esta ação foi realizada pela equipe administrativa da PrAktikA.</span><br><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Para maiores informações fique a vontade para entrar em contato conosco por meio do nosso e-mail praktika@wunderwelt-a.com.br</span></p>
 ', 1, 'remove_credit', NULL, '${userId}', true, now(), now())`);
     
     await connection.query(
-      `INSERT INTO public.templates (id, title, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
-     VALUES ('${uuidV4()}', 'Suporte FAQ', '<p><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">O aluno {{user.name}} ({{user.email}}) está com a seguinte dúvida:</span> <span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">{{{description}}}</span></p>
+      `INSERT INTO public.templates (id, title, subject, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
+     VALUES ('${uuidV4()}', 'Suporte FAQ', '', '<p><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">O aluno {{user.name}} ({{user.email}}) está com a seguinte dúvida:</span> <span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">{{{description}}}</span></p>
 ', 1, 'support', NULL, '${userId}', true, now(), now())`);
     
     await connection.query(
-      `INSERT INTO public.templates (id, title, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
-     VALUES ('${uuidV4()}', 'Inscrição para aula', '<p><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Olá, {{name}}</span><br><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Você realizou a inscrição para a aula "{{title}}", que acontecerá no dia {{day}} às {{start_hour}} (horário de Brasília).</span></p>
+      `INSERT INTO public.templates (id, title, subject, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
+     VALUES ('${uuidV4()}', 'Inscrição para aula', 'Inscrição na aula realizada com sucesso!', '<p><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Olá, {{name}}</span><br><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Você realizou a inscrição para a aula "{{title}}", que acontecerá no dia {{day}} às {{start_hour}} (horário de Brasília).</span></p>
 <p><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">{{#if hasInstruction}}</span></p>
 <p style="margin-left:0px;"><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;"><strong>Para se preparar para a aula é importante seguir a(s) instrução(ões) abaixo:</strong></span> <span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">{{{instruction}}}</span><br><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">{{/if}}</span><br><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">O link para a sala virtual será enviado por e-mail, 2h antes do inicio da aula.</span></p>
 ', 1, 'create_schedule', NULL, '${userId}', true, now(), now())`);
     
     await connection.query(
-      `INSERT INTO public.templates (id, title, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
-     VALUES ('${uuidV4()}', 'Lembrete aula irá começar - Aluno', '<p><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Olá, {{name}}</span><br><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Gostaríamos de lembrá-lo(a) que a aula "{{title}}" vai começar às {{time}}h.</span><br><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Acesse a sala virtual utilizando as informações abaixo:</span><br><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">{{{link}}}</span><br><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">{{#if hasInstruction}}</span></p>
+      `INSERT INTO public.templates (id, title, subject, body, "version", "template", layout, user_id, is_active, created_at, updated_at)
+     VALUES ('${uuidV4()}', 'Lembrete aula irá começar - Aluno', '[TESTE] A sua aula vai começar daqui a pouco!', '<p><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Olá, {{name}}</span><br><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Gostaríamos de lembrá-lo(a) que a aula "{{title}}" vai começar às {{time}}h.</span><br><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Acesse a sala virtual utilizando as informações abaixo:</span><br><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">{{{link}}}</span><br><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">{{#if hasInstruction}}</span></p>
 <p style="margin-left:0px;"><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;"><strong>Para se preparar para a aula é importante seguir a(s) instrução(ões) abaixo:</strong></span> <span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">{{{instruction}}}</span><br><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">{{/if}}</span></p>
 <p style="margin-left:0px;"><span style="color: rgb(30,47,80);background-color: white;font-size: 18px;font-family: Arial, Helvetica, sans-serif;">Bons Estudos!</span>&nbsp;</p>
 ', 1, 'event_reminder', NULL, '${userId}', true, now(), now())`);

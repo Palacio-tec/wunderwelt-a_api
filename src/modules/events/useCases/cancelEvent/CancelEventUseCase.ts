@@ -152,6 +152,7 @@ class CancelEventUseCase {
           const variables = {
             name,
             mailMessage,
+            title
           };
 
           const calendarEvent = {
@@ -183,7 +184,7 @@ class CancelEventUseCase {
 
           sendMailWithLog.execute({
             to: email,
-            subject,
+            subject: templates.get(templateName).subject,
             variables,
             path: templatePath,
             calendarEvent,
@@ -236,6 +237,7 @@ class CancelEventUseCase {
 
     if (eventTeacher.receive_email) {
       const variables = {
+        title,
         name: eventTeacher.name,
         mailMessage: `A aula "${title}" agendada para o dia ${this.dateProvider.parseFormat(start_date, "DD-MM-YYYY [às] HH:mm")} foi cancelada.`,
       };
@@ -257,7 +259,6 @@ class CancelEventUseCase {
         }),
         method: 'CANCEL',
       }
-
       const subject = `Aula cancelada - ${title}`
 
       await this.notificationsRepository.create({
@@ -269,7 +270,7 @@ class CancelEventUseCase {
 
       sendMailWithLog.execute({
         to: eventTeacher.email,
-        subject,
+        subject: templates.get(templateName).subject,
         variables,
         calendarEvent,
         mailLog: {

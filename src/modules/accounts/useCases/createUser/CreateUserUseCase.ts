@@ -120,7 +120,7 @@ class CreateUserUseCase {
 
       this.mailProvider.sendMail({
         to: email,
-        subject: "Login para acessar a plataforma PrAktikA",
+        subject: templates.get("create_user").subject,
         variables,
         template: templates.get("create_user").body,
         base: templates.get("base").body,
