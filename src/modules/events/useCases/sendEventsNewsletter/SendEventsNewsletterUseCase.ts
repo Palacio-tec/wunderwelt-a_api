@@ -124,7 +124,7 @@ class SendEventsNewsletterUseCase {
 
       await this.mailProvider.sendMail({
         to: fakeData.to,
-        subject: "[TESTE] - Confira as aulas incríveis que estão por vir",
+        subject: `[TESTE] - ${templates.get("newsletter").subject}`,
         variables,
         template: templates.get("newsletter").body,
         base: templates.get("base-newsletter").body
@@ -146,7 +146,7 @@ class SendEventsNewsletterUseCase {
 
           sendMailWithLog.execute({
             to: user.email,
-            subject: "Programação de aulas da PrAktikA",
+            subject: templates.get("newsletter").subject,
             variables,
             template: templates.get("newsletter").body,
             base: templates.get("base-newsletter").body,

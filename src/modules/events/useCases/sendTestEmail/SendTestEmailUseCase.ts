@@ -76,7 +76,7 @@ class SendTestEmailUseCase {
 
         this.mailProvider.sendMail({
           to: user.email,
-          subject: "[TESTE] A sua aula vai começar daqui a pouco!",
+          subject: eventReminderTemplate.get("event_reminder").subject,
           variables,
           template: eventReminderTemplate.get("event_reminder").body,
           base: eventReminderTemplate.get("base").body,
@@ -84,7 +84,7 @@ class SendTestEmailUseCase {
 
         this.mailProvider.sendMail({
           to: user.email,
-          subject: "[TESTE][SEM-LINK] A sua aula vai começar daqui a pouco!",
+          subject: testeNoLinkTemplate.get("teste_no_link").subject,
           variables,
           template: testeNoLinkTemplate.get("teste_no_link").body,
           base: testeNoLinkTemplate.get("base").body,
@@ -92,8 +92,7 @@ class SendTestEmailUseCase {
 
         this.mailProvider.sendMail({
           to: user.email,
-          subject:
-            "[TESTE][SOMENTE-TEXTO] A sua aula vai começar daqui a pouco!",
+          subject: testeOnlyTextTemplate.get("teste_only_text").subject,
           variables,
           template: testeOnlyTextTemplate.get("teste_only_text").body,
           base: testeOnlyTextTemplate.get("base").body,

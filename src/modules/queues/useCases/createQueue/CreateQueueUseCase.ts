@@ -53,7 +53,7 @@ class CreateQueueUseCase {
 
     this.mailProvider.sendMail({
       to: process.env.GENERAL_MAIL,
-      subject: "Sugestão de aluno para aula",
+      subject: templates.get("mail_with_suggestion").subject,
       variables,
       template: templates.get("mail_with_suggestion").body,
       base: templates.get("base").body,

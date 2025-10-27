@@ -17,6 +17,7 @@ class CreateTemplateUseCase {
 
   async execute({
     title,
+    subject,
     body,
     template,
     user_id,
@@ -42,6 +43,7 @@ class CreateTemplateUseCase {
 
     const templateEntity = await this.templatesRepository.create({
       title,
+      subject,
       body,
       template,
       version,

@@ -19,6 +19,9 @@ class Template {
   title: string;
 
   @Column()
+  subject: string;
+
+  @Column()
   body: string;
 
   @Column()
@@ -35,7 +38,6 @@ class Template {
 
   @ManyToOne(() => User)
   @JoinColumn({ name: "user_id" })
-  created_by: User;
 
   @Column({ default: true })
   is_active: boolean;

@@ -256,7 +256,7 @@ class CreateScheduleUseCase {
 
     sendMailWithLog.execute({
       to: email,
-      subject: "Inscrição na aula realizada com sucesso!",
+      subject: templates.get("create_schedule").subject,
       variables,
       template: templates.get("create_schedule").body,
       base: templates.get("base").body,

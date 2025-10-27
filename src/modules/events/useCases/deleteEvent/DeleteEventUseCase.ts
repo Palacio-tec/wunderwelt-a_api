@@ -161,7 +161,7 @@ class DeleteEventUseCase {
 
         sendMailWithLog.execute({
           to: email,
-          subject: "Aula Removida",
+          subject: templates.get(templateName).subject,
           variables,
           calendarEvent,
           mailLog: {
@@ -222,6 +222,7 @@ class DeleteEventUseCase {
     }
 
     const variables = {
+      title,
       name: eventTeacher.name,
       mailMessage: `A aula "${title}" agendada para o dia ${this.dateProvider.parseFormat(start_date, "DD-MM-YYYY [às] HH:mm")} foi cancelada.`,
     };
@@ -230,7 +231,7 @@ class DeleteEventUseCase {
 
     sendMailWithLog.execute({
       to: eventTeacher.email,
-      subject,
+      subject: templates.get(templateName).subject,
       variables,
       calendarEvent,
       mailLog: {

@@ -15,6 +15,7 @@ class TemplatesRepository implements ITemplatesRepository {
   async create({
     version,
     title,
+    subject,
     body,
     template,
     user_id
@@ -22,6 +23,7 @@ class TemplatesRepository implements ITemplatesRepository {
     const templateData = this.repository.create({
     version,
     title,
+    subject,
     body,
     template,
     user_id

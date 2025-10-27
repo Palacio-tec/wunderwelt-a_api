@@ -75,7 +75,7 @@ class CanceledEventUseCase {
 
     sendMailWithLog.execute({
       to: email,
-      subject: `Aula cancelada - ${dateTimeFormatted} - ${title}`,
+      subject: templates.get(templateName).subject,
       variables,
       calendarEvent,
       mailLog: {

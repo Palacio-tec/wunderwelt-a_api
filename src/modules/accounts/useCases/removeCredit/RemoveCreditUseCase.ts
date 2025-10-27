@@ -124,7 +124,7 @@ class RemoveCreditUseCase {
 
       this.mailProvider.sendMail({
         to: email,
-        subject: "Os seus créditos foram reajustados",
+        subject: templates.get("remove_credit").subject,
         variables,
         template: templates.get("remove_credit").body,
         base: templates.get("base").body,

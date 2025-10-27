@@ -45,7 +45,7 @@ class TestTemplateUseCase {
 
     await this.mailProvider.sendMail({
       to: userExists.email,
-      subject: "Este email é um teste",
+      subject: templates.get(templateName).subject,
       variables,
       template: templates.get(templateName).body,
       base: templates.get(base).body,

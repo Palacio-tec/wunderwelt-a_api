@@ -153,7 +153,7 @@ class RemoveScheduleUseCase {
 
         this.mailProvider.sendMail({
           to: email,
-          subject: "Abriu uma vaga para a aula que você queria! Aproveite!",
+          subject: queueTemplates.get("queue_available_event").subject,
           variables,
           template: queueTemplates.get("queue_available_event").body,
           base: queueTemplates.get("base").body,
@@ -205,7 +205,7 @@ class RemoveScheduleUseCase {
 
     sendMailWithLog.execute({
       to: email,
-      subject: "Inscrição na aula realizada com sucesso!",
+      subject: templates.get("student_removed").subject,
       variables,
       template: templates.get("student_removed").body,
       base: templates.get("base").body,

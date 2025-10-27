@@ -182,7 +182,7 @@ class DeleteScheduleUseCase {
 
         this.mailProvider.sendMail({
           to: email,
-          subject: "Abriu uma vaga para a aula que você queria! Aproveite!",
+          subject: templates.get("queue_available_event").subject,
           variables,
           template: templates.get("queue_available_event").body,
           base: templates.get("base").body,
