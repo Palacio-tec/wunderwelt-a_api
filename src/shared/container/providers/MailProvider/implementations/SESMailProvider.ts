@@ -50,7 +50,7 @@ class SESMailProvider implements IMailProvider {
 
     const templateHTML = templateParse(variables);
 
-    const subjectTemplate = Handlebars.compile(subject);
+    const subjectTemplate = handlebars.compile(subject);
     const subjectCompiled = subjectTemplate(variables);
 
     const mailOptions = {
