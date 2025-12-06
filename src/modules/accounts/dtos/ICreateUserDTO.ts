@@ -21,6 +21,7 @@ interface ICreateUserDTO {
   birth_date?: Date;
   level_id?: string;
   our_student?: boolean;
+  international_phone?: string;
 }
 
 export { ICreateUserDTO };
