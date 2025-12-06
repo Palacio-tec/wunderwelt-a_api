@@ -92,6 +92,9 @@ class User {
   @Column({ nullable: true })
   our_student: boolean;
 
+  @Column({ nullable: true })
+  international_phone: string;
+
   constructor() {
     if (!this.id) {
       this.id = uuidV4();
