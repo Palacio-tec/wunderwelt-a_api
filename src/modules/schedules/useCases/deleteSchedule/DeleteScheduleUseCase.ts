@@ -87,8 +87,6 @@ class DeleteScheduleUseCase {
     if (depositCredit <= 0) {
       return;
     }
-
-    await this.usersRepository.updateAddCreditById(user_id, depositCredit);
   }
 
   async execute(eventId: string, user_id: string): Promise<void> {
@@ -128,6 +126,8 @@ class DeleteScheduleUseCase {
     );
 
     if (untilEventStart >= Number(parameterRefundTimeLimit.value)) {
+      await this.usersRepository.updateAddCreditById(user_id, Number(credit));
+
       this.statementsRepository.create({
         amount: credit,
         description: `Reembolso por cancelar a inscrição da aula "${
